@@ -1,0 +1,92 @@
+/*background color*/
+
+body {
+  background-color: rgb(172, 172, 172);
+}
+
+.title {
+  color: white;
+}
+.container > .form {
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.twotextinpfld {
+  height: 3em;
+  margin: 10px;
+  border: black 10px solid;
+  border-radius: 0.33em;
+}
+.textinpfld {
+  height: 5vh;
+  margin: 5px;
+  text-size-adjust: 50vh;
+  border-radius: 1em;
+}
+
+::placeholder {
+  padding: 10px;
+}
+.googlesignin {
+  border-radius: 0.33em;
+  border: black 1px solid;
+  height: 2em;
+  margin: 5px;
+  background-color: rgb(66, 133, 244);
+}
+
+.facebookesignin {
+  border-radius: 0.33em;
+  border: black 1px solid;
+  height: 2em;
+  margin: 5px;
+  background-color: rgb(66, 133, 244);
+}
+/*submit button Credit to "getcssscan.com" by Tailwind, the 15/10/2024 for "Button 40"*/
+.submitbutton {
+  background-color: #111827;
+  border: 1px solid transparent;
+  border-radius: 0.75rem;
+  box-sizing: border-box;
+  color: #ffffff;
+  cursor: pointer;
+  flex: 0 0 auto;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.5rem;
+  padding: 0.75rem 1.2rem;
+  text-align: center;
+  transition-duration: 0.1s;
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  width: auto;
+}
+
+.submitbutton:hover {
+  background-color: #374151;
+}
+
+.submitbutton:focus {
+  box-shadow: none;
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+@media (min-width: 768px) {
+  .submitbutton {
+    padding: 0.75rem 1.5rem;
+  }
+}
+
+a {
+  color: blue;
+}
+a:hover {
+  color: white;
+}
