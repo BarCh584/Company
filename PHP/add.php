@@ -10,27 +10,34 @@
 
 <body>
     <div class="container">
-    <nav class="outnavbar">
-        <ul style="list-style-type: none; padding: 0;">
-            <li><a href="startpage.php"><img src="../Images/Navbar/home.png" alt="Logo" style="width: 5vw; height: 5vh;"></a></li>
-            <li><a href="startpage.php"><img src="../Images/Navbar/search.png" alt="Logo" style="width: 5vw; height: 5vh;"></a></li>
-            <li><a href="add.php"><img src="../Images/Navbar/add.png" alt="Logo" style="width: 5vw; height: 5vh;"></a></li>
-            <li><a href="settings.php"><img src="../Images/Navbar/Settings.png" alt="Logo" style="width: 5vw; height: 5vh;"></a></li>
-            <li><a href="message.php"><img src="../Images/Navbar/message.png" alt="Logo" style="width:5vw; height: 5vh" ></a></li>
-            <li><a href="account.php"><img src="../Images/Navbar/user.png" alt="Logo" style="width: 5vw; height: 5vh" ></a></li>
-        </ul>
-    </nav>
-        <div class="form">
-            <form>
+        <nav class="outnavbar">
+            <ul style="list-style-type: none; padding: 0;">
+                <li><a href="startpage.php"><img src="../Images/Navbar/home.png" alt="Logo"
+                            style="width: 5vw; height: 5vh;"></a></li>
+                <li><a href="startpage.php"><img src="../Images/Navbar/search.png" alt="Logo"
+                            style="width: 5vw; height: 5vh;"></a></li>
+                <li><a href="add.php"><img src="../Images/Navbar/add.png" alt="Logo"
+                            style="width: 5vw; height: 5vh;"></a></li>
+                <li><a href="settings.php"><img src="../Images/Navbar/Settings.png" alt="Logo"
+                            style="width: 5vw; height: 5vh;"></a></li>
+                <li><a href="message.php"><img src="../Images/Navbar/message.png" alt="Logo"
+                            style="width:5vw; height: 5vh"></a></li>
+                <li><a href="account.php"><img src="../Images/Navbar/user.png" alt="Logo"
+                            style="width: 5vw; height: 5vh"></a></li>
+            </ul>
+        </nav>
+        <div class="form" >
+            <form action="account.php" method="POST">
                 <label>Type of post</label><br>
-                <input type="radio" name="checkbox"><label>Post</label><br>
-                <input type="radio" name="checkbox"><label>Video</label><br>
-                <input type="radio" name="checkbox"><label>Image</label><br><br>
+                <!--<input type="radio" name="comment"><label>Post</label><br>
+                <input type="radio" name="video"><label>Video</label><br>
+                <input type="radio" name="image"><label>Image</label><br><br>-->
                 <label>Upload your file</label>
                 <input type="file" name="file" id="file"><br><br>
                 <label>Add a description (Optional)</label><br><br>
-                <textarea placeholder="Description" rows="10" maxlength="" style="width: 25%;"></textarea><br>
-                <input type="submit" class="submitbutton" action="">
+                <textarea placeholder="Description" rows="10" maxlength="" name="comment"
+                    style="width: 25%;"></textarea><br>
+                <input type="submit" class="submitbutton">
             </form>
         </div>
     </div>

@@ -1,29 +1,28 @@
 /*background color*/
 
 body {
-  background-color: rgb(172, 172, 172);
+  background-color: rgb(206, 206, 206);
 }
 
 .title {
   color: white;
 }
-.container > .form {
-  flex: 1;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+.index {
+ text-align: center;
 }
 .twotextinpfld {
-  height: 3em;
+  height: 2em;
   margin: 10px;
-  border: black 10px solid;
+  
+  border: black 1px solid;
   border-radius: 0.33em;
 }
 .textinpfld {
-  height: 5vh;
-  margin: 5px;
-  text-size-adjust: 50vh;
-  border-radius: 1em;
+  height: 2em;
+  margin: 10px;
+  width:  33%;
+  border: black 1px solid;
+  border-radius: 0.33em;
 }
 
 ::placeholder {
@@ -89,4 +88,11 @@ a {
 }
 a:hover {
   color: white;
+}
+
+.commentcreate {
+  background-color: white;
+  text-align: left;
+  width: 33.3%;
+  height: 100%;
 }

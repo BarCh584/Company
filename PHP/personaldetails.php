@@ -10,16 +10,16 @@
 </head>
 
 <body>
-    <div id="grid">
+    <div class="index">
         <h1>
             Provide your personal details
         </h1>
-        <form>
+        <form class="form">
             <input type="text" class="twotextinpfld" placeholder="First name">
             <input type="text" class="twotextinpfld"placeholder="Last name">
             <br>
             <input type="text" class="twotextinpfld"placeholder="example@email.com">
-            <input type="number" class="twotextinpfld" placeholder="(000) 000-0000">
+            <input type="tel" class="twotextinpfld" placeholder="Telephone number">
             <br>
             <input type="text" class="textinpfld"placeholder="Street address">
             <br>
