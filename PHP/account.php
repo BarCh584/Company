@@ -1,3 +1,8 @@
+<?php
+ini_set('session.gc_maxlifetime', 3600);
+session_start();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -26,22 +31,27 @@
                             style="width: 5vw; height: 5vh"></a></li>
             </ul>
         </nav>
-        <div class="commentcreate">
-            <?php
-            addimage();
-            function addimage()
-            {
-                if (isset($_POST['comment'])) {
-                    print("<textarea>" . $_POST['comment'] . "</textarea>");
-                }
-                else {
-                    print("Error");
-                } 
-            }
-            ?>
-            
 
-            
+        <?php
+        // Check if the session variables exist before using them
+        if (isset($_SESSION['username']) && isset($_SESSION['email']) && isset($_SESSION['password'])) {
+            $username = $_SESSION['username'];
+            $email = $_SESSION['email'];
+
+            // Note: For security, do NOT display or use the plain-text password directly
+            // Instead, you can use the hashed password if needed for authentication purposes
+            $hashedPassword = $_SESSION['password'];
+
+            echo "<h1>Welcome, $username!</h1>";
+            echo "<p>Your email: $email</p>";
+            echo "<p>Your password: $hashedPassword</p>";
+        } else {
+            echo "<p>No session data found. Please log in or sign up first.</p>";
+        }
+
+        ?>
+
+        <div class="commentcreate">
         </div>
     </div>
 </body>

@@ -1,3 +1,8 @@
+<?php
+    ini_set('session.gc_maxlifetime', 3600);
+    session_start();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -35,21 +40,23 @@
 
     <?php
     $servername = "localhost";
-    $username = "root";
-    $password = "";
-    $dbname = "Company";
-    $conn = new mysqli($servername, $username, $password, $dbname);
+    $serverusername = "root";
+    $serverpassword = "";
+    $serverdbname = "Company";
+    $conn = new mysqli($servername, $serverusername, $serverpassword, $serverdbname);
 
     if ($conn->connect_error) {
         die("Connection failed: " . $conn->connect_error);
     }
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        $username = $conn->real_escape_string($_POST['username']);
-        $email = $conn->real_escape_string($_POST['email']);
-        $password = $conn->real_escape_string($_POST['password']);
+        $_SESSION['username'] = $conn->real_escape_string($_POST['username']);
+        $username = $_SESSION['username'];
+        $_SESSION['email'] = $conn->real_escape_string($_POST['email']);
+        $email = $_SESSION['email'];
+        $_SESSION['password'] = $conn->real_escape_string($_POST['password']);
+        $password = $_SESSION['password'];
         $hashedpassword = password_hash($password, PASSWORD_DEFAULT);
-
         $stmt = $conn->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
         $stmt->bind_param("sss", $username,$email, $hashedpassword);
 

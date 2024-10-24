@@ -1,3 +1,48 @@
+<?php
+    $servername = "localhost";
+    $username = "root";
+    $password = "";
+    $dbname = "Company";
+    if (isset($_POST['emailadd']) && isset($_POST['pswrd'])) {
+        ini_set('session.gc_maxlifetime', 3600);
+        session_start();
+        $conn = new mysqli($servername, $username, $password, $dbname);
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            if (empty($_POST['emailadd']) || empty($_POST['pswrd'])) {
+                echo "Please fill in all fields";
+                session_abort();
+                exit();
+            } else {
+                $email = $conn->real_escape_string($_POST['emailadd']);
+                $pswrd = $conn->real_escape_string($_POST['pswrd']);
+                $stmt = $conn->prepare("SELECT password FROM users WHERE email = ?");
+                $stmt->bind_param("s", $email);
+                $stmt->execute();
+                $stmt->store_result();
+                if ($stmt->num_rows > 0) {
+                    $stmt->bind_result($hashedpassword);
+                    $stmt->fetch();
+                    if (password_verify($pswrd, $hashedpassword)) {
+                        $_SESSION['email'] = $email;
+                        $_SESSION['pswrd'] = $pswrd;
+                        header("Location: startpage.php");
+                    } else {
+                        echo "Incorrect password";
+                    }
+                } else {
+                    echo "Incorrect email";
+                }
+            }
+        } else {
+            $conn->close();
+        }
+    }
+
+    ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -15,7 +60,7 @@
             Login into your account
         </h1>
         <form method="POST" class="form" action="">
-            <input type="text" class="textinpfld" name="uname" placeholder="example@email.com" required><br>
+            <input type="text" class="textinpfld" name="emailadd" placeholder="example@email.com" required><br>
             <input type="password" class="textinpfld" name="pswrd" minlength="8" placeholder="Password" required><br>
             <label for="staysignin">Stay sign-in</label>
             <input type="checkbox" value="staysignin">
@@ -33,34 +78,7 @@
         <button class="facebookesignin">Sign in with Facebook</button>
     </div>
 
-    <?php
-    $servername = "localhost";
-    $username = "root";
-    $password = "";
-    $dbname = "Company";
-    $conn = new mysqli($servername, $username, $password, $dbname);
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        $username = $conn->real_escape_string($_POST['uname']);
-        $password = $_POST['pswrd'];
-        $stmt = $conn->prepare("SELECT id, email, password FROM users WHERE email = ?");
-        $stmt->execute();
-        $result = $stmt->get_result();
-
-        if($result->num_rows > 0) {
-            $user = $result->fetch_assoc();
-
-            if(password_verify($password, $user['password'])) {
-                $_SESSION['id'] = $user['id'];
-                echo "Login successful";
-            } else {
-                echo "Password is incorrect";
-            }
-        }
-    }
-    ?>
+    
 </body>
 
 </html>
