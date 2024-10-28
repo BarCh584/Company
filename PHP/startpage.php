@@ -1,6 +1,6 @@
 <?php
 ini_set('session.gc_maxlifetime', 86000);
-    session_start();
+session_start();
 ?>
 
 <!DOCTYPE html>
@@ -14,34 +14,27 @@ ini_set('session.gc_maxlifetime', 86000);
 </head>
 
 <body>
-    <nav class="outnavbar">
-        <ul style="list-style-type: none; padding: 0;">
-            <li><a href="startpage.php"><img src="../Images/Navbar/home.png" alt="Logo"
-                        style="width: 5vw; height: 5vh;"></a></li>
-            <li><a href="startpage.php"><img src="../Images/Navbar/search.png" alt="Logo"
-                        style="width: 5vw; height: 5vh;"></a></li>
-            <li><a href="add.php"><img src="../Images/Navbar/add.png" alt="Logo" style="width: 5vw; height: 5vh;"></a>
-            </li>
-            <li><a href="settings.php"><img src="../Images/Navbar/Settings.png" alt="Logo"
-                        style="width: 5vw; height: 5vh;"></a></li>
-            <li><a href="message.php"><img src="../Images/Navbar/message.png" alt="Logo"
-                        style="width:5vw; height: 5vh"></a></li>
-            <li><a href="account.php"><img src="../Images/Navbar/user.png" alt="Logo"
-                        style="width: 5vw; height: 5vh"></a></li>
-        </ul>
-    </nav>
+<?php
+    include_once('../Libraries/navbar.php');
+    createnavbar();
+?>
 
     <?php
-    
-    if (isset($_SESSION['username']) && isset($_SESSION['email']) && isset($_SESSION['password'])) {
-        $username = $_SESSION['username'];
-        $email = $_SESSION['email'];
-        $password = $_SESSION['password'];
-        print("Username: " . $username . " Email: " . $email . " Password: ". $password);
-    } else {
-        print("Error");
+    $servername = "localhost";
+    $username = "root";
+    $password = "";
+    $dbname = "Company";
+    $conn = new mysqli($servername, $username, $password, $dbname);
+    if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
     }
-    
+    $sql = "SELECT id, email, username, password FROM users WHERE email = '" . $_SESSION['email'] . "'";
+    $result = $conn->query($sql);
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+        }
+    }
+
     ?>
 </body>
 

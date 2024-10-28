@@ -10,37 +10,67 @@
 
 <body>
     <div class="container">
-        <nav class="outnavbar">
-            <ul style="list-style-type: none; padding: 0;">
-                <li><a href="startpage.php"><img src="../Images/Navbar/home.png" alt="Logo"
-                            style="width: 5vw; height: 5vh;"></a></li>
-                <li><a href="startpage.php"><img src="../Images/Navbar/search.png" alt="Logo"
-                            style="width: 5vw; height: 5vh;"></a></li>
-                <li><a href="add.php"><img src="../Images/Navbar/add.png" alt="Logo"
-                            style="width: 5vw; height: 5vh;"></a></li>
-                <li><a href="settings.php"><img src="../Images/Navbar/Settings.png" alt="Logo"
-                            style="width: 5vw; height: 5vh;"></a></li>
-                <li><a href="message.php"><img src="../Images/Navbar/message.png" alt="Logo"
-                            style="width:5vw; height: 5vh"></a></li>
-                <li><a href="account.php"><img src="../Images/Navbar/user.png" alt="Logo"
-                            style="width: 5vw; height: 5vh"></a></li>
-            </ul>
-        </nav>
-        <div class="form" >
-            <form action="account.php" method="POST">
-                <label>Type of post</label><br>
-                <!--<input type="radio" name="comment"><label>Post</label><br>
-                <input type="radio" name="video"><label>Video</label><br>
-                <input type="radio" name="image"><label>Image</label><br><br>-->
-                <label>Upload your file</label>
-                <input type="file" name="file" id="file"><br><br>
-                <label>Add a description (Optional)</label><br><br>
-                <textarea placeholder="Description" rows="10" maxlength="" name="comment"
-                    style="width: 25%;"></textarea><br>
-                <input type="submit" class="submitbutton">
-            </form>
-        </div>
+    <?php
+    include_once('../Libraries/navbar.php');
+    createnavbar();
+?>
+         <form method="POST">
+        <label>Title</label><br>
+        <input type="text" class="textinpfld" name="title" spellcheck="true" placeholder="Title" required><br>
+        <label>Add a comment (optional)</label><br>
+        <textarea class="textinpfld" name="comment" id="comment" rows="3" onload="autoresizetextinputfield(this)" oninput="autoresizetextinputfield(this)" spellcheck="true" placeholder="comment" required></textarea><br>
+            <label>Upload your file (optional)</label><br>
+            <input type="file" name="file" id="file"><br>
+            <input type="submit" class="submitbutton">
+        </form>
     </div>
+    <script>
+
+        document.getElementById("comment").onload = autoresizetextinputfield(document.getElementById("comment"));
+        function autoresizetextinputfield(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = textarea.scrollHeight + 'px';
+        }
+    </script>
+    <?php
+    // Check if the session variables exist before using them
+    $servername = "localhost";
+    $username = "root";
+    $password = "";
+    $dbname = "Company";
+    $conn = new mysqli($servername, $username, $password, $dbname);
+    if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
+    }
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+        session_start();
+        $account = "SELECT id, email, username, password FROM users WHERE email = '" . $_SESSION['email'] . "'";
+        $result = $conn->query($account);
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                print ("Welcome " . $row['username']);
+                if ($_POST['comment'] != null || $_POST['file'] != null) {
+                    $title = $conn->real_escape_string($_POST['title']);
+                    $comment = $conn->real_escape_string($_POST['comment']);
+                    $file = $conn->real_escape_string($_POST['file']);
+                    $accountid = $conn->real_escape_string($row['id']);
+                    $stmt = $conn->prepare("INSERT INTO posts (accountid, comment, title, file) VALUES (?, ?, ?, ?)");
+                    $stmt->bind_param("ssss",$accountid, $title, $comment, $file);
+                    $stmt->execute() or die("	". $conn->error);
+                    if($stmt->execute()){
+                        echo "New record created successfully";
+                    } else {
+                        echo "Error: " . $stmt->error;
+                    }
+                    $stmt->close();
+
+                }
+            }
+        }
+
+    }
+    ?>
 </body>
 
 </html>

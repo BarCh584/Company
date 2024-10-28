@@ -1,6 +1,6 @@
 <?php
-    ini_set('session.gc_maxlifetime', 3600);
-    session_start();
+ini_set('session.gc_maxlifetime', 3600);
+session_start();
 ?>
 
 <!DOCTYPE html>
@@ -58,14 +58,20 @@
         $password = $_SESSION['password'];
         $hashedpassword = password_hash($password, PASSWORD_DEFAULT);
         $stmt = $conn->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
-        $stmt->bind_param("sss", $username,$email, $hashedpassword);
-
-        if ($stmt->execute()) {
-            echo "New record created successfully";
+        $stmt->bind_param("sss", $username, $email, $hashedpassword);
+        $emailexists = $conn->prepare("SELECT * FROM users WHERE email = ?");
+        $emailexists->bind_param("s", $email);
+        $emailexists->execute();
+        $emailexists->store_result();
+        if ($emailexists->num_rows > 0) {
+            echo "Email already exists";
         } else {
-            echo "Error: " . $stmt->error;
+            if ($stmt->execute()) {
+                echo "New record created successfully";
+            } else {
+                echo "Error: " . $stmt->error;
+            }
         }
-
         $stmt->close();
     }
 
