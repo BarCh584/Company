@@ -20,10 +20,10 @@ session_start();
             Sign up
         </h1>
         <form method="POST">
-            <input type="text" name="username" class="textinpfld" placeholder="username"><br>
-            <input type="email" name="email" class="textinpfld" placeholder="email"><br>
-            <input type="password" name="password" class="textinpfld" placeholder="password"><br>
-            <input type="password" name="confirmpassword" class="textinpfld" placeholder="confirm password"><br>
+            <input type="text" name="username" class="textinpfld" placeholder="username" required><br>
+            <input type="email" name="email" class="textinpfld" placeholder="email" required><br>
+            <input type="password" name="password" class="textinpfld" placeholder="password" minlength="8" required><br>
+            <input type="password" name="confirmpassword" class="textinpfld" placeholder="confirm password" minlength="8" required><br>
             <input type="submit" name="submit" class="submitbutton">
         </form>
         <br>
@@ -42,7 +42,7 @@ session_start();
     $servername = "localhost";
     $serverusername = "root";
     $serverpassword = "";
-    $serverdbname = "Company";
+    $serverdbname = "company";
     $conn = new mysqli($servername, $serverusername, $serverpassword, $serverdbname);
 
     if ($conn->connect_error) {
@@ -68,6 +68,9 @@ session_start();
         } else {
             if ($stmt->execute()) {
                 echo "New record created successfully";
+                header("Location: index.php");
+                $stmt->close();
+                $conn->close();
             } else {
                 echo "Error: " . $stmt->error;
             }

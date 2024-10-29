@@ -34,18 +34,18 @@ session_start();
         $result = $conn->query($sql);
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
-                print ("Welcome " . $row['username']);
-                print ("<br>");
-                print ("Email-address is: " . $row['email']);
-                print ("<br>");
-                print ("Your (encrypted) password is: " . password_hash($row['password'], PASSWORD_DEFAULT));
+                print("
+                <div class='content'>
+                <h1>Account</h1>
+                <h3>Username: " . $row['username'] . "</h3>
+                <h3>Email-address is:" .  $row['email'] . "</h3>
+                </div>
+                ");
+                
             }
         }
 
         ?>
-
-        <div class="commentcreate">
-        </div>
     </div>
 </body>
 

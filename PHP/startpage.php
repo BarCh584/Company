@@ -18,9 +18,8 @@ session_start();
     include_once('../Libraries/navbar.php');
     createnavbar();
 ?>
-
     <?php
-    $servername = "localhost";
+    /*$servername = "localhost";
     $username = "root";
     $password = "";
     $dbname = "Company";
@@ -28,12 +27,11 @@ session_start();
     if ($conn->connect_error) {
         die("Connection failed: " . $conn->connect_error);
     }
-    $sql = "SELECT id, email, username, password FROM users WHERE email = '" . $_SESSION['email'] . "'";
+    $sql = "SELECT id, email, username, password FROM users WHERE username = '" . $_SESSION['username'] . "'";
     $result = $conn->query($sql);
     if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-        }
-    }
+
+    }*/
 
     ?>
 </body>

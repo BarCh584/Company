@@ -1,32 +1,40 @@
 /*background color*/
 
 body {
-  background-color: rgb(206, 206, 206);
+  background-color: #121212;
 }
 
 .title {
   color: white;
 }
 .index {
- text-align: center;
+  text-align: center;
 }
 .twotextinpfld {
   height: 2em;
   margin: 10px;
-  
-  border: black 1px solid;
-  border-radius: 0.33em;
-}
-.textinpfld {
-  height: 2em;
-  margin: 10px;
-  width:  33%;
+  background-color: #717171;
+  color: #ffffff;
   border: black 1px solid;
   border-radius: 0.33em;
 }
 
+input[type="text"] {
+  color: #ffffff;;
+}
+.textinpfld {
+  height: 2em;
+  margin: 10px;
+  width: 33%;
+  border: black 1px solid;
+  border-radius: 0.33em;
+  background-color: #717171;
+  color: #ffffff;
+}
+
 ::placeholder {
   padding: 10px;
+  color: #ffffff;
 }
 .googlesignin {
   border-radius: 0.33em;
@@ -45,18 +53,17 @@ body {
 }
 /*submit button Credit to "getcssscan.com" by Tailwind, the 15/10/2024 for "Button 40"*/
 .submitbutton {
-  background-color: #111827;
+  background-color: #f6eebd;
   border: 1px solid transparent;
   border-radius: 0.75rem;
   box-sizing: border-box;
-  color: #ffffff;
+  color: #000000;
   cursor: pointer;
   flex: 0 0 auto;
   font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
-  font-size: 1.125rem;
+  font-size: 1rem;
   font-weight: 600;
-  line-height: 1.5rem;
-  padding: 0.75rem 1.2rem;
+  line-height: 1rem;
   text-align: center;
   transition-duration: 0.1s;
   transition-property: background-color, border-color, color, fill, stroke;
@@ -68,7 +75,7 @@ body {
 }
 
 .submitbutton:hover {
-  background-color: #374151;
+  background-color: #e4da69;
 }
 
 .submitbutton:focus {
@@ -83,13 +90,6 @@ body {
   }
 }
 
-a {
-  color: blue;
-}
-a:hover {
-  color: white;
-}
-
 .commentcreate {
   background-color: white;
   text-align: left;
@@ -101,3 +101,18 @@ textarea {
   resize: none;
   width: 25%;
 }
+
+
+div.content {
+  text-align: center;
+  margin: auto;
+}
+form.content {
+  text-align: center;
+  margin: auto;
+}
+
+label, h1, h3, p {
+  color: white;
+}
+

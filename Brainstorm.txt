@@ -1,9 +1,8 @@
-- Accounts
-- Suchfunktion
-- Startfunktion
 - Zahlmethoden (Paypal, VISA, MASTERCARD)
 - Sneak peak (1-2 kostenlose Bilder) bevor zahlung
 - Bildhochladefunktion
 - Videofunktion
 - DM list
 - Live streaming (Optional)
+- Design
+- Website hosting

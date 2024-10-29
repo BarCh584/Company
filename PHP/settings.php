@@ -1,21 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../CSS/default.css">
     <title>Document</title>
 </head>
+
 <body>
-<nav class="outnavbar">
-        <ul style="list-style-type: none; padding: 0;">
-            <li><a href="startpage.php"><img src="../Images/Navbar/home.png" alt="Logo" style="width: 5vw; height: 5vh;"></a></li>
-            <li><a href="startpage.php"><img src="../Images/Navbar/search.png" alt="Logo" style="width: 5vw; height: 5vh;"></a></li>
-            <li><a href="add.php"><img src="../Images/Navbar/add.png" alt="Logo" style="width: 5vw; height: 5vh;"></a></li>
-            <li><a href="settings.php"><img src="../Images/Navbar/Settings.png" alt="Logo" style="width: 5vw; height: 5vh;"></a></li>
-            <li><a href="message.php"><img src="../Images/Navbar/message.png" alt="Logo" style="width:5vw; height: 5vh" ></a></li>
-            <li><a href="account.php"><img src="../Images/Navbar/user.png" alt="Logo" style="width: 5vw; height: 5vh" ></a></li>
-        </ul>
-    </nav>
+    <div class="container">
+        <?php
+        include_once('../Libraries/navbar.php');
+        createnavbar();
+        ?>
+            <ul class="outnavbar" style="margin-left: 15vw; width: 20vw; border-right: 1px solid gray; border-left: 1px solid gray;">
+                <li><a href="settings.profile.php">Profile</a></li>
+                <li><a href="settings.paymentinformation.php">Payment & finances</a></li>
+                <li><a href="settings.preferences.php">Preferences</a></li>
+                <li><a href="settings.languages.php">Language</a></li>
+                <li><a href="settings.privacy.php">Privacy</a></li>
+            </ul>
+        </div>
+    </div>
 </body>
+
 </html>

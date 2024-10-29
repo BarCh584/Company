@@ -10,23 +10,25 @@
 
 <body>
     <div class="container">
-    <?php
-    include_once('../Libraries/navbar.php');
-    createnavbar();
-?>
-         <form method="POST">
-        <label>Title</label><br>
-        <input type="text" class="textinpfld" name="title" spellcheck="true" placeholder="Title" required><br>
-        <label>Add a comment (optional)</label><br>
-        <textarea class="textinpfld" name="comment" id="comment" rows="3" onload="autoresizetextinputfield(this)" oninput="autoresizetextinputfield(this)" spellcheck="true" placeholder="comment" required></textarea><br>
+        <?php
+        include_once('../Libraries/navbar.php');
+        createnavbar();
+        ?>
+        <form method="POST" class="content">
+            <label>Title</label><br>
+            <input type="text" class="textinpfld" name="title" spellcheck="true" placeholder="Title" required><br>
+            <label>Add a comment (optional)</label><br>
+            <textarea class="textinpfld" name="comment" id="comment" rows="3" onload="autoresizetextinputfield(this)"
+                oninput="autoresizetextinputfield(this)" spellcheck="true" placeholder="Comment"
+                required></textarea><br>
             <label>Upload your file (optional)</label><br>
             <input type="file" name="file" id="file"><br>
             <input type="submit" class="submitbutton">
         </form>
     </div>
     <script>
-
         document.getElementById("comment").onload = autoresizetextinputfield(document.getElementById("comment"));
+
         function autoresizetextinputfield(textarea) {
             textarea.style.height = 'auto';
             textarea.style.height = textarea.scrollHeight + 'px';
@@ -56,19 +58,17 @@
                     $file = $conn->real_escape_string($_POST['file']);
                     $accountid = $conn->real_escape_string($row['id']);
                     $stmt = $conn->prepare("INSERT INTO posts (accountid, comment, title, file) VALUES (?, ?, ?, ?)");
-                    $stmt->bind_param("ssss",$accountid, $title, $comment, $file);
-                    $stmt->execute() or die("	". $conn->error);
-                    if($stmt->execute()){
-                        echo "New record created successfully";
+                    $stmt->bind_param("ssss", $accountid, $title, $comment, $file);
+                    $stmt->execute() or die("	" . $conn->error);
+                    if ($stmt->execute()) {
+                        print("<h3>Your account was successfully created</h3>");
                     } else {
                         echo "Error: " . $stmt->error;
                     }
                     $stmt->close();
-
                 }
             }
         }
-
     }
     ?>
 </body>
