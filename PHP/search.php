@@ -11,7 +11,7 @@
 <body>
     <?php
     include_once('../Libraries/navbar.php');
-    createnavbar();
+    createnavbar("search");
     ?>
     <form method="POST" class="content">
         <input type="text" class="textinpfld" placeholder="Search for a username" name="username">

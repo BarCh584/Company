@@ -12,7 +12,7 @@
     <div class="container">
         <?php
         include_once('../Libraries/navbar.php');
-        createnavbar();
+        createnavbar("add");
         ?>
         <form method="POST" class="content">
             <label>Title</label><br>

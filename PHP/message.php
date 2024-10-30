@@ -9,7 +9,7 @@
 <body>
 <?php
     include_once('../Libraries/navbar.php');
-    createnavbar();
+    createnavbar("message");
 ?>
 </body>
 </html>

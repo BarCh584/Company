@@ -111,7 +111,10 @@ form.content {
   text-align: center;
   margin: auto;
 }
-
+form.paymentform {
+  text-align: center;
+  margin-left: 25vw;
+}
 label, h1, h3, p {
   color: white;
 }

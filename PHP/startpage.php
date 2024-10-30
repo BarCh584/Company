@@ -16,7 +16,7 @@ session_start();
 <body>
 <?php
     include_once('../Libraries/navbar.php');
-    createnavbar();
+    createnavbar("startpage");
 ?>
     <?php
     /*$servername = "localhost";
