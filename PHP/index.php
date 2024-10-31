@@ -30,10 +30,10 @@
                         $_SESSION['pswrd'] = $pswrd;
                         header("Location: startpage.php");
                     } else {
-                        echo "Incorrect password";
+                        echo "<script>alert('Incorrect password');</script>";
                     }
                 } else {
-                    echo "Incorrect email";
+                    echo "<script>alert('Incorrect email');</script>";
                 }
             }
         } else {

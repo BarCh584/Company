@@ -14,59 +14,111 @@
     {
         ?>
         <ul class="outnavbar">
-            <li><a <?php if($buttontohighlight == "startpage") print ("class='active'"); ?> href="startpage.php"><img src="../Images/Navbar/home.png" alt="Logo">Home</a></li>
-            <li><a <?php if($buttontohighlight == "search") print ("class='active'"); ?> href="search.php"><img src="../Images/Navbar/search.png" alt="Logo">Search</a></li>
-            <li><a <?php if($buttontohighlight == "add") print ("class='active'"); ?> href="add.php"><img src="../Images/Navbar/add.png" alt="Logo">Add</a></li>
-            <li><a <?php if($buttontohighlight == "settings.profile") print ("class='active'"); ?> href="settings.profile.php"><img src="../Images/Navbar/Settings.png" alt="Logo">Settings</a></li>
-            <li><a <?php if($buttontohighlight == "message") print ("class='active'"); ?> href="message.php"><img src="../Images/Navbar/message.png" alt="Logo">Messages</a></li>
-            <li><a <?php if($buttontohighlight == "account") print ("class='active'"); ?> href="account.php"><img src="../Images/Navbar/user.png" alt="Logo">Account</a></li>
+            <li><a <?php if ($buttontohighlight == "startpage")
+                print ("class='active'");
+            else
+                print ("class='not-active'"); ?>
+                    href="startpage.php"><img src="../Images/Navbar/home.png" alt="Logo">Home</a></li>
+            <li><a <?php if ($buttontohighlight == "search")
+                print ("class='active'");
+            else
+                print ("class='not-active'"); ?>
+                    href="search.php"><img src="../Images/Navbar/search.png" alt="Logo">Search</a></li>
+            <li><a <?php if ($buttontohighlight == "add")
+                print ("class='active'");
+            else
+                print ("class='not-active'"); ?>
+                    href="add.php"><img src="../Images/Navbar/add.png" alt="Logo">Add</a></li>
+            <li><a <?php if ($buttontohighlight == "settings.profile")
+                print ("class='active'");
+            else
+                print ("class='not-active'"); ?> href="settings.profile.php"><img src="../Images/Navbar/user.png"
+                        alt="Logo">Account</a></li>
+            <li><a <?php if ($buttontohighlight == "message")
+                print ("class='active'");
+            else
+                print ("class='not-active'"); ?>
+                    href="message.php"><img src="../Images/Navbar/message.png" alt="Logo">Messages</a></li>
         </ul>
-
-
-
         <?php
     }
     ?>
 
 
     <?php
-    function createsettingsnavbar($buttontohighlightin) {
+    function createsettingsnavbar($buttontohighlightin)
+    {
         ?>
-    
-    <ul class="outnavbar" id="innavbar" style="margin-left: 15vw; width: 25vw; border-right: 1px solid gray; border-left: 1px solid gray;">
-                <li><a <?php if($buttontohighlightin == "settings.profile") print("class='active'");?>class="item" href="settings.profile.php">Profile</a></li>
-                <li><a <?php if($buttontohighlightin == "settings.notifications") print("class='active'");?>class="item" href="settings.notifications.php">Notifications</a></li>
-                <li><a <?php if($buttontohighlightin == "settings.privacy") print("class='active'");?>class="item" href="settings.privacy.php">Privacy</a></li>
-                <li><a <?php if($buttontohighlightin == "settings.subscriptions") print("class='active'");?>class="item" href="settings.subscriptions.php">Subscriptions</a></li>
-                <li><a <?php if($buttontohighlightin == "settings.paymentinformation") print("class='active'");?>class="item" href="settings.paymentinformation.php">Payment & finances</a></li>
-                <li><a <?php if($buttontohighlightin == "settings.preferences") print("class='active'");?>class="item" href="settings.preferences.php">Preferences</a></li>
-                <li><a <?php if($buttontohighlightin == "settings.languages") print("class='active'");?>class="item" href="settings.languages.php">Language</a></li>
-            </ul>
-    <?php
+
+        <ul class="outnavbar" id="innavbar"
+            style="margin-left: 15vw; width: 25vw; border-right: 1px solid gray; border-left: 1px solid gray;">
+            <li><a <?php if ($buttontohighlightin == "settings.profile")
+                print ("class='active'");
+            else
+                print ("class='not-active'"); ?>class="item" href="settings.profile.php"><img
+                        src="../Images/Navbar/profile.png" alt="Logo">Profile</a></li>
+            <li><a <?php if ($buttontohighlightin == "settings.notifications")
+                print ("class='active'");
+            else
+                print ("class='not-active'"); ?>class="item" href="settings.notifications.php"><img
+                        src="../Images/Navbar/notification.png" alt="Logo">Notifications</a></li>
+            <li><a <?php if ($buttontohighlightin == "settings.privacy")
+                print ("class='active'");
+            else
+                print ("class='not-active'"); ?>class="item" href="settings.privacy.php"><img
+                        src="../Images/Navbar/privacy.png" alt="Logo">Privacy</a></li>
+            <li><a <?php if ($buttontohighlightin == "settings.subscriptions")
+                print ("class='active'");
+            else
+                print ("class='not-active'"); ?>class="item" href="settings.subscriptions.php"><img
+                        src="../Images/Navbar/subscription.png" alt="Logo">Subscriptions</a></li>
+            <li><a <?php if ($buttontohighlightin == "settings.paymentinformation")
+                print ("class='active'");
+            else
+                print ("class='not-active'"); ?>class="item" href="settings.paymentinformation.php"><img
+                        src="../Images/Navbar/wallet.png" alt="Logo">Payment & finances</a></li>
+            <li><a <?php if ($buttontohighlightin == "settings.preferences")
+                print ("class='active'");
+            else
+                print ("class='not-active'"); ?>class="item" href="settings.preferences.php"><img
+                        src="../Images/Navbar/preferences.png" alt="Logo">Preferences</a></li>
+            <li><a <?php if ($buttontohighlightin == "settings.languages")
+                print ("class='active'");
+            else
+                print ("class='not-active'"); ?>class="item" href="settings.languages.php"><img
+                        src="../Images/Navbar/language.png" alt="Logo">Language</a></li>
+            <li><a <?php if ($buttontohighlightin == "settings.about")
+                print ("class='active'");
+            else
+                print ("class='not-active'"); ?>class="item" href="settings.about.php"><img
+                        src="../Images/Navbar/link.png" alt="Logo">About</a></li>
+        </ul>
+        <?php
     }
-    
+
     ?>
     <style>
         ul.outnavbar>li>a {
             color: white;
             display: flex;
             text-decoration: none;
+            font-family: Arial, Helvetica, sans-serif;
         }
 
-        ul#innavbar>li>a {
-            text-align: left;
-            justify-content: space-between;
-            border-radius: 0.75rem;
-        }
-        ul#innavbar>li>a.item {
-            padding-top: 2vh;
-            padding-bottom: 2vh;
-            padding-left: 2vw;
-            padding-right: 2vw;
-        }
+        /* Colors and font for outnavbar */
+
+
         ul#innavbar>li>a.item:hover {
             background-color: #3f3f3f;
         }
+
+        /* hovering in innavbar */
+
+        ul.outnavbar>li:hover {
+            background-color: rgb(64, 64, 64);
+        }
+
+        /* hovering in outnavbar */
         ul.outnavbar {
             width: 15vw;
             list-style-type: none;
@@ -76,20 +128,16 @@
             height: 100vh;
             /* Ensure the ul stretches across the entire height */
         }
-        /*ul.outnavbar li a:hover, ul.outnavbar li a::selection {
-            filter: brightness(0) saturate(100%) invert(88%) sepia(12%) saturate(771%) hue-rotate(11deg) brightness(106%) contrast(91%);
-        }*/
 
-        ul.outnavbar>li:hover {
-            background-color: rgb(64, 64, 64);
-        }
 
         .outnavbar a img {
-            margin-top: 1vh;
-            margin-bottom: 1vh;
+            margin-top: 2vh;
+            margin-bottom: 2vh;
             width: 5vw;
             height: 5vh;
         }
+
+        /* correct image resizing and more stretching between elements*/
 
         .outnavbar {
             left: 0vw;
@@ -103,19 +151,20 @@
             transition: transform 5s ease;
         }
 
-        .outnavbar li {
-            /*Make each list item take up equal space */
-            background-color: #282828;
-        }
         .active {
             filter: brightness(0) saturate(100%) invert(88%) sepia(12%) saturate(771%) hue-rotate(11deg) brightness(106%) contrast(91%);
+            font-weight: bold;
+            font-family: Arial, Helvetica, sans-serif;
         }
-        ul#innavbar>li>a.active {
-            padding-top: 2vh;
-            padding-bottom: 2vh;
-            padding-left: 2vw;
-            padding-right: 2vw;
+
+        /* highlight selected navbar element */
+        .not-active {
+            filter: brightness(0) saturate(100%) invert(100%) sepia(4%) saturate(643%) hue-rotate(272deg) brightness(114%) contrast(100%);
+            font-weight: normal;
+            font-family: Arial, Helvetica, sans-serif;
         }
+
+        /* unhighlight selected navbar element */
     </style>
 </body>
 
