@@ -26,8 +26,8 @@
     if ($conn->connect_error) {
         die("Connection failed: " . $conn->connect_error);
     }
-    if($_SERVER["REQUEST_METHOD"] == "POST") {
-        if(empty($_POST["username"])) {
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        if (empty($_POST["username"])) {
             echo "No username entered";
             session_abort();
             exit();
@@ -37,19 +37,21 @@
             $stmt->bind_param("s", $uname);
             $stmt->execute();
             $result = $stmt->get_result();
-            if($result->num_rows > 0) {
-                print("<div class='content'>");
-                while($row = $result->fetch_assoc()) {
-                    print("<p>Username: " . $row["username"] . "</p>");
+            if ($result->num_rows > 0) {
+                print ("<div class='contentnavbar'>");
+                while ($row = $result->fetch_assoc()) {
+                    print ("<li><a href='search.results.php?username=$row[username]'>Username: " . $row["username"] . "</a></li><br>");
                 }
-                print("</div>");
+                print ("</div>");
             } else {
-                print("<div class='content'>
+                print ("<div class='contentnavbar'>
                      <p>No user found</p>
                      </<div>");
             }
         }
     }
+
+
 
     ?>
 </body>

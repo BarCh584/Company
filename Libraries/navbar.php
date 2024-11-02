@@ -57,25 +57,15 @@
             else
                 print ("class='not-active'"); ?>class="item" href="settings.profile.php"><img
                         src="../Images/Navbar/profile.png" alt="Logo">Profile</a></li>
-            <li><a <?php if ($buttontohighlightin == "settings.notifications")
-                print ("class='active'");
-            else
-                print ("class='not-active'"); ?>class="item" href="settings.notifications.php"><img
-                        src="../Images/Navbar/notification.png" alt="Logo">Notifications</a></li>
-            <li><a <?php if ($buttontohighlightin == "settings.privacy")
-                print ("class='active'");
-            else
-                print ("class='not-active'"); ?>class="item" href="settings.privacy.php"><img
-                        src="../Images/Navbar/privacy.png" alt="Logo">Privacy</a></li>
             <li><a <?php if ($buttontohighlightin == "settings.subscriptions")
                 print ("class='active'");
             else
                 print ("class='not-active'"); ?>class="item" href="settings.subscriptions.php"><img
                         src="../Images/Navbar/subscription.png" alt="Logo">Subscriptions</a></li>
-            <li><a <?php if ($buttontohighlightin == "settings.paymentinformation")
+            <li><a <?php if ($buttontohighlightin == "settings.paymentinformationcreditcard")
                 print ("class='active'");
             else
-                print ("class='not-active'"); ?>class="item" href="settings.paymentinformation.php"><img
+                print ("class='not-active'"); ?>class="item" href="settings.paymentinformationcreditcard.php"><img
                         src="../Images/Navbar/wallet.png" alt="Logo">Payment & finances</a></li>
             <li><a <?php if ($buttontohighlightin == "settings.preferences")
                 print ("class='active'");

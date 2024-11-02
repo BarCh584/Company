@@ -34,6 +34,9 @@
             <li><a href="https://www.flaticon.com/free-icons/privacy" title="privacy icons">Privacy icons created by Anggara - Flaticon</a><br></li>
             <li><a href="https://www.flaticon.com/free-icons/notification" title="notification icons">Notification icons created by Freepik - Flaticon</a><br></li>
             <li><a href="https://www.flaticon.com/free-icons/user" title="user icons">User icons created by Freepik - Flaticon</a><br></li>
+            <li><a href="https://www.flaticon.com/free-icons/credit-card" title="credit card icons">Credit card icons created by Stockio - Flaticon</a><br></li>
+            <li><a href="https://www.flaticon.com/free-icons/paypal" title="paypal icons">Paypal icons created by Pixel perfect - Flaticon</a></li>
+            <li><h3>Parts of this site uses code from the project "smooth-frog-53" made by JkHuger (https://uiverse.io/JkHuger/smooth-frog-53), licensed under the MIT License</h3></li>
         </div>
     </div>
 </body>

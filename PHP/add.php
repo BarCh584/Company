@@ -1,3 +1,44 @@
+<?php
+session_start();
+$emailaddress = $_SESSION['email'];
+// Check if the session variables exist before using them
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "Company";
+$conn = new mysqli($servername, $username, $password, $dbname);
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $account = $conn->prepare("SELECT * FROM users WHERE email =?");
+    $account->bind_param("s", $emailaddress);
+    $account->execute();
+    $result = $account->get_result();
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            print ("Welcome " . $row['username']);
+            if ($_POST['comment'] != null || $_POST['file'] != null) {
+                $title = $conn->real_escape_string($_POST['title']);
+                $comment = $conn->real_escape_string($_POST['comment']);
+                $file = $conn->real_escape_string($_POST['file']);
+                $accountid = $conn->real_escape_string($row['id']);
+                $username = $conn->real_escape_string($row['username']);
+                $stmt = $conn->prepare("INSERT INTO posts (accountid, comment, title, file, accountname) VALUES (?, ?, ?, ?, ?)");
+                $stmt->bind_param("sssss", $accountid, $comment, $title, $file, $username);
+                $stmt->execute() or die("	" . $conn->error);
+                if ($stmt->execute()) {
+                    print ("<h3>Your post was successfully created</h3>");
+                } else {
+                    echo "Error: " . $stmt->error;
+                }
+                $stmt->close();
+            }
+        }
+    }
+}
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -34,43 +75,7 @@
             textarea.style.height = textarea.scrollHeight + 'px';
         }
     </script>
-    <?php
-    // Check if the session variables exist before using them
-    $servername = "localhost";
-    $username = "root";
-    $password = "";
-    $dbname = "Company";
-    $conn = new mysqli($servername, $username, $password, $dbname);
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-        session_start();
-        $account = "SELECT id, email, username, password FROM users WHERE email = '" . $_SESSION['email'] . "'";
-        $result = $conn->query($account);
-        if ($result->num_rows > 0) {
-            while ($row = $result->fetch_assoc()) {
-                print ("Welcome " . $row['username']);
-                if ($_POST['comment'] != null || $_POST['file'] != null) {
-                    $title = $conn->real_escape_string($_POST['title']);
-                    $comment = $conn->real_escape_string($_POST['comment']);
-                    $file = $conn->real_escape_string($_POST['file']);
-                    $accountid = $conn->real_escape_string($row['id']);
-                    $stmt = $conn->prepare("INSERT INTO posts (accountid, comment, title, file) VALUES (?, ?, ?, ?)");
-                    $stmt->bind_param("ssss", $accountid, $title, $comment, $file);
-                    $stmt->execute() or die("	" . $conn->error);
-                    if ($stmt->execute()) {
-                        print("<h3>Your account was successfully created</h3>");
-                    } else {
-                        echo "Error: " . $stmt->error;
-                    }
-                    $stmt->close();
-                }
-            }
-        }
-    }
-    ?>
 </body>
 
 </html>
