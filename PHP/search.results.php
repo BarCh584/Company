@@ -45,13 +45,13 @@
                 $poststmt->execute();
                 $postresults = $poststmt->get_result();
                 if ($postresults->num_rows > 0) {
-                    print("<div class='posts'>");
+                    print("<div class='postgrid'>");
                     while ($row = $postresults->fetch_assoc()) {
-                        print ("<h3>Title: " . $row["title"] . "</h3>");
-                        print ("<h3>Content: " . $row["comment"] . "</h3>");
-                        print ("<h3>Created at: " . $row["createdat"] . "</h3>");
-                        print ("<h3>Commentid " . $row["commentid"] . "</h3>");
-                        print ("<h3>Uploaded file: " . $row["file"] . "</h3><br><br>");
+                        print ("<div class='postgriditem'>Title: " . $row["title"] . 
+                        "<br>Content: " . $row["comment"] . 
+                        "<br>Created at: " . $row["createdat"] .
+                        "<br>Commentid " . $row["commentid"] . 
+                        "<br>Uploaded file: " . $row["file"] . "</div>");
                     }
                     print("</div>");
                 }
