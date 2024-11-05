@@ -14,10 +14,10 @@ session_start();
 </head>
 
 <body>
-<?php
+    <?php
     include_once('../Libraries/navbar.php');
     createnavbar("startpage");
-?>
+    ?>
     <?php
     /*$servername = "localhost";
     $username = "root";
@@ -34,6 +34,7 @@ session_start();
     }*/
 
     ?>
+
 </body>
 
 </html>

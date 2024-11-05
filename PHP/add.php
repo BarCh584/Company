@@ -26,7 +26,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $username = $conn->real_escape_string($row['username']);
                 $stmt = $conn->prepare("INSERT INTO posts (accountid, comment, title, file, accountname) VALUES (?, ?, ?, ?, ?)");
                 $stmt->bind_param("sssss", $accountid, $comment, $title, $file, $username);
-                $stmt->execute() or die("	" . $conn->error);
                 if ($stmt->execute()) {
                     print ("<h3>Your post was successfully created</h3>");
                 } else {
@@ -46,7 +45,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="../CSS/default.css">
+    <link rel="stylesheet" href="../CSS/default.css?v=<?php echo time(); ?>">
 </head>
 
 <body>

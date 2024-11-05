@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="../CSS/default.css">
+    <link rel="stylesheet" href="../CSS/default.css?v=<?php echo time(); ?>">
 </head>
 
 <body>
@@ -19,7 +19,7 @@
     </form>
     <?php
     if (isset($_GET["username"])) {
-        print ("<div class='contentresultnavbar'>
+        print ("<div class='contentuser'>
             <h3>Username: " . $_GET['username'] . "</h3>
             <button>Follow</button>
             <button>Message</button>
@@ -45,15 +45,29 @@
                 $poststmt->execute();
                 $postresults = $poststmt->get_result();
                 if ($postresults->num_rows > 0) {
-                    print("<div class='postgrid'>");
+                    print ("<div class='postgrid'>");
                     while ($row = $postresults->fetch_assoc()) {
-                        print ("<div class='postgriditem'>Title: " . $row["title"] . 
-                        "<br>Content: " . $row["comment"] . 
-                        "<br>Created at: " . $row["createdat"] .
-                        "<br>Commentid " . $row["commentid"] . 
-                        "<br>Uploaded file: " . $row["file"] . "</div>");
+                        if ($row["file"] != null) {
+                            print ("<div class='postgriditem'>
+                                " . $row["title"] .
+                                "<br>" . $row['comment'] .
+                                "<br><img src='" . $row['file'] . "' width='400' height='400'/>" .
+                                "<br>" . $row['createdat'] . "<form method='POST' class='postcommentform'>
+                                    <input type='text' class='textinpfld' placeholder='Search for a username' name='username'>
+                                    <input type='submit' name='submit' value='Search' class='submitbutton'>
+                                </form></div>");
+                        } else {
+                            print ("<div class='postgriditem'>"
+                                . $row["title"] .
+                                "<br>" . $row["comment"] .
+                                "<br>" . $row["createdat"] . " 
+                                <form method='POST' class='postcommentform'>
+                                    <input type='text' class='textinpfld' placeholder='Comment' name='username'>
+                                    <input type='submit' name='submit' value='Add comment' class='submitbutton'>
+                                </form></div>");
+                        }
                     }
-                    print("</div>");
+                    print ("</div>");
                 }
             }
         }

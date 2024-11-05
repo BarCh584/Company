@@ -266,11 +266,12 @@ div.contentnavbar>li>a:hover {
 
 /*Result navbar*/
 
-div.contentresultnavbar {
+div.contentuser {
   margin-left: 25vw;
   display: flex;
+  margin-bottom: 3vw;
 }
-div.contentresultnavbar>button {
+div.contentuser>button {
   background-color: #3f3f3f;
   color: white;
   border: none;
@@ -280,7 +281,7 @@ div.contentresultnavbar>button {
   font-family: Arial, Helvetica, sans-serif;
 
 }
-div.contentresultnavbar>button:hover {
+div.contentuser>button:hover {
   background-color: #575757;
   color: white;
   border: none;
@@ -289,7 +290,7 @@ div.contentresultnavbar>button:hover {
   margin-left: 1vw;
   font-family: Arial, Helvetica, sans-serif;
 }
-div.contentresultnavbar>h3 {
+div.contentuser>h3 {
   margin: 0% 1vw 0% 1vw;
   font-family: Arial, Helvetica, sans-serif;
   
@@ -298,15 +299,22 @@ div.contentresultnavbar>h3 {
 /*Posts*/
 
 div.postgrid {
-  margin-left: 25vw;
-  /*display: flex;
-  flex-direction: column;*/
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  margin-left: 25%;
+  
+  width: 50%;
+
 }
 div.postgriditem {
-  margin-bottom: 1vw;
+  padding: 3vw;
+  margin-top: 3vw;
   text-align: left;
   color: white;
   font-family: Arial, Helvetica, sans-serif;
+  background-color: #3f3f3f;
+}
+
+/*postcommentform*/
+
+.postcommentform {
+  text-align: right;
 }
