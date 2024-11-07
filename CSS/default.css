@@ -300,12 +300,10 @@ div.contentuser>h3 {
 
 div.postgrid {
   margin-left: 25%;
-  
-  width: 50%;
-
+  width: 66.6%;
 }
 div.postgriditem {
-  padding: 3vw;
+  padding: 2vw;
   margin-top: 3vw;
   text-align: left;
   color: white;
