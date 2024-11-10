@@ -56,6 +56,7 @@ session_start();
         $email = $_SESSION['email'];
         $_SESSION['password'] = $conn->real_escape_string($_POST['password']);
         $password = $_SESSION['password'];
+        
         $hashedpassword = password_hash($password, PASSWORD_DEFAULT);
         $stmt = $conn->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
         $stmt->bind_param("sss", $username, $email, $hashedpassword);
@@ -67,18 +68,15 @@ session_start();
             echo "Email already exists";
         } else {
             if ($stmt->execute()) {
+                $last_id = $conn->insert_id;
+                $_SESSION['id'] = $last_id;
                 echo "New record created successfully";
                 header("Location: index.php");
-                $stmt->close();
-                $conn->close();
             } else {
                 echo "Error: " . $stmt->error;
             }
         }
-        $stmt->close();
     }
-
-    $conn->close();
     ?>
 </body>
 

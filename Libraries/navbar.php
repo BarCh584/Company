@@ -15,30 +15,30 @@
         ?>
         <ul class="outnavbar">
             <li><a <?php if ($buttontohighlight == "startpage")
-                print ("class='active'");
+                print("class='active settings-'");
             else
                 print ("class='not-active'"); ?>
-                    href="startpage.php"><img src="../Images/Navbar/home.png" alt="Logo">Home</a></li>
+                    href="startpage.php"><img src="../Images/Navbar/hollow/home.png" alt="Logo">Home</a></li>
             <li><a <?php if ($buttontohighlight == "search")
-                print ("class='active'");
+                print("class='active settings-'");
             else
                 print ("class='not-active'"); ?>
-                    href="search.php"><img src="../Images/Navbar/search.png" alt="Logo">Search</a></li>
+                    href="search.php"><img src="../Images/Navbar/hollow/search.png" alt="Logo">Search</a></li>
             <li><a <?php if ($buttontohighlight == "add")
-                print ("class='active'");
+                print("class='active settings-'");
             else
                 print ("class='not-active'"); ?>
-                    href="add.php"><img src="../Images/Navbar/add.png" alt="Logo">Add</a></li>
+                    href="add.php"><img src="../Images/Navbar/hollow/add.png" alt="Logo">Add</a></li>
             <li><a <?php if ($buttontohighlight == "settings.profile")
-                print ("class='active'");
+                print("class='active settings-'");
             else
-                print ("class='not-active'"); ?> href="settings.profile.php"><img src="../Images/Navbar/user.png"
+                print ("class='not-active'"); ?> href="settings.profile.php"><img src="../Images/Navbar/hollow/user.png"
                         alt="Logo">Account</a></li>
             <li><a <?php if ($buttontohighlight == "message")
-                print ("class='active'");
+                print("class='active settings-'");
             else
                 print ("class='not-active'"); ?>
-                    href="message.php"><img src="../Images/Navbar/message.png" alt="Logo">Messages</a></li>
+                    href="message.php"><img src="../Images/Navbar/hollow/message.png" alt="Logo">Messages</a></li>
         </ul>
         <?php
     }
@@ -53,35 +53,35 @@
         <ul class="outnavbar" id="innavbar"
             style="margin-left: 15vw; width: 25vw; border-right: 1px solid gray; border-left: 1px solid gray;">
             <li><a <?php if ($buttontohighlightin == "settings.profile")
-                print ("class='active'");
+                print("class='active settings-profile'");
             else
                 print ("class='not-active'"); ?>class="item" href="settings.profile.php"><img
-                        src="../Images/Navbar/profile.png" alt="Logo">Profile</a></li>
+                        src="../Images/Navbar/hollow/user.png" alt="Logo">Profile</a></li>
             <li><a <?php if ($buttontohighlightin == "settings.subscriptions")
-                print ("class='active'");
+                print("class='active settings-subscriptions'");
             else
                 print ("class='not-active'"); ?>class="item" href="settings.subscriptions.php"><img
-                        src="../Images/Navbar/subscription.png" alt="Logo">Subscriptions</a></li>
+                        src="../Images/Navbar/hollow/subscription.png" alt="Logo">Subscriptions</a></li>
             <li><a <?php if ($buttontohighlightin == "settings.paymentinformationcreditcard")
-                print ("class='active'");
+                print("class='active settings-paymentinformationcreditcard'");
             else
                 print ("class='not-active'"); ?>class="item" href="settings.paymentinformationcreditcard.php"><img
-                        src="../Images/Navbar/wallet.png" alt="Logo">Payment & finances</a></li>
+                        src="../Images/Navbar/hollow/wallet.png" alt="Logo">Payment & finances</a></li>
             <li><a <?php if ($buttontohighlightin == "settings.preferences")
-                print ("class='active'");
+                print("class='active settings-preferences'");
             else
                 print ("class='not-active'"); ?>class="item" href="settings.preferences.php"><img
-                        src="../Images/Navbar/preferences.png" alt="Logo">Preferences</a></li>
+                        src="../Images/Navbar/hollow/preferences.png" alt="Logo">Preferences</a></li>
             <li><a <?php if ($buttontohighlightin == "settings.languages")
-                print ("class='active'");
+                print("class='active settings-languages'");
             else
                 print ("class='not-active'"); ?>class="item" href="settings.languages.php"><img
-                        src="../Images/Navbar/language.png" alt="Logo">Language</a></li>
+                        src="../Images/Navbar/hollow/language.png" alt="Logo">Language</a></li>
             <li><a <?php if ($buttontohighlightin == "settings.about")
-                print ("class='active'");
+                print("class='active settings-about'");
             else
                 print ("class='not-active'"); ?>class="item" href="settings.about.php"><img
-                        src="../Images/Navbar/link.png" alt="Logo">About</a></li>
+                        src="../Images/Navbar/hollow/link.png" alt="Logo">About</a></li>
         </ul>
         <?php
     }

@@ -18,16 +18,17 @@
             } else {
                 $email = $conn->real_escape_string($_POST['emailadd']);
                 $pswrd = $conn->real_escape_string($_POST['pswrd']);
-                $stmt = $conn->prepare("SELECT password FROM users WHERE email = ?");
+                $stmt = $conn->prepare("SELECT id, password FROM users WHERE email = ?");
                 $stmt->bind_param("s", $email);
                 $stmt->execute();
                 $stmt->store_result();
                 if ($stmt->num_rows > 0) {
-                    $stmt->bind_result($hashedpassword);
+                    $stmt->bind_result($id, $hashedpassword);
                     $stmt->fetch();
                     if (password_verify($pswrd, $hashedpassword)) {
                         $_SESSION['email'] = $email;
                         $_SESSION['pswrd'] = $pswrd;
+                        $_SESSION['id'] = $id;
                         header("Location: startpage.php");
                     } else {
                         echo "<script>alert('Incorrect password');</script>";

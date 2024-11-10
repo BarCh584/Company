@@ -1,5 +1,4 @@
 <?php
-ini_set('session.gc_maxlifetime', 86000);
 session_start();
 ?>
 
@@ -19,6 +18,9 @@ session_start();
     createnavbar("startpage");
     ?>
     <?php
+    if (!isset($_SESSION['id'])) {
+        die("You must be logged in to post comments.");
+    }
     /*$servername = "localhost";
     $username = "root";
     $password = "";
