@@ -15,27 +15,27 @@
         ?>
         <ul class="outnavbar">
             <li><a <?php if ($buttontohighlight == "startpage")
-                print("class='active settings-'");
+                print("class='active startpage'");
             else
                 print ("class='not-active'"); ?>
                     href="startpage.php"><img src="../Images/Navbar/hollow/home.png" alt="Logo">Home</a></li>
             <li><a <?php if ($buttontohighlight == "search")
-                print("class='active settings-'");
+                print("class='active search'");
             else
                 print ("class='not-active'"); ?>
                     href="search.php"><img src="../Images/Navbar/hollow/search.png" alt="Logo">Search</a></li>
             <li><a <?php if ($buttontohighlight == "add")
-                print("class='active settings-'");
+                print("class='active add'");
             else
                 print ("class='not-active'"); ?>
                     href="add.php"><img src="../Images/Navbar/hollow/add.png" alt="Logo">Add</a></li>
             <li><a <?php if ($buttontohighlight == "settings.profile")
-                print("class='active settings-'");
+                print("class='active settings-profile'");
             else
                 print ("class='not-active'"); ?> href="settings.profile.php"><img src="../Images/Navbar/hollow/user.png"
                         alt="Logo">Account</a></li>
             <li><a <?php if ($buttontohighlight == "message")
-                print("class='active settings-'");
+                print("class='active message'");
             else
                 print ("class='not-active'"); ?>
                     href="message.php"><img src="../Images/Navbar/hollow/message.png" alt="Logo">Messages</a></li>
@@ -88,6 +88,7 @@
 
     ?>
     <style>
+
         ul.outnavbar>li>a {
             color: white;
             display: flex;

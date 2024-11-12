@@ -17,7 +17,7 @@ $conn = new mysqli($servername, $db_username, $db_password, $dbname);
 
 // Check if the connection failed
 if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+    die("Connection failed: {$conn->connect_error}");
 }
 
 // Handle comment submission for any logged-in user
@@ -31,7 +31,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit_comment"]) && i
     $commentstmt->bind_param("iis", $postid, $userid, $comment);
     $commentstmt->execute();
 
-    header("Location:" . $_SERVER['REQUEST_URI']); // Redirect to the same page to avoid form resubmission
+    header("Location: {$_SERVER['REQUEST_URI']}"); // Redirect to the same page to avoid form resubmission
+    exit();
 }
 ?>
 
@@ -47,9 +48,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit_comment"]) && i
 </head>
 
 <body>
-
     <?php
-    include_once('../Libraries/navbar.php');
+    include_once '../Libraries/navbar.php';
+    include_once '../Libraries/navbar.php';
     createnavbar("search");
     ?>
 
@@ -76,7 +77,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit_comment"]) && i
         $stmt->bind_param("s", $searchedusername);
         $stmt->execute();
         $result = $stmt->get_result();
-
+        if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"], $_POST["postid"])) {
+            $postid = $conn->real_escape_string($_POST["postid"]);
+            if ($_POST["action"] == "like") {
+                $likestmt = $conn->prepare("UPDATE posts SET likes = likes + 1 WHERE id = ?");
+                $likestmt->bind_param("i", $postid);
+                $likestmt->execute();
+            } else if ($_POST["action"] == "dislike") {
+                $dislikestmt = $conn->prepare("UPDATE posts SET dislikes = dislikes + 1 WHERE id = ?");
+                $dislikestmt->bind_param("i", $postid);
+                $dislikestmt->execute();
+            }
+        }
+        if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"], $_POST["commentid"])) {
+            $commentid = $conn->real_escape_string($_POST["commentid"]);
+            if ($_POST["action"] == "like") {
+                $likestmt = $conn->prepare("UPDATE comments SET likes = likes + 1 WHERE id = ?");
+                $likestmt->bind_param("i", $commentid);
+                $likestmt->execute();
+            } else if ($_POST["action"] == "dislike") {
+                $dislikestmt = $conn->prepare("UPDATE comments SET dislikes = dislikes + 1 WHERE id = ?");
+                $dislikestmt->bind_param("i", $commentid);
+                $dislikestmt->execute();
+            }
+        }
         if ($result->num_rows > 0) {
             while ($user = $result->fetch_assoc()) {
                 $userid = $user["id"];
@@ -95,22 +119,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit_comment"]) && i
                         echo "<h4>" . htmlspecialchars($post["title"]) . "</h4>";
                         echo "<p>" . htmlspecialchars($post["comment"]) . "</p>";
                         echo "<p><small>Posted on: " . htmlspecialchars($post["createdat"]) . "</small></p>";
-                        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-                            if (isset($_POST["action"], $_POST["postid"])) {
-                                $postid = $conn->real_escape_string($_POST["postid"]);
-                                if ($_POST["action"] == "like") {
-                                    print ("<script>console.log('like');</script>");
-                                    $likestmt = $conn->prepare("UPDATE posts SET likes = likes + 1 WHERE id = ?");
-                                    $likestmt->bind_param("i", $post["id"]);
-                                    $likestmt->execute();
-                                } else if ($_POST["action"] == "dislike") {
-                                    print ("<script>console.log('dislike');</script>");
-                                    $likestmt = $conn->prepare("UPDATE posts SET dislikes = dislikes + 1 WHERE id = ?");
-                                    $likestmt->bind_param("i", $post["id"]);
-                                    $likestmt->execute();
-                                }
-                            }
-                        }
+                        // Handle like and dislike actions
                         ?>
                         <form name="like" class="likeanddislike" method="post">
                             <input type="hidden" name="action" value="like">
@@ -141,7 +150,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit_comment"]) && i
                         <?php
                         // Fetch and display comments with usernames for the current post
                         $commentstmt = $conn->prepare("
-                        SELECT comments.comment, comments.createdat, comments.likes, comments.dislikes, users.username
+                        SELECT comments.comment, comments.createdat, comments.id,comments.likes, comments.dislikes, users.username
                         FROM comments 
                         JOIN users ON comments.userid = users.id 
                         WHERE comments.postid = ? 
@@ -156,11 +165,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit_comment"]) && i
                                 echo "<p><strong>" . htmlspecialchars($comment["username"]) . "</strong>: " . htmlspecialchars($comment["comment"]) . "</p>";
                                 echo "<small>Commented on: " . htmlspecialchars($comment["createdat"]) . "</small><br>"; ?>
                                 <form class="likeanddislike" method="post">
-                                    <input type="image" src="../Images/Posts-comments-replies/hollow/like.png" />
+                                    <input type="hidden" name="action" value="like">
+                                    <input type="hidden" name="commentid" value="<?= $comment["id"] ?>">
+                                    <input type="image" id="<?= $comment['id'] . 'like' ?>" onclick="like('<?= $comment['id'] ?>')"
+                                        src="../Images/Posts-comments-replies/hollow/like.png" />
                                     <?= $comment["likes"] ?>
                                 </form>
                                 <form class="likeanddislike" method="post">
-                                    <input type="image" src="../Images/Posts-comments-replies/hollow/dislike.png" />
+                                    <input type="hidden" name="action" value="dislike">
+                                    <input type="hidden" name="commentid" value="<?= $comment["id"] ?>">
+                                    <input type="image" id="<?= $comment['id'] . 'dislike' ?>" onclick="dislike('<?= $comment['id'] ?>')"
+                                        src="../Images/Posts-comments-replies/hollow/dislike.png" />
                                     <?= $comment["dislikes"] ?>
                                 </form>
                             <?php }
@@ -182,9 +197,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit_comment"]) && i
     // Close the database connection
     $conn->close();
     ?>
-
+    <script>
+        function like(commentId) {
+            document.getElementById(commentId + 'like').src = "../Images/Posts-comments-replies/filled/like.png";
+            $.post("like_action.php", { id: commentId, action: 'like' });
+        }
+        function dislike(commentId) {
+            document.getElementById(commentId + 'dislike').src = "../Images/Posts-comments-replies/filled/dislike.png";
+            $.post("dislike_action.php", { id: commentId, action: 'dislike' });
+        }
+    </script>
     <style>
         .likeanddislike {
+            display: inline-block;
+            text-align: left;
+            border: none;
+            background: none;
+            padding: 0;
+            width: 5vw;
+            height: 5vh;
+        }
+
+        .likeanddislike:active {
             display: inline-block;
             text-align: left;
             border: none;
