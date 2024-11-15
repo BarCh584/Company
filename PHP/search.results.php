@@ -55,12 +55,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit_comment"]) && i
     ?>
 
     <!-- Search form for username -->
-    <form method="GET" class="content">
-        <input type="text" class="textinpfld" placeholder="Search for a username" name="username" required
-            autocomplete="off">
-        <input type="submit" name="submit" value="Search" class="submitbutton">
-    </form>
-
+    <div class="content">
+        <form method="GET">
+            <input type="text" class="textinpfld" placeholder="Search for a username" name="username" required
+                autocomplete="off">
+            <input type="submit" name="submit" value="Search" class="submitbutton">
+        </form>
+        <form>
+            <a href="message.php">Message</a>
+            <input type="submit" name="submit" value="Follow" class="submitbutton">
+        </form>
+    </div>
     <?php
     // Check if the username is set in the GET request
     if (isset($_GET["username"])) {
@@ -68,8 +73,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit_comment"]) && i
 
         echo "<div class='contentuser'>
                 <h3>Username: " . htmlspecialchars($searchedusername) . "</h3>
-                <button>Follow</button>
-                <button>Message</button>
+
               </div>";
 
         // Find the user ID by username
@@ -121,6 +125,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit_comment"]) && i
                         echo "<p><small>Posted on: " . htmlspecialchars($post["createdat"]) . "</small></p>";
                         // Handle like and dislike actions
                         ?>
+
+
+                        <?php
+                        $videoformats = ["mp3", "mp4", "wav"];
+                        $imageformats = ["jpg", "jpeg", "png", "gif"];
+                        $fileextension = strtolower(pathinfo($post["file"], PATHINFO_EXTENSION));
+                        if ($post["file"] != null) {
+                            if (in_array($fileextension, $videoformats)) {
+                                echo "<video width='400' height='400' controls><source src='$post[file]' type='video/mp4'></video>";
+                            } else if (in_array($fileextension, $imageformats)) {
+
+                                echo "<img src='" . $post['file'] . "' width='400' height='400' />";
+                            }
+                        }
+                        // Display the comment form for each post
+                        ?>
+                        <br>
                         <form name="like" class="likeanddislike" method="post">
                             <input type="hidden" name="action" value="like">
                             <input type="hidden" name="postid" value="<?= $post["id"] ?>">
@@ -133,14 +154,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit_comment"]) && i
                             <input type="image" name="dislike" value="dislike" src="../Images/Posts-comments-replies/hollow/dislike.png" />
                             <?= $post["dislikes"] ?>
                         </form>
-
-                        <?php
-
-                        if ($post["file"] != null) {
-                            echo "<img src='" . htmlspecialchars($post["file"]) . "' width='400' height='400' />";
-                        }
-                        // Display the comment form for each post
-                        ?>
                         <form method='POST' class='postcommentform'>
                             <input type='hidden' name='postid' value='<?= $post["id"] ?>'>
                             <input type='text' class='textinpfld' placeholder='Comment' name='comment' required>
