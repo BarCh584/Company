@@ -1,48 +1,49 @@
 <?php
-    $servername = "localhost";
-    $username = "root";
-    $password = "";
-    $dbname = "Company";
-    if (isset($_POST['emailadd']) && isset($_POST['pswrd'])) {
-        ini_set('session.gc_maxlifetime', 3600);
-        session_start();
-        $conn = new mysqli($servername, $username, $password, $dbname);
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            if (empty($_POST['emailadd']) || empty($_POST['pswrd'])) {
-                echo "Please fill in all fields";
-                session_abort();
-                exit();
-            } else {
-                $email = $conn->real_escape_string($_POST['emailadd']);
-                $pswrd = $conn->real_escape_string($_POST['pswrd']);
-                $stmt = $conn->prepare("SELECT id, password FROM users WHERE email = ?");
-                $stmt->bind_param("s", $email);
-                $stmt->execute();
-                $stmt->store_result();
-                if ($stmt->num_rows > 0) {
-                    $stmt->bind_result($id, $hashedpassword);
-                    $stmt->fetch();
-                    if (password_verify($pswrd, $hashedpassword)) {
-                        $_SESSION['email'] = $email;
-                        $_SESSION['pswrd'] = $pswrd;
-                        $_SESSION['id'] = $id;
-                        header("Location: startpage.php");
-                    } else {
-                        echo "<script>alert('Incorrect password');</script>";
-                    }
-                } else {
-                    echo "<script>alert('Incorrect email');</script>";
-                }
-            }
-        } else {
-            $conn->close();
-        }
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "Company";
+if (isset($_POST['emailadd']) && isset($_POST['pswrd'])) {
+    ini_set('session.gc_maxlifetime', 3600);
+    session_start();
+    $conn = new mysqli($servername, $username, $password, $dbname);
+    if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
     }
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        if (empty($_POST['emailadd']) || empty($_POST['pswrd'])) {
+            echo "Please fill in all fields";
+            session_abort();
+            exit();
+        } else {
+            $email = $conn->real_escape_string($_POST['emailadd']);
+            $pswrd = $conn->real_escape_string($_POST['pswrd']);
+            $stmt = $conn->prepare("SELECT username, id, password FROM users WHERE email = ?");
+            $stmt->bind_param("s", $email);
+            $stmt->execute();
+            $stmt->store_result();
+            if ($stmt->num_rows > 0) {
+                $stmt->bind_result($username, $id, $hashedpassword);
+                $stmt->fetch();
+                if (password_verify($pswrd, $hashedpassword)) {
+                    $_SESSION['email'] = $email;
+                    $_SESSION['pswrd'] = $pswrd;
+                    $_SESSION['id'] = $id;
+                    $_SESSION['username'] = $username;
+                    header("Location: startpage.php");
+                } else {
+                    echo "<script>alert('Incorrect password');</script>";
+                }
+            } else {
+                echo "<script>alert('Incorrect email');</script>";
+            }
+        }
+    } else {
+        $conn->close();
+    }
+}
 
-    ?>
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -79,7 +80,7 @@
         <button class="facebookesignin">Sign in with Facebook</button>
     </div>
 
-    
+
 </body>
 
 </html>

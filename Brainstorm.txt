@@ -1,7 +1,10 @@
-- Zahlmethoden (Paypal, VISA, MASTERCARD)
-- Sneak peak (1-2 kostenlose Bilder) bevor zahlung
-- DM list
+- Payment methods (Paypal, VISA, MASTERCARD)
+- Sneak peak (1-2 free images) before payment
+- Startpage
+- Reply function
+- Languages
 - Settings
 - Live streaming (Optional)
 - Design
 - Website hosting
+- Website name

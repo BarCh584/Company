@@ -50,7 +50,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit_comment"]) && i
 <body>
     <?php
     include_once '../Libraries/navbar.php';
-    include_once '../Libraries/navbar.php';
     createnavbar("search");
     ?>
 
@@ -61,14 +60,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit_comment"]) && i
                 autocomplete="off">
             <input type="submit" name="submit" value="Search" class="submitbutton">
         </form>
-        <form>
-            <a href="message.php">Message</a>
+        <form method="GET">
+            <a href="message.php?username=<?=$_GET["username"]?>">Message</a>
             <input type="submit" name="submit" value="Follow" class="submitbutton">
         </form>
     </div>
     <?php
     // Check if the username is set in the GET request
-    if (isset($_GET["username"])) {
+    if(isset($_GET["username"])) {
         $searchedusername = $_GET["username"];
 
         echo "<div class='contentuser'>
@@ -93,6 +92,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit_comment"]) && i
                 $dislikestmt->execute();
             }
         }
+        /* Like and dislike function */
         if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"], $_POST["commentid"])) {
             $commentid = $conn->real_escape_string($_POST["commentid"]);
             if ($_POST["action"] == "like") {

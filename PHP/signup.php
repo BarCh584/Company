@@ -56,7 +56,10 @@ session_start();
         $email = $_SESSION['email'];
         $_SESSION['password'] = $conn->real_escape_string($_POST['password']);
         $password = $_SESSION['password'];
-        
+        if($password != $_POST['confirmpassword']){
+            echo "Passwords do not match";
+            exit();
+        }
         $hashedpassword = password_hash($password, PASSWORD_DEFAULT);
         $stmt = $conn->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
         $stmt->bind_param("sss", $username, $email, $hashedpassword);

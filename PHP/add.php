@@ -86,6 +86,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
     <div class="container">
         <?php include_once('../Libraries/navbar.php'); createnavbar("add"); ?>
+        
         <form method="POST" enctype="multipart/form-data" class="content">
             <label>Title</label><br>
             <input type="text" class="textinpfld" name="title" spellcheck="true" placeholder="Title"><br>
