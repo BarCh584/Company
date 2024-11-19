@@ -105,7 +105,11 @@ textarea {
 
 div.content {
   text-align: center;
-  margin-left: 30vw;
+  margin-left: 40vw;
+}
+div.content>form {
+  text-align: center;
+  margin-left: 20vw;
 }
 form.content {
   text-align: center;
@@ -148,8 +152,8 @@ div.paymentform {
 /* This site uses code from the project "smooth-frog-53" made by JkHuger (https://uiverse.io/JkHuger/smooth-frog-53), licensed under the MIT License*/
 /* Slider*/
 /* From Uiverse.io by JkHuger */ 
-.sliderbutton {
-  margin-left: 45.5%;
+div.content>form>div.sliderbutton {
+  text-align: left;
 }
 input.toggle-checkbox {
   position: absolute;
