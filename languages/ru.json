@@ -1,4 +1,25 @@
 {
-    "Hello": "Привет",
-    "World": "Мир"
+"Home": "Стартовая страница",
+"Search": "Поиск",
+"Add": "Добавить",
+"Account": "Аккаунт",
+"Messages": "Сообщения",
+"Profile": "Профиль",
+"Subscriptions": "Подписки",
+"Payment & finances": "Оплата и финансы",
+"Preferences": "Настройки",
+"Language": "Язык",
+"About": "О нас",
+"Email-address": "Адрес электронной почты",
+"Password": "Пароль",
+"First name": "Имя",
+"Last name": "Фамилия",
+"Phone number": "Номер телефона",
+"Street addres": "Улица",
+"Street address 2": "Улица 2",
+"City": "Город",
+"State/Province": "Штат/Провинция",
+"Title": "Заголовок",
+"Add a comment": "Добавить комментарий",
+"Submit": "Отправить"
 }

@@ -114,7 +114,7 @@
         $dbname = "Company";
         $conn = new mysqli($servername, $username, $password, $dbname);
         $usera = $_SESSION["username"];
-        $userb = $_GET["username"];
+        if(isset($_GET["username"])) $userb = $_GET["username"];
         if ($conn->connect_error) {
             die("Connection failed, error code: " . $conn->connect_error);
         }

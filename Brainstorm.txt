@@ -3,6 +3,7 @@
 - Startpage
 - Reply function
 - Languages
+- Window optimizations
 - Settings
 - Live streaming (Optional)
 - Design

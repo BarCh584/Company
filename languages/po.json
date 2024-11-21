@@ -1,4 +1,25 @@
 {
-    "welcome": "Bem-vindo",
-    "thank you": "Obrigado"
+"Home": "Pagina inicial",
+"Search": "Pesquisa",
+"Add": "Adicionar",
+"Account": "Conta",
+"Messages": "Mensagens",
+"Profile": "Perfil",
+"Subscriptions": "Assinaturas",
+"Payment & finances": "Pagamento e finanças",
+"Preferences": "Preferências",
+"Language" : "Idioma",
+"About": "Sobre",
+"Email-address": "Endereço de e-mail",
+"Password": "Senha",
+"First name": "Nome",
+"Last name": "Sobrenome",
+"Phone number": "Número de telefone",
+"Street addres": "Endereço",
+"Street address 2": "Endereço 2",
+"City": "Cidade",
+"State/Province": "Estado/Província",
+"Title": "Título",
+"Add a comment": "Adicionar um comentário",
+"Submit": "Enviar"
 }

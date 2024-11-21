@@ -1,4 +1,26 @@
 {
-    "welcome": "Willkommen",
-    "thank you": "Danke"
+    "Home": "Home",
+    "Search": "Suche",
+    "Add": "Hinzufügen",
+    "Account": "Konto",
+    "Messages": "Nachrichten",
+    "Profile": "Profil",
+    "Subscriptions": "Abonnements",
+    "Payment & finances": "Zahlung & Finanzen",
+    "Preferences": "Präferenzen",
+    "Language": "Sprache",
+    "About": "Über",
+    "Email-address": "E-Mail-Adresse",
+    "Password": "Passwort",
+    "First name": "Vorname",
+    "Last name": "Nachname",
+    "Phone number": "Telefonnummer",
+    "Street address": "Straßenadresse",
+    "Street address 2": "Straßenadresse 2",
+    "City": "Stadt",
+    "State/Province": "Bundesland/Provinz",
+    "Title": "Titel",
+    "Add a comment (optional)": "Kommentar hinzufügen (optional)",
+    "Submit": "Speichern"
+
 }

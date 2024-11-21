@@ -1,4 +1,25 @@
 {
-    "welcome": "welcome",
-    "thank you": "thank you"
+"Home": "Home",
+"Search": "Search",
+"Add": "Add",
+"Account": "Account",
+"Messages": "Messages",
+"Profile": "Profile",
+"Subscriptions": "Subscriptions",
+"Payment & finances":"Payment & finances",
+"Preferences": "Preferences",
+"Language": "Language",
+"About": "About",
+"Email-address": "Email-address",
+"Password": "Password",
+"First name": "First name",
+"Last name": "Last name",
+"Phone number": "Phone number",
+"Street address": "Street address",
+"Street address 2": "Street address 2",
+"City": "City",
+"State/Province": "State/Province",
+"Title": "Title",
+"Add a comment": "Add a comment",
+"Submit": "Submit"
 }
