@@ -7,4 +7,3 @@
 - Live streaming (Optional)
 - Design
 - Website hosting
-- Website name
