@@ -6,7 +6,7 @@ $password = "";
 $dbname = "company";
 $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
-    die("" . $conn->connect_error);
+    die("{$conn->connect_error}");
 }
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $creditcard = $conn->real_escape_string($_POST['creditcard']);
@@ -20,7 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->close();
         $conn->close();
     } else {
-        echo "Error: " . $stmt->error;
+        echo "Error: {$stmt->error}";
     }
     $stmt->close();
 }
@@ -40,18 +40,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
     <div class="container">
         <div class="paymentform">
-            <a href="settings.paymentinformationcreditcard.php"><button class="paymentchoicebutton"><img
-                        src="../Images/paymentinfos/credit-card.png"></button></a>
-            <a href="settings.paymentinformationpaypal.php"><button class="paymentbuttonactive paymentchoicebutton"><img
-                        src="../Images/paymentinfos/paypal.png"></button></a>
+            <div id="paypalcontainer">
+            </div>
         </div>
+        <script src="https://www.paypal.com/sdk/js?client-id=AX3Uu6n2ZthFq8bzmqyqK0YSiOYB9FR6igJjmEyAestmzAVw7Htar3yuD195uBDQu2psbQHvUFmwTwfq"></script>
+        <script>
+            paypal.Buttons({
+                createOrder:function(data, actions){
+                    return actions.order.create({
+                        purchase_units: [{
+                            amount: {
+                                value: '0.01'
+                            }
+                        }]
+                    });
+                },
+                onApprove: function(data, actions){
+                    return actions.order.capture().then(function(details){
+                        alert('Transaction completed by ' + details.payer.name.given_name);
+                    });
+                }
+            }).render('#paypalcontainer');
+        </script>
         <?php
-        include_once('../Libraries/navbar.php');
-        include_once('../Libraries/paymentform.php');
+        include_once '../Libraries/navbar.php';
+        include_once '../Libraries/paymentform.php';
         createnavbar("settings.profile");
         createsettingsnavbar("settings.paymentinformationcreditcard");
-        paypalform();
         ?>
+
+
     </div>
 </body>
 

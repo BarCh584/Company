@@ -1,4 +1,3 @@
-- Payment methods (Paypal, VISA, MASTERCARD)
 - Sneak peak (1-2 free images) before payment
 - Startpage
 - Reply function

@@ -1,3 +1,15 @@
+<?php
+session_start();
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if ($_SESSION["username"] != null && $_GET["username"] != null && !empty($_POST["message"])) {
+        createmessage($_SESSION["username"], $_GET["username"], $_POST["message"]);
+        showchatmessages();
+    } else {
+        echo "<p style='color:red;'>You can't send an empty message</p>";
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -12,7 +24,6 @@
     <?php
     include_once('../Libraries/navbar.php');
     createnavbar("message");
-    session_start();
     print ($_SESSION["username"]);
     showdmaccountlist($_SESSION["username"]);
     ?>
@@ -87,16 +98,6 @@
             header("Refresh:0");
         }// Redirect to the same page to avoid form resubmission
         exit();
-    }
-
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        if ($_SESSION["username"] != null && $_GET["username"] != null && !empty($_POST["message"])) {
-            createmessage($_SESSION["username"], $_GET["username"], $_POST["message"]);
-            showchatmessages();
-        } else {
-            echo "<p style='color:red;'>You can't send an empty message</p>";
-
-        }
     }
     ?>
 
