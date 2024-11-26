@@ -1,9 +1,4 @@
 <?php
-session_start();
-$emailaddress = $_SESSION['email'] ?? '';
-if (!$emailaddress) {
-    die("No email address found in session.");
-}
 
 // Database connection
 $servername = "localhost";
@@ -30,7 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $comment = $conn->real_escape_string($_POST['comment']);
                 $accountid = $conn->real_escape_string($row['id']);
                 $username = $conn->real_escape_string($row['username']);
-                
+
                 // Check if file is uploaded
                 $file = null;
                 if (isset($_FILES['file']) && $_FILES['file']['error'] === UPLOAD_ERR_OK) {
@@ -54,9 +49,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         echo "Your file must be of type: " . implode(", ", $allowedtypes);
                     }
                 }
-                
+
                 // Insert post into database
-                if($file != null) {
+                if ($file != null) {
                     $stmt = $conn->prepare("INSERT INTO posts (accountid, comment, title, file, accountname) VALUES (?, ?, ?, ?, ?)");
                     $stmt->bind_param("sssss", $accountid, $comment, $title, $file, $username);
                 } else {
@@ -77,16 +72,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="../CSS/default.css?v=<?php echo time(); ?>">
 </head>
+
 <body>
     <div class="container">
-        <?php include_once('../Libraries/navbar.php'); createnavbar("add"); ?>
-        
+        <?php include_once('../Libraries/navbar.php');
+        createnavbar("add"); ?>
+
         <form method="POST" enctype="multipart/form-data" class="content">
             <label>Title</label><br>
             <input type="text" class="textinpfld" name="title" spellcheck="true" placeholder="Title"><br>
@@ -105,4 +103,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     </script>
 </body>
+
 </html>

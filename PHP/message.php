@@ -1,6 +1,4 @@
 <?php
-session_start();
-
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($_SESSION["username"] != null && $_GET["username"] != null && !empty($_POST["message"])) {
         createmessage($_SESSION["username"], $_GET["username"], $_POST["message"]);
@@ -24,7 +22,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <?php
     include_once('../Libraries/navbar.php');
     createnavbar("message");
-    print ($_SESSION["username"]);
     showdmaccountlist($_SESSION["username"]);
     ?>
     <form method="POST" style="margin-left: 30vw">

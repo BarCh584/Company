@@ -18,7 +18,6 @@
         <input type="submit" name="submit" value="Search" class="submitbutton">
     </form>
     <?php
-    session_start();
     if (!isset($_SESSION['id'])) {
         die("You must be logged in to post comments.");
     }

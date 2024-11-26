@@ -1,51 +1,45 @@
 <?php
-function loadtranslation($lang)
+function lang()
 {
-    $filepath = "../languages/" . $lang . ".json";
-    if(!file_exists($filepath))
-    {
-        $filepath = "../languages/en.json"; // Default to English if the language file is not found
-        echo "Language file not found";
-        return;
+    // Save language preference to database if selected
+    $dbname = "localhost";
+    $dbuname = "root";
+    $dbpwrd = "";
+    $db = "Company";
+    $conn = new mysqli($dbname, $dbuname, $dbpwrd, $db);
+    if ($conn->connect_error) {
+        die("Connection failed: {$conn->connect_error}");
     }
-    $tranlation = json_decode(file_get_contents($filepath), true);
-    if(json_last_error() != JSON_ERROR_NONE)
-    {
-        throw new Exception("Error loading translation file");
+    $langstmt = $conn->prepare("SELECT language FROM users WHERE username = ?");
+    $langstmt->bind_param("s", $_SESSION['username']);
+    $langstmt->execute();
+    $langstmtresult = $langstmt->get_result();
+    if ($langstmtresult->num_rows > 0) {
+        while ($row = $langstmtresult->fetch_assoc()) {
+            return $row['language'];
+        }
+    } else {
+        return substr($_SERVER["HTTP_ACCEPT_LANGUAGE"], 0, 2); // Return the browser language if no language preference is found
     }
-    return $tranlation;
 }
 
-function t($key, $translation, $fallbacktranslation = null) {
-    if(isset($translation[$key]))
-    {
-        return $translation[$key];
+function t($text)
+{
+    $lang = lang();
+    if($lang == null) {
+        $lang = substr($_SERVER["HTTP_ACCEPT_LANGUAGE"], 0, 2); // Return the browser language if no language preference is found
     }
-    if($fallbacktranslation != null && isset($fallbacktranslation[$key]))
-    {
-        return $fallbacktranslation[$key];
+    $langfilepath = "../languages/" . $lang . ".json";
+    if (!file_exists($langfilepath)) {
+        print $text; // Return the original text if the language file does not exist
     }
-    return $key;
-}
+    $langfile = file_get_contents($langfilepath);
+    $langjson = json_decode($langfile, true);
+    if (isset($langjson[$text])) {
+        print $langjson[$text];
 
-function detectlanguage() {
-    session_start();
-    if(isset($_GET["lang"])) return $_GET["lang"];
-    if(isset($_SESSION["lang"])) return $_SESSION["lang"];
-    if(isset($_COOKIE["lang"]))  return $_COOKIE["lang"];
-    
-    if(isset($_SERVER["HTTP_ACCEPT_LANGUAGE"]))
-    {
-        $lang = substr($_SERVER["HTTP_ACCEPT_LANGUAGE"], 0, 2);
-        $supportedelanguages = ["en", "fr", "de", "es", "it"];
-        return in_array($lang, $supportedelanguages) ? $lang : "en";
+    } else {
+        print $text; // Return the original text if the translation is not found
     }
-    return "en";
+
 }
-$lang = detectlanguage();
-session_start();
-$_SESSION["lang"] = $lang;
-setcookie("lang", $lang, time() + (86400 * 30), "/"); // store for 1 month
-$translation = loadtranslation($lang);
-$fallbacktranslation = loadtranslation("en");
-?>

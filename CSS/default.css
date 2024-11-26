@@ -324,3 +324,79 @@ div.postgriditem {
     padding: 0.75rem 1.5rem;
   }
 }
+
+/*navbar*/
+ul.outnavbar>li>a {
+  color: white;
+  display: flex;
+  text-decoration: none;
+  font-family: Arial, Helvetica, sans-serif;
+  padding: 1.5vw;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* Colors and font for outnavbar */
+
+
+ul#innavbar>li>a.item:hover {
+  background-color: #3f3f3f;
+}
+
+/* hovering in innavbar */
+
+ul.outnavbar>li>a>#text {
+  text-align: center;
+  display: flex;
+  color: #e4da69;
+}
+ul.outnavbar>li:hover {
+  background-color: rgb(64, 64, 64);
+  
+  transform: scale(1.01);
+}
+
+/* hovering in outnavbar */
+ul.outnavbar {
+  width: 15vw;
+  list-style-type: none;
+  position: fixed;
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  /* Ensure the ul stretches across the entire height */
+}
+
+
+.outnavbar a img {
+  width: 5vw;
+  height: 5vh;
+}
+
+/* correct image resizing and more stretching between elements*/
+
+.outnavbar {
+  left: 0vw;
+  top: 0vh;
+  /* Ensure the navbar container stretches across the entire height */
+  display: flex;
+  flex-direction: column;
+  /* Distribute items evenly */
+  height: 100vh;
+  background-color: #282828;
+  transition: transform 5s ease;
+}
+.container {
+  text-align: center;
+}
+.active {
+  filter: brightness(0) saturate(100%) invert(88%) sepia(12%) saturate(771%) hue-rotate(11deg) brightness(106%) contrast(91%);
+  font-weight: bold;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* highlight selected navbar element */
+.not-active {
+  filter: brightness(0) saturate(100%) invert(100%) sepia(4%) saturate(643%) hue-rotate(272deg) brightness(114%) contrast(100%);
+  font-weight: normal;
+  font-family: Arial, Helvetica, sans-serif;
+}

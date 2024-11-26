@@ -1,9 +1,11 @@
-- Sneak peak (1-2 free images) before payment
+- Sneak peak (1-2 free images) before payment (optional)
 - Startpage
-- Reply function
+- Limit like and dislike to 1 per account
 - Languages
 - Window optimizations
 - Settings
-- Live streaming (Optional)
 - Design
+Last steps: 
 - Website hosting
+- Plan id for subscriptions
+- Logo?

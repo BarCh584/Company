@@ -13,14 +13,11 @@
         <?php
         include_once('../Libraries/navbar.php');
         createnavbar("settings.profile");
-        ?>
-        <?php
-        include_once('../Libraries/navbar.php');
         createsettingsnavbar("settings.preferences");
         ?>
         <div class="content">
             <h1>Preferences</h1>
-            <form action="settings.preferences.php" method="post">
+            <form action="settings.preferences.php" method="post">g
                 <br>
                 <label for="theme">Theme:</label>
                 <span class="slider"></span>
@@ -42,10 +39,38 @@
                     </label>
                 </div>
                 <br>
+                <p>Enable 2FA authentication</p>
+                <input type="checkbox" name="2fa" id="2fa">
                 <input type="submit" class="submitbutton" value="Save">
             </form>
         </div>
     </div>
+    <?php
+    if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['2fa'])) {
+        include_once "../Libraries/GoogleAuthenticator-2.x/src/FixedBitNotation.php";
+        include_once "../Libraries/GoogleAuthenticator-2.x/src/GoogleAuthenticatorInterface.php";
+        include_once "../Libraries/GoogleAuthenticator-2.x/src/GoogleAuthenticator.php";
+        include_once "../Libraries/GoogleAuthenticator-2.x/src/GoogleQrUrl.php";
+
+        $secret = 'test';
+        
+        $g = new Sonata\GoogleAuthenticator\GoogleAuthenticator();
+        $code = $g->getCode($secret);
+        echo 'Current Code is: ';
+        echo $g->getCode($secret);
+        echo '<br>';
+        echo "Check if $code is valid: ";
+        if($g->checkCode($secret, $code)){
+            echo 'Valid';
+        } else {
+            echo 'Invalid';
+        }
+        $secret = $g->generateSecret();
+        echo "Get a new secret $secret <br>";
+        echo "Scan this QR code: (to scan with an app like Google Authenticator) <br>";
+        echo Sonata\GoogleAuthenticator\GoogleQrUrl::generate('test', $secret, 'GoogleAuthenticatorExample');
+    }
+    ?>
 </body>
 
 </html>
