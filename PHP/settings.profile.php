@@ -11,15 +11,25 @@ if ($conn->connect_error) {
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $stmt = $conn->prepare("UPDATE users SET email=?, username=? WHERE email=?");
-    $stmt->bind_param("ssssssssss", $_SESSION["email"], $_SESSION["username"], $_SESSION['email']);
-
-    if ($stmt->execute()) {
-        echo "<script>alert('Account updated successfully');</script>";
-    } else {
-        echo "<script>alert('Error updating your account, please contact the support team');</script>";
+    if (isset($_POST["password"]) && isset($_POST["confirmpassword"])) {
+        if ($_POST["password"] === $_POST["confirmpassword"]) {
+            $hashed_password = password_hash($_POST["password"], PASSWORD_DEFAULT);
+            $pswrdstmt = $conn->prepare("UPDATE users SET password=? WHERE email=?");
+            $pswrdstmt->bind_param("ss", $hashed_password, $_SESSION['email']);
+            $hashedpassword = $hashed_password;
+            $pswrdstmt->execute();
+            $pswrdstmt->close();
+        } else {
+            echo "<script>alert('Passwords do not match');</script>";
+        }
     }
-    $stmt->close();
+    if (isset($_POST["username"])) {
+        $stmt = $conn->prepare("UPDATE users SET username=? WHERE email=?");
+        $stmt->bind_param("ss", $_POST["username"], $_SESSION['email']);
+        $_SESSION["username"] = $_POST["username"];
+        $stmt->execute();
+        $stmt->close();
+    }
 }
 
 
@@ -41,24 +51,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         include_once '../Libraries/navbar.php';
         createnavbar("settings.profile");
         createsettingsnavbar("settings.profile");
-        $sql = $conn->prepare("SELECT * FROM users WHERE email = ?");
-        $sql->bind_param("s", $_SESSION['email']);
-        $sql->execute();
-        $result = $sql->get_result();
-        if ($result->num_rows > 0) {
-            while ($row = $result->fetch_assoc()) {
-                echo "
+        form();
+        function form()
+        {
+            $servername = "localhost";
+            $username = "root";
+            $password = "";
+            $dbname = "Company";
+            $conn = new mysqli($servername, $username, $password, $dbname);
+            $sql = $conn->prepare("SELECT * FROM users WHERE email = ?");
+            $sql->bind_param("s", $_SESSION['email']);
+            $sql->execute();
+            $result = $sql->get_result();
+            if ($result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    echo "
             <form class='form' method='POST'>
                 <div class='content' style='margin-left: 15vw'>
                     <h1>Account</h1>
                     <input type='text' name='username' class='twotextinpfld' placeholder='Username: {$row['username']}' value='{$row['username']}'></h3><br>
-                    <input type='text' name='email' class='twotextinpfld' placeholder='example@email.com' value='{$row['email']}'><br>
+                    <h3>Reset Password</h3>
+                    <input type='password' name='password' class='twotextinpfld' placeholder='Reset Password' minlength='8'><br>
+                    <input type='password' name='confirmpassword' class='twotextinpfld' placeholder='Confirm Password' minlength='8'><br>
                     <input type='submit' class='submitbutton' value='Save'>
                 </div>
             </form>";
+                }
             }
+            $conn->close();
         }
-        $conn->close();
         ?>
     </div>
 </body>

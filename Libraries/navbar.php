@@ -70,7 +70,7 @@
                 print ("class='active settings-profile'");
             else
                 print ("class='not-active'"); ?>class="item" href="settings.profile.php"><img
-                        src="../Images/Navbar/hollow/user.png" alt="Logo"><?php t("Profile"); ?></a></li>
+                        src="../Images/Navbar/hollow/user.png" alt="Logo"><?php t("Account details"); ?></a></li>
             <li><a <?php if ($buttontohighlightin == "settings.subscriptions")
                 print ("class='active settings-subscriptions'");
             else
