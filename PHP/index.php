@@ -23,6 +23,9 @@
         <br>
         <a href="signup.php">
             Sign up
+        </a><br><br>
+        <a href="passwordresetemail.php">
+            Forgot password?
         </a>
         <br>
         <br>

@@ -17,7 +17,7 @@
         ?>
         <div class="content">
             <h1>Preferences</h1>
-            <form action="settings.preferences.php" method="post">g
+            <form action="settings.preferences.php" method="post">
                 <br>
                 <label for="theme">Theme:</label>
                 <span class="slider"></span>

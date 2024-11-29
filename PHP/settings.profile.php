@@ -1,40 +1,3 @@
-<?php
-
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "Company";
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (isset($_POST["password"]) && isset($_POST["confirmpassword"])) {
-        if ($_POST["password"] === $_POST["confirmpassword"]) {
-            $hashed_password = password_hash($_POST["password"], PASSWORD_DEFAULT);
-            $pswrdstmt = $conn->prepare("UPDATE users SET password=? WHERE email=?");
-            $pswrdstmt->bind_param("ss", $hashed_password, $_SESSION['email']);
-            $hashedpassword = $hashed_password;
-            $pswrdstmt->execute();
-            $pswrdstmt->close();
-        } else {
-            echo "<script>alert('Passwords do not match');</script>";
-        }
-    }
-    if (isset($_POST["username"])) {
-        $stmt = $conn->prepare("UPDATE users SET username=? WHERE email=?");
-        $stmt->bind_param("ss", $_POST["username"], $_SESSION['email']);
-        $_SESSION["username"] = $_POST["username"];
-        $stmt->execute();
-        $stmt->close();
-    }
-}
-
-
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -85,3 +48,46 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </body>
 
 </html>
+
+<?php
+if (!isset($_SESSION['email'])) {
+    die("User not logged in.");
+}
+
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "Company";
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_POST["password"]) && isset($_POST["confirmpassword"])) {
+        if ($_POST["password"] === $_POST["confirmpassword"]) {
+            $hashed_password = password_hash($_POST["password"], PASSWORD_DEFAULT);
+            $pswrdstmt = $conn->prepare("UPDATE users SET password=? WHERE email=?");
+            $pswrdstmt->bind_param("ss", $hashed_password, $_SESSION['email']);
+            $hashedpassword = $hashed_password;
+            $pswrdstmt->execute();
+            $pswrdstmt->close();
+            header("Refresh:0"); // Refresh the page to initialize the new language without get parameters in the URL to prevent looping
+        } else {
+            echo "<script>alert('Passwords do not match');</script>";
+        }
+    }
+    if (isset($_POST["username"])) {
+        $stmt = $conn->prepare("UPDATE users SET username=? WHERE email=?");
+        $stmt->bind_param("ss", $_POST["username"], $_SESSION['email']);
+        print ($_POST["username"]);
+        $_SESSION["username"] = $_POST["username"];
+        $stmt->execute();
+        $stmt->close();
+        header("Refresh:0"); // Refresh the page to initialize the new language without get parameters in the URL to prevent looping
+    }
+}
+
+
+?>

@@ -3,6 +3,7 @@
 - Limit like and dislike to 1 per account
 - Window optimizations
 - Reset password
+- DM chats listed using ID's
 - Settings
 - Design
 Last steps: 
