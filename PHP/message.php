@@ -1,13 +1,3 @@
-<?php
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if ($_SESSION["username"] != null && $_GET["username"] != null && !empty($_POST["message"])) {
-        createmessage($_SESSION["username"], $_GET["username"], $_POST["message"]);
-        showchatmessages();
-    } else {
-        echo "<p style='color:red;'>You can't send an empty message</p>";
-    }
-}
-?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -23,6 +13,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     include_once('../Libraries/navbar.php');
     createnavbar("message");
     showdmaccountlist($_SESSION["username"]);
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        if ($_SESSION["username"] != null && $_GET["username"] != null && !empty($_POST["message"])) {
+            createmessage($_SESSION["username"], $_GET["username"], $_POST["message"]);
+            showchatmessages();
+        } else {
+            echo "<p style='color:red;'>You can't send an empty message</p>";
+        }
+    }
     ?>
     <form method="POST" style="margin-left: 30vw">
         <input class="textinpfld" type="text" name="message" placeholder="Message"><br>

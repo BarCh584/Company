@@ -1,3 +1,38 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../CSS/default.css?v=<?php echo time(); ?>">
+</head>
+
+<body>
+    <div class="container">
+        <?php 
+        include_once('../Libraries/navbar.php');
+        createnavbar("add"); ?>
+
+        <form method="POST" enctype="multipart/form-data" class="content">
+            <label>Title</label><br>
+            <input type="text" class="textinpfld" name="title" spellcheck="true" placeholder="Title"><br>
+            <label>Add a comment (optional)</label><br>
+            <textarea class="textinpfld" name="comment" id="comment" rows="3" onload="autoresizetextinputfield(this)"
+                oninput="autoresizetextinputfield(this)" spellcheck="true" placeholder="Comment"></textarea><br>
+            <label>Upload your file (optional)</label><br>
+            <input type="file" name="file" id="file"><br>
+            <input type="submit" class="submitbutton">
+        </form>
+    </div>
+    <script>
+        function autoresizetextinputfield(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = textarea.scrollHeight + 'px';
+        }
+    </script>
+</body>
 <?php
 
 // Database connection
@@ -13,8 +48,9 @@ if ($conn->connect_error) {
 // Handling post submissions
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Verify user session
+
     $account = $conn->prepare("SELECT * FROM users WHERE email = ?");
-    $account->bind_param("s", $emailaddress);
+    $account->bind_param("s", $_SESSION['email']);
     $account->execute();
     $result = $account->get_result();
     if ($result->num_rows > 0) {
@@ -63,6 +99,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 } else {
                     echo "Error: " . $stmt->error;
                 }
+            } else {
+                echo "Please fill in the required fields.";
             }
         }
     } else {
@@ -70,38 +108,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 ?>
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="../CSS/default.css?v=<?php echo time(); ?>">
-</head>
-
-<body>
-    <div class="container">
-        <?php include_once('../Libraries/navbar.php');
-        createnavbar("add"); ?>
-
-        <form method="POST" enctype="multipart/form-data" class="content">
-            <label>Title</label><br>
-            <input type="text" class="textinpfld" name="title" spellcheck="true" placeholder="Title"><br>
-            <label>Add a comment (optional)</label><br>
-            <textarea class="textinpfld" name="comment" id="comment" rows="3" onload="autoresizetextinputfield(this)"
-                oninput="autoresizetextinputfield(this)" spellcheck="true" placeholder="Comment"></textarea><br>
-            <label>Upload your file (optional)</label><br>
-            <input type="file" name="file" id="file"><br>
-            <input type="submit" class="submitbutton">
-        </form>
-    </div>
-    <script>
-        function autoresizetextinputfield(textarea) {
-            textarea.style.height = 'auto';
-            textarea.style.height = textarea.scrollHeight + 'px';
-        }
-    </script>
-</body>
-
 </html>
