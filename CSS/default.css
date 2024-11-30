@@ -1,26 +1,28 @@
-/*background color*/
-
+/* General body styling */
 body {
   background-color: #121212;
+  margin: 0;
+  padding: 0;
 }
 
-.title {
-  color: white;
-}
-.index {
-  text-align: center;
-}
-.twotextinpfld {
-  height: 2em;
-  margin: 10px;
-  background-color: #717171;
-  color: #ffffff;
-  border: black 1px solid;
-  border-radius: 0.33em;
+/* Navbar styling */
+ul.outnavbar {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  position: fixed;
+  width: 15vw;
+  height: 100vh;
+  background-color: #282828;
+  display: flex;
+  flex-direction: column;
+  left: 0;
+  top: 0;
+  transition: transform 0.3s ease-in-out;
 }
 
-input[type="text"] {
-  color: #ffffff;;
+ul.outnavbar li {
+  flex-grow: 1;
 }
 .textinpfld {
   height: 2em;
@@ -31,27 +33,55 @@ input[type="text"] {
   background-color: #717171;
   color: #ffffff;
 }
+ul.outnavbar a {
+  color: white;
+  text-decoration: none;
+  font-family: Arial, Helvetica, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5vw;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
 
-::placeholder {
-  padding: 10px;
+ul.outnavbar a img {
+  width: 2.5vw;
+  height: auto;
+  margin-bottom: 0.5vw;
+}
+
+ul.outnavbar a:hover {
+  background-color: #3f3f3f;
+  transform: scale(1.1);
+}
+
+ul.outnavbar .active {
+  filter: brightness(0) saturate(100%) invert(88%) sepia(12%) saturate(771%) hue-rotate(11deg) brightness(106%) contrast(91%);
+  font-weight: bold;
+}
+
+/* Input field styling */
+input[type="text"],
+input[type="email"],
+textarea {
+  height: 2em;
+  margin: 10px;
+  background-color: #717171;
   color: #ffffff;
-}
-.googlesignin {
-  border-radius: 0.33em;
   border: black 1px solid;
-  height: 2em;
-  margin: 5px;
-  background-color: rgb(66, 133, 244);
+  border-radius: 0.33em;
 }
 
-.facebookesignin {
-  border-radius: 0.33em;
-  border: black 1px solid;
-  height: 2em;
-  margin: 5px;
-  background-color: rgb(66, 133, 244);
+input[type="text"]:focus,
+input[type="email"]:focus,
+textarea:focus {
+  border-color: #3f3f3f;
+  outline: none;
+  box-shadow: 0 0 5px rgba(63, 63, 63, 0.7);
 }
-/*submit button Credit to "getcssscan.com" by Tailwind, the 15/10/2024 for "Button 40"*/
+
+/* Submit button styling */
 .submitbutton {
   background-color: #f6eebd;
   border: 1px solid transparent;
@@ -84,319 +114,79 @@ input[type="text"] {
   outline-offset: 2px;
 }
 
+/* Responsive Design for smaller screens */
+@media screen and (max-width: 768px) {
+  ul.outnavbar {
+      flex-direction: row;
+      height: 10vh;
+      width: 100vw;
+      bottom: 0;
+      top: auto;
+      left: 0;
+      justify-content: space-around;
+      align-items: center;
+      z-index: 1000;
+  }
 
+  ul.outnavbar li {
+      flex-grow: unset;
+  }
 
-.commentcreate {
-  background-color: white;
-  text-align: left;
-  width: 33.3%;
-  height: 100%;
-}
+  ul.outnavbar a img {
+      width: 5vw;
+      height: 5vw;
+  }
+  /*ul.outnavbar>li>a>p {
+    text-indent: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 0%;
+    height: 0%;
+  }*/
+  input[type="text"],
+  input[type="email"],
+  textarea {
+      width: calc(100% - 2rem);
+      margin: 1rem;
+      padding: 0.8rem;
+      font-size: 0.9rem;
+  }
 
-textarea {
-  resize: none;
-  width: 25%;
-}
-
-
-div.content {
-  text-align: center;
-  margin-left: 40vw;
-}
-div.content>form {
-  text-align: center;
-  margin-left: 20vw;
-}
-form.content {
-  text-align: center;
-  margin: auto;
-}
-form.paymentform {
-  text-align: center;
-  margin-left: 25vw;
-}
-label, h1, h3, p {
-  color: white;
-}
-/*Child*/
-.paymentchoicebutton:hover {
-  background-color: #3f3f3f;
-}
-.paymentchoicebutton {
-  list-style-type: none;
-  background: none;
-  display: flex;
-  flex-direction: row;
-}
-button.paymentbuttonactive {
-  border: #f6eebd 1px solid;
-}
-/*Parent*/
-div.paymentform {
-  margin-left: 25vw;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-}
-.paymentform img {
-  width: 5vw;
-  height: 5vw;
-}
-
-
-
-/* This site uses code from the project "smooth-frog-53" made by JkHuger (https://uiverse.io/JkHuger/smooth-frog-53), licensed under the MIT License*/
-/* Slider*/
-/* From Uiverse.io by JkHuger */ 
-div.content>form>div.sliderbutton {
-  text-align: left;
-}
-input.toggle-checkbox {
-  position: absolute;
-  opacity: 0;
-  cursor: pointer;
-  height: 0;
-  width: 0;
-}
-
-.toggle-slot {
-  font-size: 10px;
-  position: relative;
-  height: 3.5em;
-  width: 7em;
-  border: 0px solid transparent;
-  border-radius: 10em;
-  background-color: white;
-  transition: background-color 250ms;
-}
-
-.toggle-checkbox:checked ~ .toggle-slot {
-  background-color: #374151;
-}
-
-.toggle-button {
-  transform: translate(0.3em, 0.25em);
-  position: absolute;
-  height: 3em;
-  width: 3em;
-  border-radius: 50%;
-  background-color: #ffeccf;
-  box-shadow: inset 0px 0px 0px 0.75em #ffbb52;
-  transition: background-color 250ms, border-color 250ms, transform 500ms cubic-bezier(.26,2,.46,.71);
-}
-
-.toggle-checkbox:checked ~ .toggle-slot .toggle-button {
-  background-color: #485367;
-  box-shadow: inset 0px 0px 0px 0.75em white;
-  transform: translate(3.65em, 0.25em);
-}
-
-.sun-icon {
-  position: absolute;
-  height: 6em;
-  width: 6em;
-  color: #ffbb52;
-}
-
-.sun-icon-wrapper {
-  position: absolute;
-  height: 6em;
-  width: 6em;
-  opacity: 1;
-  transform: translate(2em, 2em) rotate(15deg);
-  transform-origin: 50% 50%;
-  transition: opacity 150ms, transform 500ms cubic-bezier(.26,2,.46,.71);
-}
-
-.toggle-checkbox:checked ~ .toggle-slot .sun-icon-wrapper {
-  opacity: 0;
-  transform: translate(3em, 2em) rotate(0deg);
-}
-
-.moon-icon {
-  position: absolute;
-  height: 6em;
-  width: 6em;
-  color: white;
-}
-
-.moon-icon-wrapper {
-  position: absolute;
-  height: 6em;
-  width: 6em;
-  opacity: 0;
-  transform: translate(11em, 2em) rotate(0deg);
-  transform-origin: 50% 50%;
-  transition: opacity 150ms, transform 500ms cubic-bezier(.26,2.5,.46,.71);
-}
-
-.toggle-checkbox:checked ~ .toggle-slot .moon-icon-wrapper {
-  opacity: 1;
-  transform: translate(2em, 2em) rotate(-15deg);
-}
-
-
-/*content "navbar"*/
-
-div.contentnavbar {
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  list-style-type: none;
-  margin-left: 20%;
-  padding: 0;
-  width:fit-content;
-}
-
-div.contentnavbar>li>a {
-  color: white;
-  display: flex;
-  text-decoration: none;
-  font-family: Arial, Helvetica, sans-serif;
-  padding: 2vw;
-  padding-left: 5vw;
-  padding-right: 5vw;
-  border-radius: 1vw;
-}
-div.contentnavbar>li>a:hover {
-  background-color: #3f3f3f;
-  text-decoration: none;
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-/*Result navbar*/
-
-div.contentuser {
-  margin-left: 25vw;
-  display: flex;
-  margin-bottom: 3vw;
-}
-div.contentuser>button {
-  background-color: #3f3f3f;
-  color: white;
-  border: none;
-  border-radius: 1vw;
-  padding: 1vw;
-  margin-left: 1vw;
-  font-family: Arial, Helvetica, sans-serif;
-
-}
-div.contentuser>button:hover {
-  background-color: #575757;
-  color: white;
-  border: none;
-  border-radius: 1vw;
-  padding: 1vw;
-  margin-left: 1vw;
-  font-family: Arial, Helvetica, sans-serif;
-}
-div.contentuser>h3 {
-  margin: 0% 1vw 0% 1vw;
-  font-family: Arial, Helvetica, sans-serif;
-  
-}
-
-/*Posts*/
-
-div.postgrid {
-  margin-left: 25%;
-  width: 66.6%;
-}
-div.postgriditem {
-  padding: 2vw;
-  margin-top: 3vw;
-  text-align: left;
-  color: white;
-  font-family: Arial, Helvetica, sans-serif;
-  background-color: #3f3f3f;
-}
-
-/*postcommentform*/
-
-.postcommentform {
-  text-align: right;
-}
-
-
-/*Design adjusting to window size*/
-@media (min-width: 768px) {
-  .submitbutton {
-    padding: 0.75rem 1.5rem;
+  button[type="submit"] {
+      margin: 1rem;
+      padding: 0.7rem 1.5rem;
+      font-size: 0.9rem;
   }
 }
 
-/*navbar*/
-ul.outnavbar>li>a {
-  color: white;
-  display: flex;
-  text-decoration: none;
-  font-family: Arial, Helvetica, sans-serif;
-  padding: 1.5vw;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-}
+/* Additional small screen tweaks */
+@media screen and (max-width: 480px) {
+  ul.outnavbar {
+      padding: 0.5vw;
+  }
 
-/* Colors and font for outnavbar */
+  ul.outnavbar a {
+      font-size: 0.8rem;
+      padding: 0.5vw;
+  }
 
+  ul.outnavbar a img {
+      width: 6vw;
+      height: auto;
+  }
 
-ul#innavbar>li>a.item:hover {
-  background-color: #3f3f3f;
-}
+  input[type="text"],
+  input[type="email"],
+  textarea {
+      width: calc(100% - 1rem);
+      margin: 0.5rem;
+      padding: 0.6rem;
+      font-size: 0.8rem;
+  }
 
-/* hovering in innavbar */
-
-ul.outnavbar>li>a>#text {
-  text-align: center;
-  display: flex;
-  color: #e4da69;
-}
-ul.outnavbar>li:hover {
-  background-color: rgb(64, 64, 64);
-  
-  transform: scale(1.01);
-}
-
-/* hovering in outnavbar */
-ul.outnavbar {
-  width: 15vw;
-  list-style-type: none;
-  position: fixed;
-  margin: 0;
-  padding: 0;
-  height: 100vh;
-  /* Ensure the ul stretches across the entire height */
-}
-
-
-.outnavbar a img {
-  width: 5vw;
-  height: 5vh;
-}
-
-/* correct image resizing and more stretching between elements*/
-
-.outnavbar {
-  left: 0vw;
-  top: 0vh;
-  /* Ensure the navbar container stretches across the entire height */
-  display: flex;
-  flex-direction: column;
-  /* Distribute items evenly */
-  height: 100vh;
-  background-color: #282828;
-  transition: transform 5s ease;
-}
-.container {
-  text-align: center;
-}
-.active {
-  filter: brightness(0) saturate(100%) invert(88%) sepia(12%) saturate(771%) hue-rotate(11deg) brightness(106%) contrast(91%);
-  font-weight: bold;
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-/* highlight selected navbar element */
-.not-active {
-  filter: brightness(0) saturate(100%) invert(100%) sepia(4%) saturate(643%) hue-rotate(272deg) brightness(114%) contrast(100%);
-  font-weight: normal;
-  font-family: Arial, Helvetica, sans-serif;
+  button[type="submit"] {
+      margin: 0.5rem;
+      padding: 0.5rem 1rem;
+      font-size: 0.8rem;
+  }
 }

@@ -14,95 +14,46 @@
     include("translation.php");
     function createnavbar($buttontohighlight)
     {
+        $buttons = [
+            "startpage" => ["startpage.php", "home.png", "Home"],
+            "search" => ["search.php", "search.png", "Search"],
+            "add" => ["add.php", "add.png", "Add"],
+            "settings.profile" => ["settings.profile.php", "user.png", "Account"],
+            "message" => ["message.php", "message.png", "Messages"],
+            "live-stream" => ["live-stream.php", "live-streaming.png", "Livestream"]
+        ];
         ?>
         <ul class="outnavbar">
-            <li><a <?php if ($buttontohighlight == "startpage")
-                print ("class='active startpage'");
-            else
-                print ("class='not-active'"); ?> href="startpage.php">
-                    <img src="../Images/Navbar/hollow/home.png" alt="Logo">
-                    <?php t("Home"); ?></a></li>
-            <li><a <?php if ($buttontohighlight == "search")
-                print ("class='active search'");
-            else
-                print ("class='not-active'"); ?> href="search.php">
-                    <img src="../Images/Navbar/hollow/search.png" alt="Logo">
-                    <?php t("Search"); ?></a></li>
-            <li><a <?php if ($buttontohighlight == "add")
-                print ("class='active add'");
-            else
-                print ("class='not-active'"); ?>
-                    href="add.php">
-                    <img src="../Images/Navbar/hollow/add.png" alt="Logo">
-                    <?php t("Add"); ?></a></li>
-            <li><a <?php if ($buttontohighlight == "settings.profile")
-                print ("class='active settings-profile'");
-            else
-                print ("class='not-active'"); ?> href="settings.profile.php">
-                    <img src="../Images/Navbar/hollow/user.png" alt="Logo">
-                    <?php t("Account"); ?></a></li>
-            <li><a <?php if ($buttontohighlight == "message")
-                print ("class='active message'");
-            else
-                print ("class='not-active'"); ?> href="message.php">
-                    <img src="../Images/Navbar/hollow/message.png" alt="Logo">
-                    <?php t("Messages"); ?></a></li>
-            <li><a <?php if ($buttontohighlight == "live-stream")
-                print ("class='active live-stream'");
-            else
-                print ("class='not-active'"); ?> href="live-stream.php">
-                    <img src="../Images/Navbar/hollow/live-streaming.png" alt="Logo">
-                    <?php t("Livestream"); ?></a></li>
+            <?php foreach ($buttons as $key => $value) { ?>
+                <li><a class="<?php echo ($buttontohighlight == $key) ? 'active ' . $key : 'not-active'; ?>" href="<?php echo $value[0]; ?>">
+                    <img src="../Images/Navbar/hollow/<?php echo $value[1]; ?>" alt="Logo">
+                    <script>if(window.innerWidth > 768) document.write("<p><?php t($value[2]); ?></p>"); </script></a></li>
+            <?php } ?>
         </ul>
         <?php
     }
-    ?>
 
-
-    <?php
     function createsettingsnavbar($buttontohighlightin)
     {
+        $settingsButtons = [
+            "settings.profile" => ["settings.profile.php", "user.png", "Account details"],
+            "settings.subscriptions" => ["settings.subscriptions.php", "subscription.png", "Subscriptions"],
+            "settings.paymentinformationpaypal" => ["settings.paymentinformationpaypal.php", "wallet.png", "Payment & finances"],
+            "settings.preferences" => ["settings.preferences.php", "preferences.png", "Preferences"],
+            "settings.languages" => ["settings.languages.php", "language.png", "Language"],
+            "settings.about" => ["settings.about.php", "link.png", "About"]
+        ];
         ?>
-
-        <ul class="outnavbar" id="innavbar"
-            style="margin-left: 15vw; width: 25vw; border-right: 1px solid gray; border-left: 1px solid gray;">
-            <li><a <?php if ($buttontohighlightin == "settings.profile")
-                print ("class='active settings-profile'");
-            else
-                print ("class='not-active'"); ?>class="item" href="settings.profile.php"><img
-                        src="../Images/Navbar/hollow/user.png" alt="Logo"><?php t("Account details"); ?></a></li>
-            <li><a <?php if ($buttontohighlightin == "settings.subscriptions")
-                print ("class='active settings-subscriptions'");
-            else
-                print ("class='not-active'"); ?>class="item"
-                    href="settings.subscriptions.php"><img src="../Images/Navbar/hollow/subscription.png"
-                        alt="Logo">Subscriptions</a></li>
-            <li><a <?php if ($buttontohighlightin == "settings.paymentinformationpaypal")
-                print ("class='active settings-paymentinformationpaypal'");
-            else
-                print ("class='not-active'"); ?>class="item"
-                    href="settings.paymentinformationpaypal.php"><img src="../Images/Navbar/hollow/wallet.png"
-                        alt="Logo">Payment & finances</a></li>
-            <li><a <?php if ($buttontohighlightin == "settings.preferences")
-                print ("class='active settings-preferences'");
-            else
-                print ("class='not-active'"); ?>class="item" href="settings.preferences.php"><img
-                        src="../Images/Navbar/hollow/preferences.png" alt="Logo">Preferences</a></li>
-            <li><a <?php if ($buttontohighlightin == "settings.languages")
-                print ("class='active settings-languages'");
-            else
-                print ("class='not-active'"); ?>class="item" href="settings.languages.php"><img
-                        src="../Images/Navbar/hollow/language.png" alt="Logo">Language</a></li>
-            <li><a <?php if ($buttontohighlightin == "settings.about")
-                print ("class='active settings-about'");
-            else
-                print ("class='not-active'"); ?>class="item" href="settings.about.php"><img
-                        src="../Images/Navbar/hollow/link.png" alt="Logo">About</a></li>
+        <ul class="outnavbar" id="innavbar" style="margin-left: 15vw; width: 25vw; border-right: 1px solid gray; border-left: 1px solid gray;">
+            <?php foreach ($settingsButtons as $key => $value) { ?>
+                <li><a class="<?php echo ($buttontohighlightin == $key) ? 'active ' . $key : 'not-active'; ?> item" href="<?php echo $value[0]; ?>">
+                    <img src="../Images/Navbar/hollow/<?php echo $value[1]; ?>" alt="Logo">
+                    <p><?php t($value[2]); ?></p></a></li>
+            <?php } ?>
         </ul>
         <?php
     }
-
-    ?>
+?>
 
 </body>
 

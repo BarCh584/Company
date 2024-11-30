@@ -149,6 +149,7 @@ handleReplySubmission($conn);
 
                 $userid = $user["id"];
                 echo "<div class='contentuser'><h3>Username: $searchedusername</h3></div>";
+                echo "<a href='message.php?username=$searchedusername'>Message</a>";
                 $posts = getPostsByUserId($conn, $userid);
 
                 /* Check if session user is subscribed to that creator */
