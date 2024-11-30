@@ -116,6 +116,49 @@ textarea:focus {
 ul.outnavbar > li > a > p {
   display: block;
 }
+
+/*Innavbar*/
+ul.innavbar li a img {
+  width: 2.5vw;
+  height: 2.5vw;
+}
+ul.innavbar li {
+  list-style-type: none;
+  background-color: #282828;
+  text-align: left;
+  border: 1px solid #3f3f3f;
+  flex-direction: row;
+}
+ul.innavbar li a {
+  color: white;
+  text-decoration: none;
+  font-family: Arial, Helvetica, sans-serif;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: left;
+  padding: 1.5vw;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+ul.innavbar li a p.navbararrow {
+  margin-left: auto;
+  text-align: right;
+}
+ul.innavbar {
+  margin: 0vw 0vw 0vw 15vw !important; /* Override the user agent stylesheet */
+  padding: 0 !important; /* Override the user agent stylesheet */
+  top: 0vh;
+  flex-grow: 1;
+  height: 100vh;
+  width: 20vw;
+  background-color: #282828;
+  flex-direction: column;
+}
+ul.innavbar li:hover {
+  background-color: #3f3f3f;
+}
+
+
 /* Responsive Design for smaller screens */
 @media screen and (max-width: 768px) {
   ul.outnavbar {
