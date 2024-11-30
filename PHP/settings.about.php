@@ -14,10 +14,7 @@
         include_once('../Libraries/navbar.php');
         createnavbar("settings.profile");
         ?>
-        <?php
-        include_once('../Libraries/navbar.php');
-        createsettingsnavbar("settings.about");
-        ?>
+
         <div class="content" style="margin-left: 45vw; text-align:left">
             <li><a href="https://www.flaticon.com/free-icons/navigation-bar" title="navigation bar icons">Navigation bar icons created by Marcus Christensen - Flaticon</a><br></li>
             <li><a href="https://www.flaticon.com/free-icons/home-button" title="home button icons">Home button icons created by Freepik - Flaticon</a><br></li>

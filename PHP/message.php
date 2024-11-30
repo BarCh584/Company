@@ -47,7 +47,7 @@
         $processedPairs = []; // To keep track of unique pairs
     
         if ($accountlistresult->num_rows > 0) {
-            echo "<ul class='outnavbar' id='innavbar' style='margin-left: 15vw; width: 15vw; border-right: 1px solid gray; border-left: 1px solid gray;'>";
+            echo "<ul class='innavbar'>";
             while ($row = $accountlistresult->fetch_assoc()) {
                 // Normalize the pair to ensure uniqueness
                 $pair = [$row["sender"], $row["receiver"]];

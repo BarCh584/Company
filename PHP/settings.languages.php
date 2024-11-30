@@ -13,7 +13,6 @@
         <?php
         include_once('../Libraries/navbar.php');
         createnavbar("settings.profile");
-        createsettingsnavbar("settings.languages");
         ?>
         <div class="content">
             <form action="settings.preferences.php" method="post">

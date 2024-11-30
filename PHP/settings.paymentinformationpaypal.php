@@ -44,7 +44,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         include_once '../Libraries/navbar.php';
         include_once '../Libraries/paymentform.php';
         createnavbar("settings.profile");
-        createsettingsnavbar("settings.paymentinformationpaypal");
         ?>
 
 

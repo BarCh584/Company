@@ -14,10 +14,6 @@
         include_once('../Libraries/navbar.php');
         createnavbar("settings.profile");
         ?>
-        <?php
-                include_once('../Libraries/navbar.php');
-                createsettingsnavbar("settings.privacy");
-        ?>
         </div>
     </div>
 </body>

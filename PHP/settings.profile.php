@@ -13,7 +13,6 @@
         <?php
         include_once '../Libraries/navbar.php';
         createnavbar("settings.profile");
-        createsettingsnavbar("settings.profile");
         form();
         function form()
         {

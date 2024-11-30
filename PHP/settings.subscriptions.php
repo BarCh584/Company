@@ -13,7 +13,6 @@
         <?php
         include_once('../Libraries/navbar.php');
         createnavbar("settings.profile");
-        createsettingsnavbar("settings.subscriptions");
         ?>
         <div class="contentnavbar">
             <?php

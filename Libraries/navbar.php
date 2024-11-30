@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <link rel="stylesheet" href="../CSS/default.css?v=<?php echo time(); ?>">
     <title>Document</title>
 </head>
@@ -18,7 +18,7 @@
             "startpage" => ["startpage.php", "home.png", "Home"],
             "search" => ["search.php", "search.png", "Search"],
             "add" => ["add.php", "add.png", "Add"],
-            "settings.profile" => ["settings.profile.php", "user.png", "Account"],
+            "settings.profile" => ["settings.navbar.php", "user.png", "Account"],
             "message" => ["message.php", "message.png", "Messages"],
             "live-stream" => ["live-stream.php", "live-streaming.png", "Livestream"]
         ];
@@ -27,7 +27,7 @@
             <?php foreach ($buttons as $key => $value) { ?>
                 <li><a class="<?php echo ($buttontohighlight == $key) ? 'active ' . $key : 'not-active'; ?>" href="<?php echo $value[0]; ?>">
                     <img src="../Images/Navbar/hollow/<?php echo $value[1]; ?>" alt="Logo">
-                    <script>if(window.innerWidth > 768) document.write("<p><?php t($value[2]); ?></p>"); </script></a></li>
+                    <p><?php t($value[2]); ?></p></a></li>
             <?php } ?>
         </ul>
         <?php
@@ -44,11 +44,11 @@
             "settings.about" => ["settings.about.php", "link.png", "About"]
         ];
         ?>
-        <ul class="outnavbar" id="innavbar" style="margin-left: 15vw; width: 25vw; border-right: 1px solid gray; border-left: 1px solid gray;">
+        <ul class="innavbar">
             <?php foreach ($settingsButtons as $key => $value) { ?>
-                <li><a class="<?php echo ($buttontohighlightin == $key) ? 'active ' . $key : 'not-active'; ?> item" href="<?php echo $value[0]; ?>">
+                <li><a class="not-active" href="<?php echo $value[0]; ?>">
                     <img src="../Images/Navbar/hollow/<?php echo $value[1]; ?>" alt="Logo">
-                    <p><?php t($value[2]); ?></p></a></li>
+                    <p class="navbartext"><?php t($value[2]); ?></p><p class="navbararrow">></p></a></li>
             <?php } ?>
         </ul>
         <?php
