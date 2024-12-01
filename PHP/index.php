@@ -15,9 +15,9 @@
                 Login into your account
             </h1>
             <form method="POST" class="form" action="">
-                <input type="text" class="textinpfld" name="emailadd" placeholder="example@email.com" required><br>
+                <input type="text" class="textinpfld" name="emailadd" placeholder="example@email.com" required autocomplete="email"><br>
                 <input type="password" class="textinpfld" name="pswrd" minlength="8" placeholder="Password"
-                    required><br>
+                    required autocomplete="current-password"><br>
                 <label>Stay sign-in</label>
                 <input type="checkbox" value="staysignin">
                 <input type="submit" class="submitbutton">

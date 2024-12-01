@@ -26,7 +26,14 @@ h1,h2,h3,h4,h5,h6,p,label,input,a.dmitem {
   color: #ffffff;
   font-family: Arial, Helvetica, sans-serif;
 }
-
+a.dmitem {
+  padding: 1.5vw;
+  display: flex;
+  flex-direction: column;
+}
+a.dmitem:hover {
+  background-color: #3f3f3f;
+}
 a {
   color: rgb(48, 48, 255);
   font-family: Arial, Helvetica, sans-serif;
@@ -74,6 +81,16 @@ ul.outnavbar .active:hover {
   height: 2em;
   margin: 10px;
   width: 33%;
+  border: black 1px solid;
+  border-radius: 0.33em;
+  background-color: #717171;
+  color: #ffffff;
+}
+
+.searchbar {
+  height: 2em;
+  margin: 10px;
+  width: fit-content;
   border: black 1px solid;
   border-radius: 0.33em;
   background-color: #717171;
@@ -136,12 +153,13 @@ textarea:focus {
 
 /*Innavbar*/
 ul.innavbar {
+  border-left: 1px solid #3f3f3f;
   border-right: 1px solid #3f3f3f;
   position:absolute;
   margin: 0vw 0vw 0vw 15vw !important; /* Override the user agent stylesheet */
   padding: 0 !important; /* Override the user agent stylesheet */
   top: 0vh;
-  height: 100vh;
+  min-height: 100%;
   width: fit-content;
   background-color: #282828;
   flex-direction: column;
@@ -217,7 +235,6 @@ ul.innavbar li a p.navbararrow {
     padding: 0.8rem;
     font-size: 0.9rem;
   }
-
   button[type="submit"] {
     margin: 1rem;
     padding: 0.7rem 1.5rem;
@@ -302,4 +319,20 @@ ul.innavbar li a p.navbararrow {
 
 .normalcontentnavbar {
   text-align: center;
+  list-style-type: none;
+}
+.searchlist {
+  left: 30vw;
+  top: 10vw;
+  position:absolute;
+}
+.searchlist li {
+  list-style-type: none;
+  align-content: center;
+  text-align: center;
+  width:fit-content;
+}
+.searchlist li a {
+  padding: 1.5vw;
+  background-color: #282828;
 }

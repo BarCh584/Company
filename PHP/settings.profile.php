@@ -9,7 +9,7 @@
 </head>
 
 <body>
-    <div class="container">
+    <div class="normalcontentnavbar">
         <?php
         include_once '../Libraries/navbar.php';
         createnavbar("settings.profile");

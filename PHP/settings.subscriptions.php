@@ -9,7 +9,7 @@
 </head>
 
 <body>
-    <div class="container">
+    <div class="normalcontentnavbar">
         <?php
         include_once('../Libraries/navbar.php');
         createnavbar("settings.profile");
@@ -34,7 +34,7 @@
             if ($displaysubscriptionsstmtresult->num_rows > 0) {
                 while ($row = $displaysubscriptionsstmtresult->fetch_assoc()) {
                     echo "<div class='subscription'>";
-                    echo "<p>Subscribed to Creator: " . $row['creator'] . "</p>";
+                    echo "<p>Subscribed to creator: " . $row['creator'] . "</p>";
                     echo "</div>";
                 }
             }

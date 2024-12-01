@@ -136,10 +136,8 @@ handleReplySubmission($conn);
     createnavbar("search");
     ?>
 
-    <div class="content">
+    <div class="normalcontentnavbar">
         <!-- Search form -->
-
-
         <?php
         if (isset($_GET["username"])) {
             $searchedusername = htmlspecialchars($_GET["username"]);
@@ -288,7 +286,7 @@ handleReplySubmission($conn);
         // Close database connection
         $conn->close();
         ?>
-    </div>
+    </>
 </body>
 <style>
     .likeanddislike {

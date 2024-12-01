@@ -13,8 +13,9 @@
     include_once('../Libraries/navbar.php');
     createnavbar("search");
     ?>
+    <ul class="innavbar">
     <form method="POST" class="content">
-        <input type="text" class="textinpfld" placeholder="Search for a username" name="username">
+        <input type="text" class="searchbar" placeholder="Search for a username" name="username">
         <input type="submit" name="submit" value="Search" class="submitbutton">
     </form>
     <?php
@@ -41,13 +42,13 @@
             $stmt->execute();
             $result = $stmt->get_result();
             if ($result->num_rows > 0) {
-                print ("<div class='contentnavbar'>");
+                print ("<div>");
                 while ($row = $result->fetch_assoc()) {
-                    print ("<li><a href='search.results.php?username=$row[username]'>Username: " . $row["username"] . "</a></li><br>");
+                    print ("<li><a href='search.results.php?username=$row[username]'>" . $row["username"] . "</a></li><br>");
                 }
                 print ("</div>");
             } else {
-                print ("<div class='contentnavbar'>
+                print ("<div>
                      <p>No user found</p>
                      </<div>");
             }
@@ -57,6 +58,7 @@
 
 
     ?>
+    </ul>
 </body>
 
 </html>

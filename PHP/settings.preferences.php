@@ -14,7 +14,7 @@
         include_once('../Libraries/navbar.php');
         createnavbar("settings.profile");
         ?>
-        <div class="content">
+        <div class="normalcontentnavbar">
             <h1>Preferences</h1>
             <form action="settings.preferences.php" method="post">
                 <br>

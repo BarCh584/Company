@@ -11,10 +11,8 @@
 <body>
     <?php
     include_once('../Libraries/navbar.php');
-    createnavbar("message");?>
-    <ul class="innavbar">
-    <?php showdmaccountlist($_SESSION["username"]); ?>
-    </ul>
+    createnavbar("message");
+    showdmaccountlist($_SESSION["username"]); ?>
     <?php
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($_SESSION["username"] != null && $_GET["username"] != null && !empty($_POST["message"])) {
@@ -25,13 +23,15 @@
         }
     }
     ?>
+    <
+    <?php if(isset($_GET["username"])) {?>
     <form method="POST" style="margin-left: 30vw">
         <input class="textinpfld" type="text" name="message" placeholder="Message"><br>
-        <input class="submitbutton" type="submit" value="Send message">
-    </form>
+    </form> <?php } ?>
     <?php // Show all direct messages between myself and everyone else I have messaged
     function showdmaccountlist($thisaccount)
     {
+        if (!isset($_GET["username"])) {
         $servername = "localhost";
         $username = "root";
         $password = "";
@@ -60,7 +60,7 @@
                 if (!in_array($pairKey, $processedPairs)) {
                     // If this pair hasn't been processed, display it
                     $processedPairs[] = $pairKey;?>
-                    <a class="dmitem" href="message.php?username=<?php if($row["sender"] != $_SESSION["username"]) print($row["sender"]); else if($row["receiver"] != $_SESSION["username"]) print($row["receiver"]); ?>"> <?php if($row["sender"] != $_SESSION["username"]) print($row["sender"]); else if($row["receiver"] != $_SESSION["username"]) print($row["receiver"]); ?> </a><br>
+                    <li><a class="dmitem" href="message.php?username=<?php if($row["sender"] != $_SESSION["username"]) print($row["sender"]); else if($row["receiver"] != $_SESSION["username"]) print($row["receiver"]); ?>"> <?php if($row["sender"] != $_SESSION["username"]) print($row["sender"]); else if($row["receiver"] != $_SESSION["username"]) print($row["receiver"]); ?> </a></li>
                 <?php }
             }
             echo "</ul>";
@@ -71,6 +71,7 @@
         $accountlist->close();
         $conn->close();
     }
+}
     function createmessage($sender, $receiver, $message)
     {
 
@@ -126,7 +127,7 @@
             echo "<div class='postgrid' style='margin-left: 30vw'>";
             while ($row = $sqlresult->fetch_assoc()) {
                 echo "<div class='postgriditem'>";
-                echo "<h3>$row[sender]: $row[message] </h3>";
+                echo "<h3>$row[sender]: $row[message] <small style='color: #3f3f3f'>$row[createdat]</small> </h3>";
                 echo "</div><br>";
             }
             echo "</div>";

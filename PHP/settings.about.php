@@ -15,7 +15,7 @@
         createnavbar("settings.profile");
         ?>
 
-        <div class="content" style="margin-left: 45vw; text-align:left">
+        <div class="normalcontentnavbar">
             <li><a href="https://www.flaticon.com/free-icons/navigation-bar" title="navigation bar icons">Navigation bar icons created by Marcus Christensen - Flaticon</a><br></li>
             <li><a href="https://www.flaticon.com/free-icons/home-button" title="home button icons">Home button icons created by Freepik - Flaticon</a><br></li>
             <li><a href="https://www.flaticon.com/free-icons/share" title="share icons">Share icons created by Freepik - Flaticon</a><br></li>
