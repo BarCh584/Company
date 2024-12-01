@@ -14,6 +14,7 @@ ul.outnavbar {
   width: 15vw;
   height: 100vh;
   background-color: #282828;
+  border-right: 1px solid #3f3f3f;
   display: flex;
   flex-direction: column;
   left: 0;
@@ -21,8 +22,53 @@ ul.outnavbar {
   transition: transform 0.3s ease-in-out;
 }
 
-ul.outnavbar li {
-  flex-grow: 1;
+h1,h2,h3,h4,h5,h6,p,label,input,a.dmitem {
+  color: #ffffff;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+a {
+  color: rgb(48, 48, 255);
+  font-family: Arial, Helvetica, sans-serif;
+  text-decoration: none;
+}
+div.line {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+ul.outnavbar li a {
+  color: white;
+  text-decoration: none;
+  font-family: Arial, Helvetica, sans-serif;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: left;
+  padding: 1.5vw;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+ul.outnavbar a img {
+  width: 2.5vw;
+  height: auto;
+  margin-bottom: 0.5vw;
+  padding-right: 1vw;
+}
+
+ul.outnavbar a:hover {
+  background-color: #3f3f3f;
+}
+
+ul.outnavbar .active {
+  filter: brightness(0) saturate(100%) invert(88%) sepia(12%) saturate(771%)
+    hue-rotate(11deg) brightness(106%) contrast(91%);
+  font-weight: bold;
+}
+ul.outnavbar .active:hover {
+  filter: brightness(0) saturate(100%) invert(21%) sepia(61%) saturate(22%) hue-rotate(5deg) brightness(88%) contrast(88%);
 }
 .textinpfld {
   height: 2em;
@@ -32,34 +78,6 @@ ul.outnavbar li {
   border-radius: 0.33em;
   background-color: #717171;
   color: #ffffff;
-}
-ul.outnavbar a {
-  color: white;
-  text-decoration: none;
-  font-family: Arial, Helvetica, sans-serif;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 1.5vw;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-ul.outnavbar a img {
-  width: 2.5vw;
-  height: auto;
-  margin-bottom: 0.5vw;
-}
-
-ul.outnavbar a:hover {
-  background-color: #3f3f3f;
-  transform: scale(1.1);
-}
-
-ul.outnavbar .active {
-  filter: brightness(0) saturate(100%) invert(88%) sepia(12%) saturate(771%)
-    hue-rotate(11deg) brightness(106%) contrast(91%);
-  font-weight: bold;
 }
 /* Input field styling */
 input[type="text"],
@@ -92,6 +110,7 @@ textarea:focus {
   flex: 0 0 auto;
   font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
   font-size: 1rem;
+  padding: 0.5em;
   font-weight: 600;
   line-height: 1rem;
   text-align: center;
@@ -113,21 +132,31 @@ textarea:focus {
   outline: 2px solid transparent;
   outline-offset: 2px;
 }
-ul.outnavbar > li > a > p {
-  display: block;
-}
+
 
 /*Innavbar*/
+ul.innavbar {
+  border-right: 1px solid #3f3f3f;
+  position:absolute;
+  margin: 0vw 0vw 0vw 15vw !important; /* Override the user agent stylesheet */
+  padding: 0 !important; /* Override the user agent stylesheet */
+  top: 0vh;
+  height: 100vh;
+  width: fit-content;
+  background-color: #282828;
+  flex-direction: column;
+}
 ul.innavbar li a img {
   width: 2.5vw;
   height: 2.5vw;
+  padding-right: 1vw;
 }
 ul.innavbar li {
   list-style-type: none;
   background-color: #282828;
   text-align: left;
-  border: 1px solid #3f3f3f;
   flex-direction: row;
+
 }
 ul.innavbar li a {
   color: white;
@@ -138,26 +167,20 @@ ul.innavbar li a {
   align-items: center;
   justify-content: left;
   padding: 1.5vw;
+  margin-bottom: 1.5vw;
+  padding: 1.5vw;
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
 ul.innavbar li a p.navbararrow {
   margin-left: auto;
   text-align: right;
 }
-ul.innavbar {
-  margin: 0vw 0vw 0vw 15vw !important; /* Override the user agent stylesheet */
-  padding: 0 !important; /* Override the user agent stylesheet */
-  top: 0vh;
-  flex-grow: 1;
-  height: 100vh;
-  width: 20vw;
-  background-color: #282828;
-  flex-direction: column;
-}
 ul.innavbar li:hover {
   background-color: #3f3f3f;
 }
-
+ul.innavbar li a p.navbararrow {
+  display: none;
+}
 
 /* Responsive Design for smaller screens */
 @media screen and (max-width: 768px) {
@@ -187,8 +210,9 @@ ul.innavbar li:hover {
   }
   input[type="text"],
   input[type="email"],
-  textarea {
-    width: calc(100% - 2rem);
+  textarea,
+  .textinpfld {
+    width: 33%;
     margin: 1rem;
     padding: 0.8rem;
     font-size: 0.9rem;
@@ -223,6 +247,7 @@ ul.innavbar li:hover {
     transition: background-color 0.3s ease, transform 0.2s ease;
   }
   ul.innavbar li a p.navbararrow {
+    display: block;
     margin-left: auto;
     text-align: right;
   }
@@ -232,6 +257,7 @@ ul.innavbar li:hover {
     position: relative;
     top: 0vh;
     left: 0vw;
+    height: 0vh;
     flex-direction: column;
   }
   ul.innavbar li:hover {
@@ -257,8 +283,9 @@ ul.innavbar li:hover {
 
   input[type="text"],
   input[type="email"],
-  textarea {
-    width: calc(100% - 1rem);
+  textarea,
+  .textinpfld {
+    width: 50%;
     margin: 0.5rem;
     padding: 0.6rem;
     font-size: 0.8rem;
@@ -269,4 +296,10 @@ ul.innavbar li:hover {
     padding: 0.5rem 1rem;
     font-size: 0.8rem;
   }
+}
+
+/*Normalcontentnavbar*/
+
+.normalcontentnavbar {
+  text-align: center;
 }

@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -11,20 +10,22 @@
 
 <body>
     <div class="container">
-        <?php 
+        <?php
         include_once('../Libraries/navbar.php');
         createnavbar("add"); ?>
-
-        <form method="POST" enctype="multipart/form-data" class="content">
-            <label>Title</label><br>
-            <input type="text" class="textinpfld" name="title" spellcheck="true" placeholder="Title"><br>
-            <label>Add a comment (optional)</label><br>
-            <textarea class="textinpfld" name="comment" id="comment" rows="3" onload="autoresizetextinputfield(this)"
-                oninput="autoresizetextinputfield(this)" spellcheck="true" placeholder="Comment"></textarea><br>
-            <label>Upload your file (optional)</label><br>
-            <input type="file" name="file" id="file"><br>
-            <input type="submit" class="submitbutton">
-        </form>
+        <div class="normalcontentnavbar">
+            <form method="POST" enctype="multipart/form-data" class="content">
+                <label>Title</label><br>
+                <input type="text" class="textinpfld" name="title" spellcheck="true" placeholder="Title"><br>
+                <label>Add a comment (optional)</label><br>
+                <textarea class="textinpfld" name="comment" id="comment" rows="3"
+                    onload="autoresizetextinputfield(this)" oninput="autoresizetextinputfield(this)" spellcheck="true"
+                    placeholder="Comment"></textarea><br>
+                <label>Upload your file (optional)</label><br>
+                <input type="file" name="file" id="file"><br>
+                <input type="submit" class="submitbutton">
+            </form>
+        </div>
     </div>
     <script>
         function autoresizetextinputfield(textarea) {
@@ -108,4 +109,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 ?>
+
 </html>

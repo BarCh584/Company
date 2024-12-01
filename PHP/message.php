@@ -11,8 +11,11 @@
 <body>
     <?php
     include_once('../Libraries/navbar.php');
-    createnavbar("message");
-    showdmaccountlist($_SESSION["username"]);
+    createnavbar("message");?>
+    <ul class="innavbar">
+    <?php showdmaccountlist($_SESSION["username"]); ?>
+    </ul>
+    <?php
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($_SESSION["username"] != null && $_GET["username"] != null && !empty($_POST["message"])) {
             createmessage($_SESSION["username"], $_GET["username"], $_POST["message"]);
@@ -57,7 +60,7 @@
                 if (!in_array($pairKey, $processedPairs)) {
                     // If this pair hasn't been processed, display it
                     $processedPairs[] = $pairKey;?>
-                    <a href="message.php?username=<?php if($row["sender"] != $_SESSION["username"]) print($row["sender"]); else if($row["receiver"] != $_SESSION["username"]) print($row["receiver"]); ?>"> <?php if($row["sender"] != $_SESSION["username"]) print($row["sender"]); else if($row["receiver"] != $_SESSION["username"]) print($row["receiver"]); ?> </a>
+                    <a class="dmitem" href="message.php?username=<?php if($row["sender"] != $_SESSION["username"]) print($row["sender"]); else if($row["receiver"] != $_SESSION["username"]) print($row["receiver"]); ?>"> <?php if($row["sender"] != $_SESSION["username"]) print($row["sender"]); else if($row["receiver"] != $_SESSION["username"]) print($row["receiver"]); ?> </a><br>
                 <?php }
             }
             echo "</ul>";
@@ -123,9 +126,8 @@
             echo "<div class='postgrid' style='margin-left: 30vw'>";
             while ($row = $sqlresult->fetch_assoc()) {
                 echo "<div class='postgriditem'>";
-                echo "<p>$row[sender]</p>";
-                echo "<br>" . $row["message"];
-                echo "</div>";
+                echo "<h3>$row[sender]: $row[message] </h3>";
+                echo "</div><br>";
             }
             echo "</div>";
         }
