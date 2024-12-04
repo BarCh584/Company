@@ -31,7 +31,7 @@
             <form class='form' method='POST'>
                 <div class='content' style='margin-left: 15vw'>
                     <h1>Account</h1>
-                    <input type='text' name='username' class='twotextinpfld' placeholder='Username: {$row['username']}' value='{$row['username']}'></h3><br>
+                    <input type='text' name='username' class='twotextinpfld' placeholder='Username: {$row['username']}' value='{$row['username']}'><br>
                     <h3>Reset Password</h3>
                     <input type='password' name='password' class='twotextinpfld' placeholder='Reset Password' minlength='8'><br>
                     <input type='password' name='confirmpassword' class='twotextinpfld' placeholder='Confirm Password' minlength='8'><br>

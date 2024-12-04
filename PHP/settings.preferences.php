@@ -21,22 +21,7 @@
                 <label for="theme">Theme:</label>
                 <span class="slider"></span>
                 <br>
-                <!--/* Parts of this site uses code from the project "smooth-frog-53" made by JkHuger (https://uiverse.io/JkHuger/smooth-frog-53), licensed under the MIT License*/-->
                 <p>Select your theme</p>
-                <div class="sliderbutton">
-                    <label>
-                        <input class="toggle-checkbox" type="checkbox">
-                        <div class="toggle-slot">
-                            <div class="sun-icon-wrapper">
-                                <div class="iconify sun-icon" data-icon="feather-sun" data-inline="false"></div>
-                            </div>
-                            <div class="toggle-button"></div>
-                            <div class="moon-icon-wrapper">
-                                <div class="iconify moon-icon" data-icon="feather-moon" data-inline="false"></div>
-                            </div>
-                        </div>
-                    </label>
-                </div>
                 <br>
                 <p>Enable 2FA authentication</p>
                 <input type="checkbox" name="2fa" id="2fa">

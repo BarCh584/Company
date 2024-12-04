@@ -4,7 +4,9 @@ body {
   margin: 0;
   padding: 0;
 }
-
+h1,h2,h3,h4,h5,h6,p,label,input,li a {
+  color: #ffffff;
+}
 /* Navbar styling */
 ul.outnavbar {
   list-style-type: none;
@@ -27,7 +29,6 @@ h1,h2,h3,h4,h5,h6,p,label,input,a.dmitem {
   font-family: Arial, Helvetica, sans-serif;
 }
 a.dmitem {
-  padding: 1.5vw;
   display: flex;
   flex-direction: column;
 }
@@ -47,7 +48,6 @@ div.line {
   text-align: center;
 }
 ul.outnavbar li a {
-  color: white;
   text-decoration: none;
   font-family: Arial, Helvetica, sans-serif;
   display: flex;
@@ -99,6 +99,7 @@ ul.outnavbar .active:hover {
 /* Input field styling */
 input[type="text"],
 input[type="email"],
+input[type="password"],
 textarea {
   height: 2em;
   margin: 10px;
@@ -110,12 +111,19 @@ textarea {
 
 input[type="text"]:focus,
 input[type="email"]:focus,
+input[type="password"]:focus,
 textarea:focus {
-  border-color: #3f3f3f;
+  border-color: #717171;
   outline: none;
   box-shadow: 0 0 5px rgba(63, 63, 63, 0.7);
 }
 
+input[type="text"]::placeholder,
+input[type="email"]::placeholder,
+input[type="password"]::placeholder,
+textarea::placeholder {
+  color: #8b8b8b;
+}
 /* Submit button styling */
 .submitbutton {
   background-color: #f6eebd;
@@ -171,21 +179,17 @@ ul.innavbar li a img {
 }
 ul.innavbar li {
   list-style-type: none;
-  background-color: #282828;
   text-align: left;
   flex-direction: row;
 
 }
 ul.innavbar li a {
-  color: white;
   text-decoration: none;
   font-family: Arial, Helvetica, sans-serif;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: left;
-  padding: 1.5vw;
-  margin-bottom: 1.5vw;
   padding: 1.5vw;
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
@@ -241,32 +245,30 @@ ul.innavbar li a p.navbararrow {
     font-size: 0.9rem;
   }
   ul.innavbar li a img {
-    width: 5vw;
-    height: 5vw;
+    width: 9vw;
+    height: 9vw;
   }
   ul.innavbar li {
     list-style-type: none;
     background-color: #282828;
     width: 100vw;
     text-align: left;
-    border: 1px solid #3f3f3f;
     flex-direction: row;
   }
   ul.innavbar li a {
-    color: white;
     text-decoration: none;
     font-family: Arial, Helvetica, sans-serif;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: left;
-    padding: 1.5vw;
     transition: background-color 0.3s ease, transform 0.2s ease;
   }
   ul.innavbar li a p.navbararrow {
     display: block;
     margin-left: auto;
     text-align: right;
+    margin-right: 1vw;
   }
   ul.innavbar {
     margin: 0 !important; /* Override the user agent stylesheet */
@@ -279,6 +281,9 @@ ul.innavbar li a p.navbararrow {
   }
   ul.innavbar li:hover {
     background-color: #3f3f3f;
+  }
+  a.dmitem {
+    padding: 0.2vw;
   }
 }
 
@@ -335,4 +340,26 @@ ul.innavbar li a p.navbararrow {
 .searchlist li a {
   padding: 1.5vw;
   background-color: #282828;
+}
+
+.postscontainer {
+  margin-left: 30%;
+  text-align: left;
+}
+
+@media (prefers-color-scheme:light) {
+  body {
+    background-color: #ffffff;
+  }
+  h1,h2,h3,h4,h5,h6,p,label,input,li a {
+    color: #000000;
+  }
+  ul.outnavbar {
+    background-color: #ffffff;
+    border-right: 1px solid #3f3f3f;
+  }
+  ul.innavbar {
+    background-color: #ffffff;
+    border-right: 1px solid #3f3f3f;
+  }
 }

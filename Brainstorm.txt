@@ -1,8 +1,6 @@
 - Sneak peak (1-2 free images) before payment (optional)
 - Startpage
 - Limit like and dislike to 1 per account
-- Window optimizations
-- Reset password
 - DM chats listed using ID's
 - Settings
 - Design
@@ -10,4 +8,3 @@ Last steps:
 - Website hosting
 - Plan id for subscriptions
 - Logo
-- Slogan

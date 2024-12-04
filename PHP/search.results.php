@@ -102,13 +102,13 @@ function displayLikeDislikeButtons($id, $type, $likes, $dislikes)
         <form name='like' class='likeanddislike' method='post'>
             <input type='hidden' name='action' value='like'>
             <input type='hidden' name='$inputName' value='$id'>
-            <input type='image' class='likeanddislike' src='../Images/Posts-comments-replies/hollow/like.png' />
+            <input type='image' class='likeanddislike' src='../Images/Posts-comments-replies/black/hollow/like.png' />
             $likes
         </form>
         <form name='dislike' class='likeanddislike' method='post'>
             <input type='hidden' name='action' value='dislike'>
             <input type='hidden' name='$inputName' value='$id'>
-            <input type='image' class='likeanddislike' src='../Images/Posts-comments-replies/hollow/dislike.png' />
+            <input type='image' class='likeanddislike' src='../Images/Posts-comments-replies/black/hollow/dislike.png' />
             $dislikes
         </form>";
 }
@@ -127,7 +127,7 @@ handleReplySubmission($conn);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="../CSS/default.css?v=<?php echo time(); ?>">
-    <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 </head>
 
 <body>
@@ -136,7 +136,7 @@ handleReplySubmission($conn);
     createnavbar("search");
     ?>
 
-    <div class="normalcontentnavbar">
+    <div class="postscontainer">
         <!-- Search form -->
         <?php
         if (isset($_GET["username"])) {
@@ -146,8 +146,7 @@ handleReplySubmission($conn);
             if ($user) {
 
                 $userid = $user["id"];
-                echo "<div class='contentuser'><h3>Username: $searchedusername</h3></div>";
-                echo "<a href='message.php?username=$searchedusername'>Message</a>";
+                echo "<div class='contentuser'><h3>Username: $searchedusername</h3><a href='message.php?username=$searchedusername'>Message</a></div>";
                 $posts = getPostsByUserId($conn, $userid);
 
                 /* Check if session user is subscribed to that creator */
@@ -189,7 +188,7 @@ handleReplySubmission($conn);
                     }); 
 
                 </script>";
-                    die("You are not subscribed to this creator. Please subscribe to view their content.");
+                    die("<p>You are not subscribed to this creator. Please subscribe to view their content.</p>");
                 } else {
                     $subscriptionstmt->close(); // Close the prepared statement to prevent data leaks
                     /* If subscriptions is valid, display content of creator */
@@ -286,7 +285,7 @@ handleReplySubmission($conn);
         // Close database connection
         $conn->close();
         ?>
-    </>
+    </s>
 </body>
 <style>
     .likeanddislike {

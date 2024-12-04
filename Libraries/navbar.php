@@ -26,7 +26,7 @@
         <ul class="outnavbar">
             <?php foreach ($buttons as $key => $value) { ?>
                 <li><a class="<?php echo ($buttontohighlight == $key) ? 'active ' . $key : 'not-active'; ?>" href="<?php echo $value[0]; ?>">
-                    <img src="../Images/Navbar/hollow/<?php echo $value[1]; ?>" alt="Logo">
+                    <img src="../Images/Navbar/black/hollow/<?php echo $value[1]; ?>" alt="Logo">
                     <p><?php t($value[2]); ?></p></a></li>
             <?php } ?>
         </ul>
@@ -47,14 +47,13 @@
         <ul class="innavbar">
             <?php foreach ($settingsButtons as $key => $value) { ?>
                 <li><a class="not-active" href="<?php echo $value[0]; ?>">
-                    <img src="../Images/Navbar/hollow/<?php echo $value[1]; ?>" alt="Logo">
+                    <img src="../Images/Navbar/black/hollow/<?php echo $value[1]; ?>" alt="Logo">
                     <p class="navbartext"><?php t($value[2]); ?></p><p class="navbararrow">></p></a></li>
             <?php } ?>
         </ul>
         <?php
     }
 ?>
-
 </body>
 
 </html>
