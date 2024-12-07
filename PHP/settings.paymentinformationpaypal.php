@@ -9,47 +9,38 @@
 </head>
 
 <body>
-    <?php
-    $servername = "localhost";
-    $username = "root";
-    $password = "";
-    $dbname = "Company";
-    $conn = new mysqli($servername, $username, $password, $dbname);
-    if ($conn->connect_error) {
-        die("Connection failed, error code: " . $conn->connect_error);
-    }
-    $getvaluesstmt = $conn->prepare("SELECT * FROM users WHERE username = ?");
-    $getvaluesstmt->bind_param("s", $_SESSION["username"]);
-    $getvaluesstmt->execute();
-    $getvaluesstmtresult = $getvaluesstmt->get_result();
-    $getvaluesstmtresult->fetch_assoc();
-    print($getvaluesstmtresult->num_rows);
-    if($getvaluesstmtresult->num_rows == 0){
-        die("User not found");
-    }
-    
-    $row = $getvaluesstmtresult->fetch_assoc();
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        if ($_SESSION["username"] != null && !empty($_POST["amount"])) {
-
-            $stmt = $conn->prepare("INSERT INTO users (priceforcontentint, priceforcontentcurrency) VALUES (?, ?)");
-            $stmt->bind_param("is", $_POST["amount"], $_POST["currency"]);
-            $stmt->execute();
-            $stmt->close();
-        }
-    }
-    ?>
     <div class="normalcontentnavbar">
-
-
         <?php
         include_once '../Libraries/navbar.php';
-        include_once '../Libraries/paymentform.php';
         createnavbar("settings.profile");
+        $servername = "localhost";
+        $username = "root";
+        $password = "";
+        $dbname = "Company";
+        $conn = new mysqli($servername, $username, $password, $dbname);
+        if ($conn->connect_error) {
+            die("Connection failed, error code: " . $conn->connect_error);
+        }
+        $mail = $_SESSION["email"] ?? null;
+        $currencycode = "";
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            if ($_SESSION["email"] != null && !empty($_POST["amount"])) {
+                $stmt = $conn->prepare("UPDATE users SET priceforcontentint = ?, priceforcontentcurrency = ? WHERE email = ?");
+                $stmt->bind_param("is", $_POST["amount"], $_POST["currency"], $_SESSION["email"]);
+                $stmt->execute();
+                $stmtrslt = $stmt->get_result();
+                $row = $stmtrslt->fetch_assoc();
+                if($row) {
+                    $currencycode = $row["priceforcontentcurrency"];
+                }
+                $stmt->close();
+            }
+        }
         ?>
         <form method="POST">
-            <select class="textinpfld">
+            <select class="textinpfld" value="currency">
                 <script>
+                    const selectedCurrency = "<?= $currencycode ?>";
                     const currency_list = [
                         { name: "Afghan Afghani", code: "AFA" },
                         { name: "Albanian Lek", code: "ALL" },
@@ -222,10 +213,9 @@
                     ];
                     // Display the currency list and select the currency that the user has selected
                     for (let i = 0; i < currency_list.length; i++) {
-                        if (currency_list[i].code == "<?= $row['priceforcontentcurrency'] ?>") {
+                        if (currency_list[i].code === selectedCurrency) {
                             document.write(`<option id="${currency_list[i].name}" value="${currency_list[i].code}" selected>${currency_list[i].name}</option>`);
-                        }
-                        else {
+                        } else {
                             document.write(`<option id="${currency_list[i].name}" value="${currency_list[i].code}">${currency_list[i].name}</option>`);
                         }
                     }

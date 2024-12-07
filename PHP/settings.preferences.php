@@ -17,12 +17,6 @@
         <div class="normalcontentnavbar">
             <h1>Preferences</h1>
             <form action="settings.preferences.php" method="post">
-                <br>
-                <label for="theme">Theme:</label>
-                <span class="slider"></span>
-                <br>
-                <p>Select your theme</p>
-                <br>
                 <p>Enable 2FA authentication</p>
                 <input type="checkbox" name="2fa" id="2fa">
                 <input type="submit" class="submitbutton" value="Save">

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../CSS/default.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="../CSS/default.css?v=<?= time(); ?>">
     <title>Document</title>
 </head>
 
@@ -12,155 +12,224 @@
     <?php
     include_once('../Libraries/navbar.php');
     createnavbar("message");
-    showdmaccountlist($_SESSION["username"]);
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        if ($_SESSION["username"] != null && $_GET["username"] != null && !empty($_POST["message"])) {
-            createmessage($_SESSION["username"], $_GET["username"], $_POST["message"]);
-            showchatmessages();
+
+    $currentUser = $_SESSION["username"];
+    $chatUser = $_GET["username"] ?? null;
+
+    // Show DM account list
+    showdmaccountlist($currentUser);
+
+    // Handle form submission
+    if ($_SERVER["REQUEST_METHOD"] === "POST") {
+        $message = $_POST["message"] ?? '';
+        if ($currentUser && $chatUser && !empty($message)) {
+            createmessage($currentUser, $chatUser, $message);
+            showchatmessages($currentUser, $chatUser);
         } else {
             echo "<p style='color:red;'>You can't send an empty message</p>";
         }
     }
     ?>
-    < <?php if (isset($_GET["username"])) { ?>
-            <form method="POST" id="messageform" style="margin-left: 30vw">
-                <input class="textinpfld" type="text" name="message" placeholder="Message"><br>
-            </form> <?php } ?>
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script>
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            let lastMessageTimestamp = null; // Track the latest message timestamp
+
+            function scrolltobottom() {
+                const chatMessages = $('#chatMessages');
+                if (chatMessages.length) {
+                    chatMessages.scrollTop(chatMessages[0].scrollHeight);
+                }
+            }
+
+            // Scroll to the bottom on page load
+            scrolltobottom();
+
+            // Send message via AJAX
             $("#messageform").submit(function (e) {
-                e.preventDefault(); // Prevent form submission and page reload
+                e.preventDefault();
                 $.ajax({
-                    url: "message.php?username=<?php if (isset($_GET["username"])) echo $_GET["username"]; ?>",
                     type: "POST",
-                    data: $(this).serialize(),
+                    url: "../Libraries/ajax_handler.php",
+                    data: {
+                        receiver: "<?= $chatUser ?>",
+                        sender: "<?= $currentUser ?>",
+                        message: $("input[name='message']").val()
+                    },
                     success: function (response) {
-                        let data = JSON.parse(response);
+                        const data = JSON.parse(response);
                         if (data.success) {
-                            $(".postgrid").append(
-                                `<div class='postgriditem'>
-                                    <h3>${data.sender}: ${data.message} <small style='color: #3f3f3f'>Just now</small></h3>
-                                </div><br>`
-                            );
-                            $("#messageform input[name='message']").val(""); // Clear the input field
+                            $(".textinpfld").val(''); // Clear the input field
+                            pollMessages(() => scrolltobottom()); // Fetch new messages and then scroll
                         } else {
-                            console.log("Error:", data.error);
+                            alert(data.error);
                         }
                     }
                 });
             });
-        </script>
-        <?php // Show all direct messages between myself and everyone else I have messaged
-        function showdmaccountlist($thisaccount)
-        {
 
-            $servername = "localhost";
-            $username = "root";
-            $password = "";
-            $dbname = "Company";
-            $conn = new mysqli($servername, $username, $password, $dbname);
-            if ($conn->connect_error) {
-                die("Connection failed, error code: " . $conn->connect_error);
+            // Polling function to fetch new messages
+            function pollMessages(callback) {
+                $.ajax({
+                    type: "GET",
+                    url: "../Libraries/ajax_handler.php",
+                    data: {
+                        sender: "<?= $currentUser ?>",
+                        receiver: "<?= $chatUser ?>"
+                    },
+                    success: function (response) {
+                        const messages = JSON.parse(response);
+
+                        if (messages.length > 0) {
+                            let newMessages = false; // Flag to detect new messages
+                            messages.forEach(function (message) {
+                                const messageTimestamp = message.createdat;
+
+                                // Check if the message is new
+                                if (!lastMessageTimestamp || messageTimestamp > lastMessageTimestamp) {
+                                    newMessages = true;
+                                    $("#chatMessages").append(
+                                        `<div class='postgriditem'>
+                                    <h3>${message.sender}: ${message.message} 
+                                    <small style='color: #3f3f3f'>${message.createdat}</small></h3>
+                                </div><br>`
+                                    );
+
+                                    // Update the lastMessageTimestamp to the latest one
+                                    lastMessageTimestamp = messageTimestamp;
+                                }
+                            });
+
+                            // Call the callback (e.g., scrolltobottom) if new messages were added
+                            if (newMessages && callback) {
+                                callback();
+                            }
+                        }
+                    }
+                });
             }
 
-            // Fetch all relevant messages involving the user
-            $accountlist = $conn->prepare("SELECT DISTINCT sender, receiver, message FROM messages WHERE sender = ? OR receiver = ?");
-            $accountlist->bind_param("ss", $thisaccount, $thisaccount);
-            $accountlist->execute();
-            $accountlistresult = $accountlist->get_result();
+            // Start polling when the page is ready
+            setInterval(() => pollMessages(), 3000); // Poll every 3 seconds
+        });
 
-            $processedPairs = []; // To keep track of unique pairs
-        
-            if ($accountlistresult->num_rows > 0) {
-                echo "<ul class='innavbar'>";
-                while ($row = $accountlistresult->fetch_assoc()) {
-                    // Normalize the pair to ensure uniqueness
-                    $pair = [$row["sender"], $row["receiver"]];
-                    sort($pair); // Sort alphabetically to normalize
-                    $pairKey = implode("-", $pair); // Create a unique string key for the pair
-        
-                    if (!in_array($pairKey, $processedPairs)) {
-                        // If this pair hasn't been processed, display it
-                        $processedPairs[] = $pairKey; ?>
-                        <li><a class="dmitem" href="message.php?username=<?php if ($row["sender"] != $_SESSION["username"])
-                            print ($row["sender"]);
-                        else if ($row["receiver"] != $_SESSION["username"])
-                            print ($row["receiver"]); ?>"><h4>
-                                <?php if ($row["sender"] != $_SESSION["username"])
-                                    print ($row["sender"]);
-                                else if ($row["receiver"] != $_SESSION["username"])
-                                    print ($row["receiver"]); ?>
-                            </h4></a></li>
-                    <?php }
-                }
-                echo "</ul>";
-            } else {
-                echo "No messages found.";
-            }
 
-            $accountlist->close();
-            $conn->close();
+    </script>
+
+    <script>
+        /* Dont allow a resubmit of the form */
+        if (window.history.replaceState) {
+            window.history.replaceState(null, null, window.location.href);
         }
-
-        function createmessage($sender, $receiver, $message)
-        {
-            $servername = "localhost";
-            $username = "root";
-            $password = "";
-            $dbname = "Company";
-            $conn = new mysqli($servername, $username, $password, $dbname);
-            if ($conn->connect_error) {
-                die("Connection failed, error code: " . $conn->connect_error);
-            }
-
-            $stmt = $conn->prepare("INSERT INTO messages (sender, receiver, message) VALUES (?, ?, ?)");
-            $stmt->bind_param("sss", $sender, $receiver, $message);
-            if ($stmt->execute()) {
-                echo json_encode(["success" => true, "message" => $message, "sender" => $sender]);
-            } else {
-                echo json_encode(["success" => false, "error" => "Message failed to send"]);
-            }
-            $stmt->close();
-            $conn->close();
+        /* Always scroll to the bottom of the postgrid */
+        window.scrollTo({
+            top: document.body.scrollHeight,
+            behavior: 'smooth' // Optional, adds animation
+        });
+    </script>
+    <?php
+    function connectDatabase()
+    {
+        $conn = new mysqli("localhost", "root", "", "Company");
+        if ($conn->connect_error) {
+            die("Database connection failed: " . $conn->connect_error);
         }
-        ?>
+        return $conn;
+    }
 
+    function showdmaccountlist($currentUser)
+    {
+        $conn = connectDatabase();
+        $stmt = $conn->prepare("
+            SELECT DISTINCT sender, receiver 
+            FROM messages 
+            WHERE sender = ? OR receiver = ?
+        ");
+        $stmt->bind_param("ss", $currentUser, $currentUser);
+        $stmt->execute();
+        $result = $stmt->get_result();
 
+        $pairs = [];
+        echo "<ul class='innavbar'>";
+        while ($row = $result->fetch_assoc()) {
+            $pair = [$row["sender"], $row["receiver"]];
+            sort($pair);
+            $pairKey = implode("-", $pair);
 
-        <?php
-        /* Display chat messages */
-
-        function showchatmessages()
-        {
-
-            $servername = "localhost";
-            $username = "root";
-            $password = "";
-            $dbname = "Company";
-            $conn = new mysqli($servername, $username, $password, $dbname);
-            $usera = $_SESSION["username"];
-            if (isset($_GET["username"]))
-                $userb = $_GET["username"];
-            if ($conn->connect_error) {
-                die("Connection failed, error code: " . $conn->connect_error);
-            }
-            // If messages are found check if myself or the other person is the sender or receiver of the message for a complete chat history
-            $sqlstmt = $conn->prepare("SELECT * FROM messages WHERE sender = ? AND receiver = ? OR sender = ? AND receiver = ?");
-            $sqlstmt->bind_param("ssss", $usera, $userb, $userb, $usera);
-            $sqlstmt->execute();
-            $sqlresult = $sqlstmt->get_result();
-            if ($sqlresult->num_rows > 0) {
-                echo "<div class='postgrid' style='margin-left: 30vw'>";
-                while ($row = $sqlresult->fetch_assoc()) {
-                    echo "<div class='postgriditem'>";
-                    echo "<h3>$row[sender]: $row[message] <small style='color: #3f3f3f'>$row[createdat]</small> </h3>";
-                    echo "</div><br>";
-                }
-                echo "</div>";
+            if (!in_array($pairKey, $pairs)) {
+                $pairs[] = $pairKey;
+                $contact = $row["sender"] === $currentUser ? $row["receiver"] : $row["sender"];
+                echo "<li><a class='dmitem' href='message.php?username=$contact'><h4>$contact</h4></a></li>";
             }
         }
-        showchatmessages();
-        ?>
+        echo "</ul>";
+
+        $stmt->close();
+        $conn->close();
+    }
+
+    function createmessage($sender, $receiver, $message)
+    {
+        $conn = connectDatabase();
+        $stmt = $conn->prepare("
+            INSERT INTO messages (sender, receiver, message) 
+            VALUES (?, ?, ?)
+        ");
+        $stmt->bind_param("sss", $sender, $receiver, $message);
+
+        if ($stmt->execute()) {
+            echo json_encode([
+                "success" => true,
+                "message" => $message,
+                "sender" => $sender,
+                "createdat" => date("Y-m-d H:i:s")
+            ]);
+        } else {
+            echo json_encode(["success" => false, "error" => "Message failed to send"]);
+        }
+
+        $stmt->close();
+        $conn->close();
+    }
+
+    function showchatmessages($currentUser, $chatUser)
+    {
+        if (!$chatUser)
+            return;
+
+        $conn = connectDatabase();
+        $stmt = $conn->prepare("
+            SELECT * FROM messages 
+            WHERE (sender = ? AND receiver = ?) OR (sender = ? AND receiver = ?)
+            ORDER BY createdat ASC
+        ");
+        $stmt->bind_param("ssss", $currentUser, $chatUser, $chatUser, $currentUser);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        // Ensure only one postgrid
+        echo "<div class='postgrid' id='chatMessages' style='margin-left: 30vw; overflow-y:scroll; max-height: 90vh;'>";
+        while ($row = $result->fetch_assoc()) {
+            echo "<div class='postgriditem'>";
+            echo "<h3>{$row['sender']}: {$row['message']} 
+                <small style='color: #3f3f3f'>{$row['createdat']}</small>
+            </h3>";
+            echo "</div><br>";
+        }
+        echo "</div>";
+
+        $stmt->close();
+        $conn->close();
+    }
+
+    showchatmessages($currentUser, $chatUser);
+    if ($chatUser): ?>
+        <form method="POST" id="messageform" style="margin-left: 30vw">
+            <input class="textinpfld" id="dmtextinpfld" type="text" name="message" placeholder="Message"><br>
+        </form>
+    <?php endif; ?>
 </body>
 
 </html>

@@ -69,14 +69,7 @@ ul.outnavbar a:hover {
   background-color: #3f3f3f;
 }
 
-ul.outnavbar .active {
-  filter: brightness(0) saturate(100%) invert(88%) sepia(12%) saturate(771%)
-    hue-rotate(11deg) brightness(106%) contrast(91%);
-  font-weight: bold;
-}
-ul.outnavbar .active:hover {
-  filter: brightness(0) saturate(100%) invert(21%) sepia(61%) saturate(22%) hue-rotate(5deg) brightness(88%) contrast(88%);
-}
+
 .textinpfld {
   height: 2em;
   margin: 10px;
@@ -285,6 +278,14 @@ ul.innavbar li a p.navbararrow {
   a.dmitem {
     padding: 0.2vw;
   }
+  .postgrid {
+    margin-left: 30vw;
+    overflow-y: scroll;
+    max-height: 60vh;
+  }
+  .dmtextinpfld {
+    top: 80vh;
+  }
 }
 
 /* Additional small screen tweaks */
@@ -341,7 +342,11 @@ ul.innavbar li a p.navbararrow {
   padding: 1.5vw;
   background-color: #282828;
 }
-
+.postgrid {
+  margin-left: 30vw;
+  overflow-y: scroll;
+  max-height: 95vh;
+}
 .postscontainer {
   margin-left: 30%;
   text-align: left;

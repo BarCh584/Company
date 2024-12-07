@@ -18,16 +18,19 @@
             "startpage" => ["startpage.php", "home.png", "Home"],
             "search" => ["search.php", "search.png", "Search"],
             "add" => ["add.php", "add.png", "Add"],
-            "settings.profile" => ["settings.navbar.php", "user.png", "Account"],
+            "settings.profile" => ["settings.navbar.php", "settings.profile.png", "Account"],
             "message" => ["message.php", "message.png", "Messages"],
             "live-stream" => ["live-stream.php", "live-streaming.png", "Livestream"]
         ];
         ?>
         <ul class="outnavbar">
             <?php foreach ($buttons as $key => $value) { ?>
-                <li><a class="<?php echo ($buttontohighlight == $key) ? 'active ' . $key : 'not-active'; ?>" href="<?php echo $value[0]; ?>">
-                    <img src="../Images/Navbar/black/hollow/<?php echo $value[1]; ?>" alt="Logo">
-                    <p><?php t($value[2]); ?></p></a></li>
+                <li><a class="<?php echo ($buttontohighlight == $key) ? 'active ' . $key : 'not-active'; ?>"
+                        href="<?php echo $value[0]; ?>">
+                        <img class="imagesrc <?php echo ($buttontohighlight == $key) ? 'filled' : 'hollow'; ?>"
+                            src="../Images/Navbar/black/hollow/<?php echo $value[1]; ?>" alt="Logo">
+                        <p><?php t($value[2]); ?></p>
+                    </a></li>
             <?php } ?>
         </ul>
         <?php
@@ -36,24 +39,53 @@
     function createsettingsnavbar($buttontohighlightin)
     {
         $settingsButtons = [
-            "settings.profile" => ["settings.profile.php", "user.png", "Account details"],
-            "settings.subscriptions" => ["settings.subscriptions.php", "subscription.png", "Subscriptions"],
-            "settings.paymentinformationpaypal" => ["settings.paymentinformationpaypal.php", "wallet.png", "Payment & finances"],
-            "settings.preferences" => ["settings.preferences.php", "preferences.png", "Preferences"],
-            "settings.languages" => ["settings.languages.php", "language.png", "Language"],
-            "settings.about" => ["settings.about.php", "link.png", "About"]
+            "settings.profile" => ["settings.profile.php", "settings.profile.png", "Account details"],
+            "settings.subscriptions" => ["settings.subscriptions.php", "settings.subscription.png", "Subscriptions"],
+            "settings.paymentinformationpaypal" => ["settings.paymentinformationpaypal.php", "settings.paymentinformationpaypal.png", "Payment & finances"],
+            "settings.preferences" => ["settings.preferences.php", "settings.preferences.png", "Preferences"],
+            "settings.languages" => ["settings.languages.php", "settings.language.png", "Language"],
+            "settings.about" => ["settings.about.php", "settings.about.png", "About"]
         ];
         ?>
         <ul class="innavbar">
             <?php foreach ($settingsButtons as $key => $value) { ?>
                 <li><a class="not-active" href="<?php echo $value[0]; ?>">
-                    <img src="../Images/Navbar/black/hollow/<?php echo $value[1]; ?>" alt="Logo">
-                    <p class="navbartext"><?php t($value[2]); ?></p><p class="navbararrow">></p></a></li>
+                        <img class="imagesrc <?php echo ($buttontohighlightin == $key) ? 'filled' : 'hollow'; ?>" src="../Images/Navbar/black/hollow/<?php echo $value[1]; ?>" alt="Logo">
+                        <p class="navbartext"><?php t($value[2]); ?></p>
+                        <p class="navbararrow">></p>
+                    </a></li>
             <?php } ?>
         </ul>
         <?php
     }
-?>
+    ?>
 </body>
+<!--Include jquery libary-->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            $(".imagesrc").each(function () {
+                this.src = this.src.replace("black", "white");
+            })
+        }
+        else {
+            $(".imagesrc").each(function () {
+                this.src = this.src.replace("white", "black")
+            })
+        }
+        $(".hollow").each(function (){
+            console.log("before: " + this.src);
+            this.src = this.src.replace("filled", "hollow");
+            console.log("after: " + this.src);
+        })
+        
+        $(".filled").each(function (){
+            console.log("before: " + this.src);
+            this.src = this.src.replace("hollow", "filled");
+            console.log("after: " + this.src);
+        })
+    });
+</script>
 
 </html>
