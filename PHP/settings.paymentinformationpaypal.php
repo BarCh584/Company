@@ -10,9 +10,12 @@
 
 <body>
     <div class="normalcontentnavbar">
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
         <?php
         include_once '../Libraries/navbar.php';
         createnavbar("settings.profile");
+        createsettingsnavbar('settings.paymentinformationpaypal');
         $servername = "localhost";
         $username = "root";
         $password = "";
@@ -30,13 +33,18 @@
                 $stmt->execute();
                 $stmtrslt = $stmt->get_result();
                 $row = $stmtrslt->fetch_assoc();
-                if($row) {
+                if ($row) {
                     $currencycode = $row["priceforcontentcurrency"];
                 }
                 $stmt->close();
             }
         }
         ?>
+        <script>
+            if (window.innerWidth < 768) {
+                $(".innavbar").hide();
+            }
+        </script>
         <form method="POST">
             <select class="textinpfld" value="currency">
                 <script>

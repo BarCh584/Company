@@ -49,8 +49,10 @@
         ?>
         <ul class="innavbar">
             <?php foreach ($settingsButtons as $key => $value) { ?>
-                <li><a class="not-active" href="<?php echo $value[0]; ?>">
-                        <img class="imagesrc <?php echo ($buttontohighlightin == $key) ? 'filled' : 'hollow'; ?>" src="../Images/Navbar/black/hollow/<?php echo $value[1]; ?>" alt="Logo">
+                <li><a class="<?php echo ($buttontohighlightin == $key) ? 'active ' . $key : 'not-active'; ?>"
+                        href="<?php echo $value[0]; ?>">
+                        <img class="imagesrc <?php echo ($buttontohighlightin == $key) ? 'filled' : 'hollow'; ?>"
+                            src="../Images/Navbar/black/hollow/<?php echo $value[1]; ?>" alt="Logo">
                         <p class="navbartext"><?php t($value[2]); ?></p>
                         <p class="navbararrow">></p>
                     </a></li>
@@ -66,25 +68,24 @@
     $(document).ready(function () {
         if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
             $(".imagesrc").each(function () {
-                this.src = this.src.replace("black", "white");
+                this.src = this.src.replace("black", "white"); // White icons for dark mode
             })
         }
         else {
             $(".imagesrc").each(function () {
-                this.src = this.src.replace("white", "black")
+                this.src = this.src.replace("white", "black") // black icons for dark mode
             })
         }
-        $(".hollow").each(function (){
-            console.log("before: " + this.src);
+        $(".hollow").each(function () {
             this.src = this.src.replace("filled", "hollow");
-            console.log("after: " + this.src);
         })
-        
-        $(".filled").each(function (){
-            console.log("before: " + this.src);
+
+        $(".filled").each(function () {
             this.src = this.src.replace("hollow", "filled");
-            console.log("after: " + this.src);
         })
+        if (window.innerWidth >= 768) {
+            $(".innavbar").show();
+        }
     });
 </script>
 

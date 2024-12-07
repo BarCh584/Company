@@ -13,6 +13,7 @@
         <?php
         include_once '../Libraries/navbar.php';
         createnavbar("settings.profile");
+
         form();
         function form()
         {
@@ -43,7 +44,14 @@
             $conn->close();
         }
         ?>
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+        <script>
+            if (window.innerWidth < 768) {
+                $(".innavbar").hide();
+            }
+        </script>
     </div>
+
 </body>
 
 </html>

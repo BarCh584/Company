@@ -13,8 +13,17 @@
         <?php
         include_once('../Libraries/navbar.php');
         createnavbar("settings.profile");
+        echo "<script>
+        if (window.innerWidth < 768) {
+        createsettingsnavbar('settings.about');
+        }</script>";
         ?>
-
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+        <script>
+        if (window.innerWidth < 768) {
+            $(".innavbar").hide();
+        }
+        </script>
         <div class="normalcontentnavbar">
             <li><a href="https://www.flaticon.com/free-icons/navigation-bar" title="navigation bar icons">Navigation bar icons created by Marcus Christensen - Flaticon</a><br></li>
             <li><a href="https://www.flaticon.com/free-icons/home-button" title="home button icons">Home button icons created by Freepik - Flaticon</a><br></li>

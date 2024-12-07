@@ -13,6 +13,7 @@
         <?php
         include_once('../Libraries/navbar.php');
         createnavbar("settings.profile");
+        createsettingsnavbar('settings.languages');
         ?>
         <div class="normalcontentnavbar">
             <form action="settings.preferences.php" method="post">
@@ -31,6 +32,11 @@
                 </select>
         </div>
     </div>
+    <script>
+        if (window.innerWidth < 768) {
+            $(".innavbar").hide();
+        }
+        </script>
     <?php
     if (isset($_GET['lang'])) {
         updatelang($_GET['lang']);

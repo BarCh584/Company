@@ -10,9 +10,12 @@
 
 <body>
     <div class="container">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
         <?php
         include_once('../Libraries/navbar.php');
         createnavbar("settings.profile");
+        createsettingsnavbar('settings.preferences');
         ?>
         <div class="normalcontentnavbar">
             <h1>Preferences</h1>
@@ -23,6 +26,11 @@
             </form>
         </div>
     </div>
+    <script>
+        if (window.innerWidth < 768) {
+            $(".innavbar").hide();
+        }
+        </script>
     <?php
     if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['2fa'])) {
         include_once "../Libraries/GoogleAuthenticator-2.x/src/FixedBitNotation.php";
