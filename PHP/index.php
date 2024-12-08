@@ -10,7 +10,6 @@
 
 <body>
     <div class="container">
-        <div class="normalcontentnavbar">
             <h1 class="title">
                 Login into your account
             </h1>

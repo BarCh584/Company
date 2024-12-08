@@ -13,11 +13,7 @@
         <?php
         include_once('../Libraries/navbar.php');
         createnavbar("settings.profile");
-        echo "<script>
-        if (window.innerWidth < 768) {
-        createsettingsnavbar('settings.about');
-        }</script>";
-        ?>
+        createsettingsnavbar('settings.about'); ?>
         <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
         <script>
         if (window.innerWidth < 768) {

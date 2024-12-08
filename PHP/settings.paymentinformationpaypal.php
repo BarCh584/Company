@@ -9,44 +9,45 @@
 </head>
 
 <body>
-    <div class="normalcontentnavbar">
-        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 
-        <?php
-        include_once '../Libraries/navbar.php';
-        createnavbar("settings.profile");
-        createsettingsnavbar('settings.paymentinformationpaypal');
-        $servername = "localhost";
-        $username = "root";
-        $password = "";
-        $dbname = "Company";
-        $conn = new mysqli($servername, $username, $password, $dbname);
-        if ($conn->connect_error) {
-            die("Connection failed, error code: " . $conn->connect_error);
-        }
-        $mail = $_SESSION["email"] ?? null;
-        $currencycode = "";
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            if ($_SESSION["email"] != null && !empty($_POST["amount"])) {
-                $stmt = $conn->prepare("UPDATE users SET priceforcontentint = ?, priceforcontentcurrency = ? WHERE email = ?");
-                $stmt->bind_param("is", $_POST["amount"], $_POST["currency"], $_SESSION["email"]);
-                $stmt->execute();
-                $stmtrslt = $stmt->get_result();
-                $row = $stmtrslt->fetch_assoc();
-                if ($row) {
-                    $currencycode = $row["priceforcontentcurrency"];
-                }
-                $stmt->close();
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
+    <?php
+    include_once '../Libraries/navbar.php';
+    createnavbar("settings.profile");
+    createsettingsnavbar('settings.paymentinformationpaypal');
+    $servername = "localhost";
+    $username = "root";
+    $password = "";
+    $dbname = "Company";
+    $conn = new mysqli($servername, $username, $password, $dbname);
+    if ($conn->connect_error) {
+        die("Connection failed, error code: " . $conn->connect_error);
+    }
+    $mail = $_SESSION["email"] ?? null;
+    $currencycode = "";
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        if ($_SESSION["email"] != null && !empty($_POST["amount"])) {
+            $stmt = $conn->prepare("UPDATE users SET priceforcontentint = ?, priceforcontentcurrency = ? WHERE email = ?");
+            $stmt->bind_param("iss", $_POST["amount"], $_POST["currency"], $_SESSION["email"]);
+            $stmt->execute();
+            $stmtrslt = $stmt->get_result();
+            $row = $stmtrslt->fetch_assoc();
+            if ($row) {
+                $currencycode = $row["priceforcontentcurrency"];
             }
+            $stmt->close();
         }
-        ?>
-        <script>
-            if (window.innerWidth < 768) {
-                $(".innavbar").hide();
-            }
-        </script>
+    }
+    ?>
+    <script>
+        if (window.innerWidth < 768) {
+            $(".innavbar").hide();
+        }
+    </script>
+    <div class="normalcontentnavbar">
         <form method="POST">
-            <select class="textinpfld" value="currency">
+            <select class="textinpfld" name="currency" value="currency">
                 <script>
                     const selectedCurrency = "<?= $currencycode ?>";
                     const currency_list = [
@@ -236,7 +237,6 @@
             <input type="submit" value="Submit" class="submitbutton">
         </form>
     </div>
-
 </body>
 
 </html>

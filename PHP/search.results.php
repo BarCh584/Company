@@ -1,124 +1,3 @@
-<?php
-
-// Ensure the user is logged in before allowing comment posting
-/*if (!isset($_SESSION['email'])) {
-    die("You must be logged in to post comments.");
-}*/
-
-// Database connection details
-$servername = "localhost";
-$db_username = "root";
-$db_password = "";
-$dbname = "Company";
-
-// Create a new database connection
-$conn = new mysqli($servername, $db_username, $db_password, $dbname);
-
-// Check if the connection failed
-if ($conn->connect_error) {
-    die("Connection failed: {$conn->connect_error}");
-}
-
-/**
- * Handle comment submission
- */
-function handleCommentSubmission($conn)
-{
-    if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["submit_comment"], $_POST["postid"])) {
-        $comment = $conn->real_escape_string($_POST["comment"]);
-        $postid = $conn->real_escape_string($_POST["postid"]);
-        $userid = $conn->real_escape_string($_SESSION['id']); // Get the logged-in user's ID from session
-
-        // Insert the comment into the database
-        $commentstmt = $conn->prepare("INSERT INTO comments (postid, userid, comment) VALUES (?, ?, ?)");
-        $commentstmt->bind_param("iis", $postid, $userid, $comment);
-        $commentstmt->execute();
-
-        // Redirect to avoid form resubmission
-        header("Location: {$_SERVER['REQUEST_URI']}");
-        exit();
-    }
-}
-function handleReplySubmission($conn)
-{
-    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit_reply"], $_POST["commentid"])) {
-        $reply = $conn->real_escape_string($_POST["reply"]);
-        $commentid = $conn->real_escape_string($_POST["commentid"]);
-        $userid = $conn->real_escape_string($_SESSION['id']);
-
-        $replystmt = $conn->prepare("INSERT INTO replies (commentid, userid, reply) VALUES (?, ?, ?)");
-        $replystmt->bind_param("iis", $commentid, $userid, $reply);
-        $replystmt->execute();
-
-        header("Location: {$_SERVER['REQUEST_URI']}");
-        exit();
-    }
-}
-/**
- * Handle like or dislike actions for posts and comments
- */
-function handleLikesDislikes($conn)
-{
-    if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["action"])) {
-        $id = $_POST["postid"] ?? $_POST["commentid"];
-        $type = isset($_POST["postid"]) ? 'posts' : 'comments';
-        $column = ($_POST["action"] === "like") ? 'likes' : 'dislikes';
-
-        $stmt = $conn->prepare("UPDATE $type SET $column = $column + 1 WHERE id = ?");
-        $stmt->bind_param("i", $id);
-        $stmt->execute();
-    }
-}
-
-/**
- * Fetch user ID by username
- */
-function getUserIdByUsername($conn, $username)
-{
-    $stmt = $conn->prepare("SELECT id FROM users WHERE username=?");
-    $stmt->bind_param("s", $username);
-    $stmt->execute();
-    return $stmt->get_result()->fetch_assoc();
-}
-
-/**
- * Fetch posts by user ID
- */
-function getPostsByUserId($conn, $userid)
-{
-    $stmt = $conn->prepare("SELECT * FROM posts WHERE accountid=?");
-    $stmt->bind_param("i", $userid);
-    $stmt->execute();
-    return $stmt->get_result();
-}
-
-/**
- * Display likes/dislikes buttons
- */
-function displayLikeDislikeButtons($id, $type, $likes, $dislikes)
-{
-    $inputName = ($type === 'post') ? 'postid' : 'commentid';
-    echo "
-        <form name='like' class='likeanddislike' method='post'>
-            <input type='hidden' name='action' value='like'>
-            <input type='hidden' name='$inputName' value='$id'>
-            <input type='image' class='likeanddislike' src='../Images/Posts-comments-replies/black/hollow/like.png' />
-            $likes
-        </form>
-        <form name='dislike' class='likeanddislike' method='post'>
-            <input type='hidden' name='action' value='dislike'>
-            <input type='hidden' name='$inputName' value='$id'>
-            <input type='image' class='likeanddislike' src='../Images/Posts-comments-replies/black/hollow/dislike.png' />
-            $dislikes
-        </form>";
-}
-
-// Process form submissions
-handleCommentSubmission($conn);
-handleLikesDislikes($conn);
-handleReplySubmission($conn);
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -134,6 +13,19 @@ handleReplySubmission($conn);
     <?php
     include_once '../Libraries/navbar.php';
     createnavbar("search");
+    // Database connection details
+    $servername = "localhost";
+    $db_username = "root";
+    $db_password = "";
+    $dbname = "Company";
+
+    // Create a new database connection
+    $conn = new mysqli($servername, $db_username, $db_password, $dbname);
+
+    // Check if the connection failed
+    if ($conn->connect_error) {
+        die("Connection failed: {$conn->connect_error}");
+    }
     ?>
 
     <div class="postscontainer">
@@ -285,7 +177,7 @@ handleReplySubmission($conn);
         // Close database connection
         $conn->close();
         ?>
-    </s>
+        </s>
 </body>
 <style>
     .likeanddislike {
@@ -318,5 +210,188 @@ handleReplySubmission($conn);
         height: 2.5vh;
     }
 </style>
+<?php
+/**
+ * Handle comment submission
+ */
+function handleCommentSubmission($conn)
+{
+    if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["submit_comment"], $_POST["postid"])) {
+        $comment = $conn->real_escape_string($_POST["comment"]);
+        $postid = $conn->real_escape_string($_POST["postid"]);
+        $userid = $conn->real_escape_string($_SESSION['id']); // Get the logged-in user's ID from session
+
+        // Insert the comment into the database
+        $commentstmt = $conn->prepare("INSERT INTO comments (postid, userid, comment) VALUES (?, ?, ?)");
+        $commentstmt->bind_param("iis", $postid, $userid, $comment);
+        $commentstmt->execute();
+
+        // Redirect to avoid form resubmission
+        header("Location: {$_SERVER['REQUEST_URI']}");
+        exit();
+    }
+}
+function handleReplySubmission($conn)
+{
+    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit_reply"], $_POST["commentid"])) {
+        $reply = $conn->real_escape_string($_POST["reply"]);
+        $commentid = $conn->real_escape_string($_POST["commentid"]);
+        $userid = $conn->real_escape_string($_SESSION['id']);
+
+        $replystmt = $conn->prepare("INSERT INTO replies (commentid, userid, reply) VALUES (?, ?, ?)");
+        $replystmt->bind_param("iis", $commentid, $userid, $reply);
+        $replystmt->execute();
+
+        header("Location: {$_SERVER['REQUEST_URI']}");
+        exit();
+    }
+}
+/**
+ * Handle like or dislike actions for posts and comments
+ */
+function handleLikesDislikes($conn)
+{
+    if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["action"])) {
+        global $conn;
+        $user_id = $_SESSION['id']; // Assuming the user is logged in
+        $action = $_POST["action"];
+        $content_type = isset($_POST["postid"]) ? 'post' : 'comment';
+        $content_id = $content_type === 'post' ? $_POST["postid"] : $_POST["commentid"];
+
+        // Check if the user has already interacted with this item
+        $stmt = $conn->prepare("
+            SELECT action FROM user_interactions 
+            WHERE user_id = ? AND content_type = ? AND content_id = ?
+        ");
+        $stmt->bind_param("isi", $user_id, $content_type, $content_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $existingAction = $result->fetch_assoc()['action'];
+
+        if ($existingAction) {
+            if ($existingAction === $action) {
+                // Deselect: Remove the interaction
+                $deleteStmt = $conn->prepare("
+                    DELETE FROM user_interactions 
+                    WHERE user_id = ? AND content_type = ? AND content_id = ?
+                ");
+                $deleteStmt->bind_param("isi", $user_id, $content_type, $content_id);
+                $deleteStmt->execute();
+
+                // Decrease the corresponding count
+                $updateStmt = $conn->prepare("
+                    UPDATE {$content_type}s SET {$action}s = {$action}s - 1 WHERE id = ?
+                ");
+                $updateStmt->bind_param("i", $content_id);
+                $updateStmt->execute();
+            } else {
+                // Toggle: Update the action
+                $updateInteractionStmt = $conn->prepare("
+                    UPDATE user_interactions SET action = ? 
+                    WHERE user_id = ? AND content_type = ? AND content_id = ?
+                ");
+                $updateInteractionStmt->bind_param("sisi", $action, $user_id, $content_type, $content_id);
+                $updateInteractionStmt->execute();
+
+                // Decrease the count for the previous action
+                $oppositeAction = ($action === 'like') ? 'dislike' : 'like';
+                $decreaseStmt = $conn->prepare("
+                    UPDATE {$content_type}s SET {$oppositeAction}s = {$oppositeAction}s - 1 WHERE id = ?
+                ");
+                $decreaseStmt->bind_param("i", $content_id);
+                $decreaseStmt->execute();
+
+                // Increase the count for the new action
+                $increaseStmt = $conn->prepare("
+                    UPDATE {$content_type}s SET {$action}s = {$action}s + 1 WHERE id = ?
+                ");
+                $increaseStmt->bind_param("i", $content_id);
+                $increaseStmt->execute();
+            }
+        } else {
+            // No existing interaction: Add the new action
+            $insertStmt = $conn->prepare("
+                INSERT INTO user_interactions (user_id, content_type, content_id, action) 
+                VALUES (?, ?, ?, ?)
+            ");
+            $insertStmt->bind_param("isis", $user_id, $content_type, $content_id, $action);
+            $insertStmt->execute();
+
+            // Increase the corresponding count
+            $increaseStmt = $conn->prepare("
+                UPDATE {$content_type}s SET {$action}s = {$action}s + 1 WHERE id = ?
+            ");
+            $increaseStmt->bind_param("i", $content_id);
+            $increaseStmt->execute();
+        }
+    }
+}
+
+
+
+/**
+ * Fetch user ID by username
+ */
+function getUserIdByUsername($conn, $username)
+{
+    $stmt = $conn->prepare("SELECT id FROM users WHERE username=?");
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    return $stmt->get_result()->fetch_assoc();
+}
+
+/**
+ * Fetch posts by user ID
+ */
+function getPostsByUserId($conn, $userid)
+{
+    $stmt = $conn->prepare("SELECT * FROM posts WHERE accountid=?");
+    $stmt->bind_param("i", $userid);
+    $stmt->execute();
+    return $stmt->get_result();
+}
+
+/**
+ * Display likes/dislikes buttons
+ */
+function displayLikeDislikeButtons($id, $type, $likes, $dislikes)
+{
+    global $conn;
+    $user_id = $_SESSION['id'];
+
+    // Check the user's current interaction
+    $stmt = $conn->prepare("
+        SELECT action FROM user_interactions 
+        WHERE user_id = ? AND content_type = ? AND content_id = ?
+    ");
+    $stmt->bind_param("isi", $user_id, $type, $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $userAction = $result->fetch_assoc()['action'];
+
+    $likeActive = $userAction === 'like' ? 'active' : '';
+    $dislikeActive = $userAction === 'dislike' ? 'active' : '';
+
+    echo "
+        <form method='post' style='display: inline;'>
+            <input type='hidden' name='action' value='like'>
+            <input type='hidden' name='{$type}id' value='{$id}'>
+            <button type='submit' class='$likeActive'>👍 $likes</button>
+        </form>
+        <form method='post' style='display: inline;'>
+            <input type='hidden' name='action' value='dislike'>
+            <input type='hidden' name='{$type}id' value='{$id}'>
+            <button type='submit' class='$dislikeActive'>👎 $dislikes</button>
+        </form>
+    ";
+}
+
+// Process form submissions
+handleCommentSubmission($conn);
+handleLikesDislikes($conn);
+handleReplySubmission($conn);
+?>
+
+
 
 </html>

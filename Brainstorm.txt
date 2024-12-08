@@ -1,6 +1,5 @@
 - Sneak peak (1-2 free images) before payment (optional)
 - Startpage
-- Limit like and dislike to 1 per account
 - DM chats listed using ID's
 - Settings
 - Design

@@ -71,7 +71,7 @@ ul.outnavbar a:hover {
 
 
 .textinpfld {
-  height: 2em;
+  height: 3em;
   margin: 10px;
   width: 33%;
   border: black 1px solid;
@@ -161,7 +161,7 @@ ul.innavbar {
   padding: 0 !important; /* Override the user agent stylesheet */
   top: 0vh;
   min-height: 100%;
-  width: fit-content;
+  width: 20vw;
   background-color: #282828;
   flex-direction: column;
 }
@@ -279,12 +279,14 @@ ul.innavbar li a p.navbararrow {
     padding: 0.2vw;
   }
   .postgrid {
-    margin-left: 30vw;
     overflow-y: scroll;
     max-height: 60vh;
   }
   .dmtextinpfld {
     top: 80vh;
+  }
+  .normalcontentnavbar {
+    margin-left: 0;
   }
 }
 
@@ -324,6 +326,7 @@ ul.innavbar li a p.navbararrow {
 /*Normalcontentnavbar*/
 
 .normalcontentnavbar {
+  margin-left: 30vw;
   text-align: center;
   list-style-type: none;
 }
@@ -343,7 +346,6 @@ ul.innavbar li a p.navbararrow {
   background-color: #282828;
 }
 .postgrid {
-  margin-left: 30vw;
   overflow-y: scroll;
   max-height: 95vh;
 }
@@ -351,7 +353,10 @@ ul.innavbar li a p.navbararrow {
   margin-left: 30%;
   text-align: left;
 }
-
+.container {
+  unicode-bidi: normal !important;
+  text-align: center;
+}
 @media (prefers-color-scheme:light) {
   body {
     background-color: #ffffff;
@@ -367,4 +372,18 @@ ul.innavbar li a p.navbararrow {
     background-color: #ffffff;
     border-right: 1px solid #3f3f3f;
   }
+}
+/*like and dislike button*/
+button.active {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+}
+
+button {
+  background-color: transparent;
+  border: 1px solid #ccc;
+  padding: 5px 10px;
+  cursor: pointer;
 }

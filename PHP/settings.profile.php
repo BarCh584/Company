@@ -9,26 +9,27 @@
 </head>
 
 <body>
-    <div class="normalcontentnavbar">
         <?php
         include_once '../Libraries/navbar.php';
         createnavbar("settings.profile");
-
-        form();
-        function form()
-        {
-            $servername = "localhost";
-            $username = "root";
-            $password = "";
-            $dbname = "Company";
-            $conn = new mysqli($servername, $username, $password, $dbname);
-            $sql = $conn->prepare("SELECT * FROM users WHERE email = ?");
-            $sql->bind_param("s", $_SESSION['email']);
-            $sql->execute();
-            $result = $sql->get_result();
-            if ($result->num_rows > 0) {
-                while ($row = $result->fetch_assoc()) {
-                    echo "
+        createsettingsnavbar("settings.profile"); ?>
+        <div class="container">
+            <?php
+            form();
+            function form()
+            {
+                $servername = "localhost";
+                $username = "root";
+                $password = "";
+                $dbname = "Company";
+                $conn = new mysqli($servername, $username, $password, $dbname);
+                $sql = $conn->prepare("SELECT * FROM users WHERE email = ?");
+                $sql->bind_param("s", $_SESSION['email']);
+                $sql->execute();
+                $result = $sql->get_result();
+                if ($result->num_rows > 0) {
+                    while ($row = $result->fetch_assoc()) {
+                        echo "
             <form class='form' method='POST'>
                 <div class='content' style='margin-left: 15vw'>
                     <h1>Account</h1>
@@ -39,19 +40,19 @@
                     <input type='submit' class='submitbutton' value='Save'>
                 </div>
             </form>";
+                    }
                 }
+                $conn->close();
             }
-            $conn->close();
-        }
-        ?>
-        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-        <script>
-            if (window.innerWidth < 768) {
-                $(".innavbar").hide();
-            }
-        </script>
+            ?>
+            <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+            <script>
+                if (window.innerWidth < 768) {
+                    $(".innavbar").hide();
+                }
+            </script>
+        </div>
     </div>
-
 </body>
 
 </html>
