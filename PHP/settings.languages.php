@@ -1,3 +1,25 @@
+<?php
+if (isset($_GET['lang'])) {
+    updatelang($_GET['lang']);
+}
+function updatelang($lang)
+{
+    session_start();
+    $servername = "localhost";
+    $username = "root";
+    $password = "";
+    $dbname = "Company";
+    $conn = new mysqli($servername, $username, $password, $dbname);
+    if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
+    }
+    $langstmt = $conn->prepare("UPDATE users SET language=? WHERE username=?");
+    $langstmt->bind_param("ss", $lang, $_SESSION['username']);
+    $langstmt->execute();
+    header("Location: startpage.php"); // Refresh the page to initialize the new language without get parameters in the URL to prevent looping
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -19,7 +41,7 @@
             <form action="settings.preferences.php" method="post">
                 <br>
                 <div class="contentnavbar">
-                <h1>Change your Language:</h1>
+                    <h1>Change your Language:</h1>
                     <li><a href="?lang=en" value="english">English</a></li>
                     <li><a href="?lang=de" value="german">Deutsch</a></li>
                     <li><a href="?lang=fr" value="french">Français</a></li>
@@ -30,35 +52,14 @@
                     <li><a href="?lang=in" value="indonesian">Indonesian</a></li>
                 </div>
                 </select>
+            </form>
         </div>
     </div>
     <script>
         if (window.innerWidth < 768) {
             $(".innavbar").hide();
         }
-        </script>
-    <?php
-    if (isset($_GET['lang'])) {
-        updatelang($_GET['lang']);
-    }
-    function updatelang($lang)
-    {
-        print ($lang);
-        $servername = "localhost";
-        $username = "root";
-        $password = "";
-        $dbname = "Company";
-        $conn = new mysqli($servername, $username, $password, $dbname);
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
-        $langstmt = $conn->prepare("UPDATE users SET language=? WHERE username=?");
-        $langstmt->bind_param("ss", $lang, $_SESSION['username']);
-        $langstmt->execute();
-        header("Location: startpage.php"); // Refresh the page to initialize the new language without get parameters in the URL to prevent looping
-    }
-
-    ?>
+    </script>
 </body>
 
 </html>

@@ -26,6 +26,14 @@
     if ($conn->connect_error) {
         die("Connection failed: {$conn->connect_error}");
     }
+    $currencystmt = $conn->prepare("SELECT priceforcontentint, priceforcontentcurrency FROM users WHERE email = ?");
+    $currencystmt->bind_param("s", $mail);
+    if ($currencystmt->execute()) {
+        $currencystmt->bind_result($priceforcontentint, $priceforcontentcurrency);
+        $currencystmt->fetch();
+        $preferencedcurrency = $priceforcontentcurrency;
+        $price = $priceforcontentint;
+    }
     ?>
 
     <div class="postscontainer">

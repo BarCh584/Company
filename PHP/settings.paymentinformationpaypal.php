@@ -30,14 +30,19 @@
         if ($_SESSION["email"] != null && !empty($_POST["amount"])) {
             $stmt = $conn->prepare("UPDATE users SET priceforcontentint = ?, priceforcontentcurrency = ? WHERE email = ?");
             $stmt->bind_param("iss", $_POST["amount"], $_POST["currency"], $_SESSION["email"]);
-            $stmt->execute();
-            $stmtrslt = $stmt->get_result();
-            $row = $stmtrslt->fetch_assoc();
-            if ($row) {
-                $currencycode = $row["priceforcontentcurrency"];
+            if ($stmt->execute()) {
+                $currencycode = $_POST["currency"];
             }
             $stmt->close();
         }
+    }
+    $currencystmt = $conn->prepare("SELECT priceforcontentint, priceforcontentcurrency FROM users WHERE email = ?");
+    $currencystmt->bind_param("s", $mail);
+    if ($currencystmt->execute()) {
+        $currencystmt->bind_result($priceforcontentint, $priceforcontentcurrency);
+        $currencystmt->fetch();
+        $preferencedcurrency = $priceforcontentcurrency;
+        $price = $priceforcontentint;
     }
     ?>
     <script>
@@ -45,11 +50,12 @@
             $(".innavbar").hide();
         }
     </script>
+    <h3>Change the price for your content</h3>
     <div class="normalcontentnavbar">
         <form method="POST">
             <select class="textinpfld" name="currency" value="currency">
                 <script>
-                    const selectedCurrency = "<?= $currencycode ?>";
+                    const selectedCurrency = "<?= $preferencedcurrency ?>";
                     const currency_list = [
                         { name: "Afghan Afghani", code: "AFA" },
                         { name: "Albanian Lek", code: "ALL" },
@@ -232,7 +238,7 @@
                 </script>
             </select>
             <br>
-            <input type="text" name="amount" class="textinpfld" placeholder="Amount">
+            <input type="text" name="amount" value="<?=$price?>" class="textinpfld" placeholder="Amount">
             <br>
             <input type="submit" value="Submit" class="submitbutton">
         </form>

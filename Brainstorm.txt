@@ -1,8 +1,9 @@
 - Sneak peak (1-2 free images) before payment (optional)
 - Startpage
 - DM chats listed using ID's
-- Settings
 - Design
+- Currency real time exchangerates
+- Live streaming to the www
 Last steps: 
 - Website hosting
 - Plan id for subscriptions
