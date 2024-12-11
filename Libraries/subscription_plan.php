@@ -2,8 +2,6 @@
 require '..\Libraries\Paypalsdk\vendor\autoload.php';
 
 use PayPal\Api\Plan;
-use PayPal\Api\Patch;
-use PayPal\Api\Payment;
 use PayPal\Api\PaymentDefinition;
 use PayPal\Api\MerchantPreferences;
 use PayPal\Auth\OAuthTokenCredential;
@@ -54,4 +52,3 @@ function createSubscriptionplan($currency, $amount)
         echo "Error: " . $e->getMessage();
     }
 }
-?>
