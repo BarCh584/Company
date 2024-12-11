@@ -3,7 +3,7 @@
 - DM chats listed using ID's
 - Design
 - Currency real time exchangerates
-- Live streaming to the www
+- Live streaming to the www 
 Last steps: 
 - Website hosting
 - Plan id for subscriptions
