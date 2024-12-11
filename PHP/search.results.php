@@ -12,6 +12,7 @@
 <body>
     <?php
     include_once '../Libraries/navbar.php';
+    include('../Libraries/subscription_plan.php');
     createnavbar("search");
     // Database connection details
     $servername = "localhost";
@@ -27,13 +28,16 @@
         die("Connection failed: {$conn->connect_error}");
     }
     $currencystmt = $conn->prepare("SELECT priceforcontentint, priceforcontentcurrency FROM users WHERE email = ?");
-    $currencystmt->bind_param("s", $mail);
+    $currencystmt->bind_param("s", $_SESSION['email']);
     if ($currencystmt->execute()) {
         $currencystmt->bind_result($priceforcontentint, $priceforcontentcurrency);
         $currencystmt->fetch();
         $preferencedcurrency = $priceforcontentcurrency;
         $price = $priceforcontentint;
+        $currencystmt->close(); // Close the statement to prevent data leaks
+        createSubscriptionplan($preferencedcurrency, $price);
     }
+    
     ?>
 
     <div class="postscontainer">
@@ -71,7 +75,7 @@
                     paypal.Buttons({
                         createSubscription: function(data, actions) {
                             return actions.subscription.create({
-                                'plan_id': planId // Adjust planid to real planid for it to work
+                                'plan_id': 'planId' // Adjust planid to real planid for it to work
                             });
                         },
                         onApprove: function(data, actions) {
@@ -345,7 +349,9 @@ function getUserIdByUsername($conn, $username)
     $stmt = $conn->prepare("SELECT id FROM users WHERE username=?");
     $stmt->bind_param("s", $username);
     $stmt->execute();
-    return $stmt->get_result()->fetch_assoc();
+    $result = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+    return $result;
 }
 
 /**
