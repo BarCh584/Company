@@ -13,6 +13,7 @@
     <?php
     include_once '../Libraries/navbar.php';
     include('../Libraries/subscription_plan.php');
+    include('../Libraries/currency_converter.php');
     createnavbar("search");
     // Database connection details
     $servername = "localhost";
@@ -35,7 +36,7 @@
         $preferencedcurrency = $priceforcontentcurrency;
         $price = $priceforcontentint;
         $currencystmt->close(); // Close the statement to prevent data leaks
-        createSubscriptionplan($preferencedcurrency, $price);
+        createSubscriptionplan($preferencedcurrency, $price); // sandbox account not created yet
     }
     
     ?>
@@ -48,12 +49,25 @@
             $user = getUserIdByUsername($conn, $searchedusername);
 
             if ($user) {
-
+                $creatorstmt = $conn->prepare("SELECT * FROM users WHERE username = ?");
+                $creatorstmt->bind_param("s", $searchedusername);
+                $creatorstmt->execute();
+                $creatorstmtresult = $creatorstmt->get_result();
+                $creatorstmtfinances = $creatorstmtresult->fetch_assoc();
                 $userid = $user["id"];
+                $consumerstmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
+                $consumerstmt->bind_param("s", $_SESSION['email']);
+                $consumerstmt->execute();
+                $consumerstmtresult = $consumerstmt->get_result();
+                $consumerstmtfinances = $consumerstmtresult->fetch_assoc();
                 echo "<div class='contentuser'><h3>Username: $searchedusername</h3><a href='message.php?username=$searchedusername'>Message</a></div>";
+                echo "<form method='POST'><input type='submit' value='Buy content for:"//.
+                //convertCurrency($_GET['username'], $_SESSION['email']) 
+                ."'></form>";
                 $posts = getPostsByUserId($conn, $userid);
-
-                /* Check if session user is subscribed to that creator */
+                $currency = userlocationcurrency();
+                print("<h3>Preferred currency:". $currency."</h3>");
+                // Check if session user is subscribed to that creator 
                 $subscriptionstmt = $conn->prepare(("SELECT * FROM subscriptions WHERE subscriber=? AND creator=?"));
                 $subscriptionstmt->bind_param("ss", $_SESSION['username'], $searchedusername);
                 $subscriptionstmt->execute();

@@ -2,6 +2,7 @@
 require '..\Libraries\Paypalsdk\vendor\autoload.php';
 
 use PayPal\Api\Plan;
+use Paypal\Api\Patch;
 use PayPal\Api\PaymentDefinition;
 use PayPal\Api\MerchantPreferences;
 use PayPal\Auth\OAuthTokenCredential;
