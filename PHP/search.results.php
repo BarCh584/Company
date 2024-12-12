@@ -38,7 +38,7 @@
         $currencystmt->close(); // Close the statement to prevent data leaks
         createSubscriptionplan($preferencedcurrency, $price); // sandbox account not created yet
     }
-    
+
     ?>
 
     <div class="postscontainer">
@@ -61,12 +61,12 @@
                 $consumerstmtresult = $consumerstmt->get_result();
                 $consumerstmtfinances = $consumerstmtresult->fetch_assoc();
                 echo "<div class='contentuser'><h3>Username: $searchedusername</h3><a href='message.php?username=$searchedusername'>Message</a></div>";
-                echo "<form method='POST'><input type='submit' value='Buy content for:"//.
-                //convertCurrency($_GET['username'], $_SESSION['email']) 
-                ."'></form>";
+                echo "<form method='POST'><input type='submit' value='Buy content for:";
+                convertCurrency($searchedusername, $_SESSION['username']);
+                echo "'></form>";
                 $posts = getPostsByUserId($conn, $userid);
                 $currency = userlocationcurrency();
-                print("<h3>Preferred currency:". $currency."</h3>");
+                print ("<h3>Preferred currency:" . $currency . "</h3>");
                 // Check if session user is subscribed to that creator 
                 $subscriptionstmt = $conn->prepare(("SELECT * FROM subscriptions WHERE subscriber=? AND creator=?"));
                 $subscriptionstmt->bind_param("ss", $_SESSION['username'], $searchedusername);

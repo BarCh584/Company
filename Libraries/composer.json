@@ -1,5 +1,13 @@
 {
     "require": {
-        "moneyphp/money": "^4.6"
+        "moneyphp/money": "^4.6",
+        "florianv/swap": "^4.3",
+        "nyholm/psr7": "^1.8",
+        "guzzlehttp/guzzle": "6.0"
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
     }
 }
