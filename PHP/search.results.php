@@ -62,7 +62,7 @@
                 $consumerstmtfinances = $consumerstmtresult->fetch_assoc();
                 echo "<div class='contentuser'><h3>Username: $searchedusername</h3><a href='message.php?username=$searchedusername'>Message</a></div>";
                 echo "<form method='POST'><input type='submit' value='Buy content for:";
-                convertCurrency($searchedusername, $_SESSION['username']);
+                getexchangerate($searchedusername, $_SESSION['username']);
                 echo "'></form>";
                 $posts = getPostsByUserId($conn, $userid);
                 $currency = userlocationcurrency();

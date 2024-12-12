@@ -1,13 +1,8 @@
 <?php
 require 'vendor/autoload.php';
-use Money\Currencies\ISOCurrencies;
 use Money\Currency;
-use Money\Exchange\ExchangerExchange;
 use Money\Money;
-use Money\Converter;
-use Money\Exchange;
-use Money\Exchange\SwapExchange;
-use Money\Currencies\ExchangerCurrencies;
+use GuzzleHttp\Client;
 
 function userlocationcurrency()
 {
@@ -32,7 +27,7 @@ function userlocationcurrency()
 
 
 
-function convertCurrency($creator, $username)
+function getexchangerate($creator, $username)
 {
     // Get all necessary data
     $servername = "localhost";
@@ -60,6 +55,18 @@ function convertCurrency($creator, $username)
     $apikey = "d3219689da2f01c4b316b9e326de14e1";
     $fixerio = "https://data.fixer.io/api/latest?access_key={$apikey}&base={$creatorpriceforcontentcurrency}&symbols={$userpriceforcontentcurrency}";
 
-    $client = new GuzzleHttp\Client();
+    $client = new Client();
+    $response = $client->request('GET', $fixerio, [
+        'headers' => [
+            'apikey' => $apikey,
+        ]
+    ]);
+    $data = json_decode($response->getBody(), true);
+    if(isset($data['rates'][$userpriceforcontentcurrency])) {
+        return $data['rates'][$userpriceforcontentcurrency];
+    } else {
+        die("<p>Failed to get currency conversion rate</p>");
+    }
+
 }
 ?>
