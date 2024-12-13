@@ -23,10 +23,6 @@ class ComposerStaticInit85a841823338cc1ed6a1f5924cc64a47
             'Psr\\Http\\Message\\' => 17,
             'Psr\\Http\\Client\\' => 16,
         ),
-        'M' => 
-        array (
-            'Money\\' => 6,
-        ),
         'G' => 
         array (
             'GuzzleHttp\\Psr7\\' => 16,
@@ -53,10 +49,6 @@ class ComposerStaticInit85a841823338cc1ed6a1f5924cc64a47
         'Psr\\Http\\Client\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/http-client/src',
-        ),
-        'Money\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/moneyphp/money/src',
         ),
         'GuzzleHttp\\Psr7\\' => 
         array (

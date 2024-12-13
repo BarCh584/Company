@@ -93,10 +93,11 @@ ul.outnavbar a:hover {
 input[type="text"],
 input[type="email"],
 input[type="password"],
+input[type="submit"],
 textarea {
   height: 2em;
   margin: 10px;
-  background-color: #717171;
+  background-color: #282828;
   color: #ffffff;
   border: black 1px solid;
   border-radius: 0.33em;
@@ -105,6 +106,7 @@ textarea {
 input[type="text"]:focus,
 input[type="email"]:focus,
 input[type="password"]:focus,
+input[type="submit"]:focus,
 textarea:focus {
   border-color: #717171;
   outline: none;

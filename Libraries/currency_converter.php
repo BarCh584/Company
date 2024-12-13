@@ -1,10 +1,7 @@
 <?php
 require 'vendor/autoload.php';
-use Money\Currencies\ISOCurrencies;
-use Money\Currency;
-use Money\Exchange\FixedExchange;
-use Money\Converter;
-use Money\Parser\DecimalMoneyParser;
+use CurrencyApi\CurrencyApi\CurrencyApiClient;
+use PayPal\Api\Amount;
 
 function userlocationcurrency()
 {
@@ -48,7 +45,6 @@ function getexchangerate($creator, $username)
     $origincurrency = $creatorpriceforcontentcurrency;
     $originmoney = $creatorpriceforcontentint;
     $creatorstmt->close();
-    // $moneyorigincurrency = new Money($creatorintcurrency, new Currency($creatorcurrency));
 
     $userstmt = $conn->prepare("SELECT priceforcontentcurrency FROM users WHERE username = ?");
     $userstmt->bind_param("s", $username);
@@ -57,23 +53,30 @@ function getexchangerate($creator, $username)
     $userstmt->fetch();
     $destinationcurrency = $userpriceforcontentcurrency;
     $userstmt->close();
-    // Use moneyphp to convert the currency
-    $url = "https://api.exchangerate-api.com/v4/latest/{$origincurrency}";
-    $response = file_get_contents($url);
-    $data = json_decode($response, true);
-    if(!isset($data['rates'][$destinationcurrency])){
-        throw new Exception("Invalid currency conversion");
-    }
-    $exchangerate = $data['rates'][$destinationcurrency];
-    $currency = new ISOCurrencies();
-    $exchange = new FixedExchange([
-        "{$origincurrency}/{$destinationcurrency}" => $exchangerate
-    ]);
-    $moneyparser = new DecimalMoneyParser($currency);
-    $money = $moneyparser->parse($originmoney, new Currency($origincurrency));
-    $converter = new Converter($currency, $exchange);
-    $convertedmoney = $converter->convert($money, new Currency($destinationcurrency));
 
-    return $convertedmoney;
+    //Get currency symbol from symbols.json
+    $symbolsjsonfilepath = __DIR__ . "/symbols.json";
+    $jsondata = json_decode(file_get_contents($symbolsjsonfilepath), true);
+    if($jsondata === null)
+    {
+        die("Failed to get currency symbols");
+    }
+
+    // Use exchange rate API to get exchange rate
+    $apikey = "7fef6d78105346ffecb0af5e";
+    $apiurl = "https://v6.exchangerate-api.com/v6/{$apikey}/latest/{$origincurrency}";
+    $response = file_get_contents($apiurl);
+    $data = json_decode($response, true);
+
+    if($data && $data['result'] == 'success')
+    {
+        // Extract the exchange rate
+        $exchangerate = $data['conversion_rates'][$destinationcurrency];
+        return round($exchangerate*$originmoney) . (array_key_exists($destinationcurrency, $jsondata) ? $jsondata[$destinationcurrency] : $destinationcurrency);
+    }
+    else
+    {
+        die("Failed to get exchange rate");
+    }
 }
 ?>
