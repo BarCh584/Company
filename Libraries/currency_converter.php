@@ -1,8 +1,10 @@
 <?php
 require 'vendor/autoload.php';
+use Money\Currencies\ISOCurrencies;
 use Money\Currency;
-use Money\Money;
-use GuzzleHttp\Client;
+use Money\Exchange\FixedExchange;
+use Money\Converter;
+use Money\Parser\DecimalMoneyParser;
 
 function userlocationcurrency()
 {
@@ -43,8 +45,8 @@ function getexchangerate($creator, $username)
     $creatorstmt->execute();
     $creatorstmt->bind_result($creatorpriceforcontentint, $creatorpriceforcontentcurrency);
     $creatorstmt->fetch();
-    $creatorcurrency = $creatorpriceforcontentcurrency;
-    $creatorintcurrency = $creatorpriceforcontentint;
+    $origincurrency = $creatorpriceforcontentcurrency;
+    $originmoney = $creatorpriceforcontentint;
     $creatorstmt->close();
     // $moneyorigincurrency = new Money($creatorintcurrency, new Currency($creatorcurrency));
 
@@ -53,28 +55,25 @@ function getexchangerate($creator, $username)
     $userstmt->execute();
     $userstmt->bind_result($userpriceforcontentcurrency);
     $userstmt->fetch();
-    $moneydestinationcurrency = $userpriceforcontentcurrency;
+    $destinationcurrency = $userpriceforcontentcurrency;
     $userstmt->close();
-    // Use of fixer.io API
-    $apikey = "d3219689da2f01c4b316b9e326de14e1";
-    $fixerio = "http://data.fixer.io/api/latest?access_key={$apikey}&base={$creatorpriceforcontentcurrency}&symbols={$userpriceforcontentcurrency}";
-
-    $client = new Client();
-    $response = $client->request('GET', $fixerio, [
-        'headers' => [
-            'apikey' => $apikey,
-        ]
+    // Use moneyphp to convert the currency
+    $url = "https://api.exchangerate-api.com/v4/latest/{$origincurrency}";
+    $response = file_get_contents($url);
+    $data = json_decode($response, true);
+    if(!isset($data['rates'][$destinationcurrency])){
+        throw new Exception("Invalid currency conversion");
+    }
+    $exchangerate = $data['rates'][$destinationcurrency];
+    $currency = new ISOCurrencies();
+    $exchange = new FixedExchange([
+        "{$origincurrency}/{$destinationcurrency}" => $exchangerate
     ]);
-    
-    $data = json_decode($response->getBody(), true);
-    if (json_last_error() !== JSON_ERROR_NONE) {
-        die("<p>Failed to parse JSON response</p>");
-    }
-    if (isset($data['rates'][$moneydestinationcurrency])) {
-        return round($data['rates'][$moneydestinationcurrency]*10, 2) . $moneydestinationcurrency; // return the amount of money and the currency
-    } else {
-        error_log("API response: " . print_r($data, true));
-        die("<p>Failed to get currency conversion rate</p>");
-    }
+    $moneyparser = new DecimalMoneyParser($currency);
+    $money = $moneyparser->parse($originmoney, new Currency($origincurrency));
+    $converter = new Converter($currency, $exchange);
+    $convertedmoney = $converter->convert($money, new Currency($destinationcurrency));
+
+    return $convertedmoney;
 }
 ?>
