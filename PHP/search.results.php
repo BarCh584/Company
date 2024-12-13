@@ -36,7 +36,7 @@
         $preferencedcurrency = $priceforcontentcurrency;
         $price = $priceforcontentint;
         $currencystmt->close(); // Close the statement to prevent data leaks
-        createSubscriptionplan($preferencedcurrency, $price); // sandbox account not created yet
+        //createSubscriptionplan($preferencedcurrency, $price); sandbox account not created yet for testing
     }
 
     ?>
@@ -60,10 +60,10 @@
                 $consumerstmt->execute();
                 $consumerstmtresult = $consumerstmt->get_result();
                 $consumerstmtfinances = $consumerstmtresult->fetch_assoc();
+                $creatoramount = getexchangerate($searchedusername, $_SESSION['username']);
                 echo "<div class='contentuser'><h3>Username: $searchedusername</h3><a href='message.php?username=$searchedusername'>Message</a></div>";
-                echo "<form method='POST'><input type='submit' value='Buy content for:";
-                getexchangerate($searchedusername, $_SESSION['username']);
-                echo "'></form>";
+                echo "<form method='POST'><input type='submit' value='Buy content for:".
+                $creatoramount."'></form>";
                 $posts = getPostsByUserId($conn, $userid);
                 $currency = userlocationcurrency();
                 print ("<h3>Preferred currency:" . $currency . "</h3>");

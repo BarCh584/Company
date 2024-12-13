@@ -6,5 +6,5 @@
 - Live streaming to the www 
 Last steps: 
 - Website hosting
-- Plan id for subscriptions
+- Plan id for subscriptions and uncomment createSubscriptionplan instruction
 - Logo

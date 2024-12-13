@@ -1,8 +1,7 @@
 <?php
-require '..\Libraries\Paypalsdk\vendor\autoload.php';
 
 use PayPal\Api\Plan;
-use Paypal\Api\Patch;
+use PayPal\Api\Patch;
 use PayPal\Api\PaymentDefinition;
 use PayPal\Api\MerchantPreferences;
 use PayPal\Auth\OAuthTokenCredential;
@@ -38,7 +37,7 @@ function createSubscriptionplan($currency, $amount)
     $plan->setMerchantPreferences($merchantpreferences);
     try {
         $createdplan = $plan->create($apicontext);
-        $patch = new Paypal\Api\Patch();
+        $patch = new PayPal\Api\Patch();
         $patch->setOp('replace')
             ->setPath('/')
             ->setValue([
