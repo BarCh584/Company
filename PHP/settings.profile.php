@@ -13,7 +13,7 @@
         include_once '../Libraries/navbar.php';
         createnavbar("settings.profile");
         createsettingsnavbar("settings.profile"); ?>
-        <div class="container">
+        <div class="normalcontentnavbar">
             <?php
             form();
             function form()
@@ -31,7 +31,7 @@
                     while ($row = $result->fetch_assoc()) {
                         echo "
             <form class='form' method='POST'>
-                <div class='content' style='margin-left: 15vw'>
+                <div class='content'>
                     <h1>Account</h1>
                     <input type='text' name='username' class='twotextinpfld' placeholder='Username: {$row['username']}' value='{$row['username']}'><br>
                     <h3>Reset Password</h3>

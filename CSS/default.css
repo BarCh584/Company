@@ -97,7 +97,7 @@ input[type="submit"],
 textarea {
   height: 2em;
   margin: 10px;
-  background-color: #282828;
+  background-color: #717171;
   color: #ffffff;
   border: black 1px solid;
   border-radius: 0.33em;
@@ -328,9 +328,21 @@ ul.innavbar li a p.navbararrow {
 /*Normalcontentnavbar*/
 
 .normalcontentnavbar {
-  margin-left: 30vw;
+  margin-left: 35vw;
   text-align: center;
   list-style-type: none;
+}
+.normalcontentnavbar li {
+  margin-bottom: 2vw;
+  /*text-align: left; align to the left*/
+}
+.normalcontentnavbar li a:hover {
+  background-color: #3f3f3f;
+}
+.normalcontentnavbar li a {
+  text-align: left;
+  padding: 0vw 32.5vw 1vw 32.5vw;
+  text-align: center;
 }
 .searchlist {
   left: 30vw;
