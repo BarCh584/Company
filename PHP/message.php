@@ -210,11 +210,12 @@
             $result = $stmt->get_result();
 
             // Ensure only one postgrid
-            echo "<div class='postgrid' id='chatMessages' style='margin-left: 30vw; overflow-y:scroll; max-height: 90vh;'>";
+            echo "<div class='postgrid' id='chatMessages' style='margin-left: 3vw; overflow-y:scroll; max-height: 90vh;'>";
             while ($row = $result->fetch_assoc()) {
                 echo "<div class='postgriditem'>";
-                echo "<h3>{$row['sender']}: {$row['message']} 
-                <small style='color: #3f3f3f'>{$row['createdat']}</small>
+                echo "<h3>{$row['sender']} <small style='color: #3f3f3f'>{$row['createdat']}</small>
+                <br>{$row['message']} 
+                
             </h3>";
                 echo "</div><br>";
             }

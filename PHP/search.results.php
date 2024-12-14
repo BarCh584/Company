@@ -61,9 +61,12 @@
                 $consumerstmtresult = $consumerstmt->get_result();
                 $consumerstmtfinances = $consumerstmtresult->fetch_assoc();
                 $creatoramount = getexchangerate($searchedusername, $_SESSION['username']);
-                echo "<div class='contentuser'><h3>Username: $searchedusername</h3><a href='message.php?username=$searchedusername'>Message</a></div>";
-                echo "<form method='POST'><input type='submit' value='Buy content for:".
-                $creatoramount."'></form>";
+                $subscriptionstmtbuybutton = $conn->prepare("SELECT * FROM subscriptions WHERE subscriber=? AND creator=?");
+                $subscriptionstmtbuybutton->bind_param("ss", $_SESSION['username'], $searchedusername);
+                $subscriptionstmtbuybutton->execute();
+                $subscriptionstmtbuybutton->store_result();
+                echo "<div class='contentuser'><h3>Username: $searchedusername</h3><a href='message.php?username=$searchedusername'>Message</a><a href='show-live-stream.php?username=$searchedusername'> Show live-stream</a></div>";
+                if($subscriptionstmtbuybutton->num_rows == 0) echo "<form method='POST'><input type='submit' value='Buy content for:".$creatoramount."'></form>";  // Only show content buy button if user is not subscribed
                 $posts = getPostsByUserId($conn, $userid);
                 $currency = userlocationcurrency();
                 print ("<h3>Preferred currency:" . $currency . "</h3>");

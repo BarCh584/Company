@@ -284,11 +284,12 @@ ul.innavbar li a p.navbararrow {
     overflow-y: scroll;
     max-height: 60vh;
   }
-  .dmtextinpfld {
-    top: 80vh;
+  #dmtextinpfld {
+    top: 70vh;
+    margin-left: 0vw !important;
   }
   .normalcontentnavbar {
-    margin-left: 0;
+    margin-left: 0vw !important;
   }
 }
 
@@ -362,6 +363,7 @@ ul.innavbar li a p.navbararrow {
 .postgrid {
   overflow-y: scroll;
   max-height: 95vh;
+  text-align: left;
 }
 .postscontainer {
   margin-left: 30%;

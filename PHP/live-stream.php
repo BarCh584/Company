@@ -42,6 +42,7 @@
             try {
                 videoelement.srcObject = await navigator.mediaDevices.getDisplayMedia(displaymediaoption);
                 dumpoptionsinfo();
+                sendStreamToServer(videoelement.srcObject);
             } catch (err) {
                 console.error("Error: " + err);
             }
@@ -57,6 +58,22 @@
             console.log(JSON.stringify(videotrack.getSettings(), null, 2));
             console.info("Track constraints:");
             console.info(JSON.stringify(videotrack.getConstraints(), null, 2));
+        }
+        function sendStreamToServer(stream) {
+            const mediaRecorder = new MediaRecorder(stream);
+            mediaRecorder.ondataavailable = function (event) {
+                if (event.data.size > 0) {
+                    sendData(event.data);
+                }
+            };
+            mediaRecorder.start(2000); // Send data in chunks every second
+        }
+        function sendData(data) {
+            const xhr = new XMLHttpRequest();
+            const username = "<?php echo $_SESSION['username']; ?>";
+            xhr.open("POST", "show-live-stream.php", true);
+            xhr.setRequestHeader("Content-Type", "application/octet-stream");
+            xhr.send(data);
         }
     </script>
 </body>
