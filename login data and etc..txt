@@ -1,0 +1,6 @@
+Google:
+
+OAuth client:
+
+CLIENT-ID: 805307410549-67rfmihm32avcenv324ldhegtgl7p28h.apps.googleusercontent.com
+SECRET-ID: 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s

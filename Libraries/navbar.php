@@ -20,7 +20,7 @@
             "add" => ["add.php", "add.png", "Add"],
             "settings.profile" => ["settings.navbar.php", "settings.profile.png", "Account"],
             "message" => ["message.php", "message.png", "Messages"],
-            "live-stream" => ["live-stream.php", "live-streaming.png", "Livestream"]
+            "live-stream" => ["live-stream.php?username=$_SESSION[username]", "live-streaming.png", "Livestream"]
         ];
         ?>
         <ul class="outnavbar">

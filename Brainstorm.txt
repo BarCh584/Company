@@ -1,9 +1,18 @@
-- Sneak peak (1-2 free images) before payment (optional)
+To do:
 - Startpage
 - DM chats listed using ID's
-- Design
-- Live streaming to the www 
+- Improving Design
+- Profil picture
+- Extending settings
+- Mobile version optimizations
+- Google and facebook sign up
+
 Last steps: 
 - Website hosting
 - Plan id for subscriptions and uncomment createSubscriptionplan instruction
 - Logo
+
+For later:
+
+- Live streaming to the www 
+- Sneak peak (1-2 free images) before payment (optional)

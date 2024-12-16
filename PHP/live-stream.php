@@ -21,6 +21,7 @@
         <button id="stopbutton">Stop</button>
     </div>
     <script>
+            
         const videoelement = document.getElementById("video");
         const startbutton = document.getElementById("startbutton");
         const stopbutton = document.getElementById("stopbutton");

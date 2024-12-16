@@ -1,3 +1,8 @@
+<?php
+require "../Libraries/vendor/autoload.php";
+require "google-auth-config.php";
+$googleloginurl = $client->createAuthUrl();
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -36,7 +41,7 @@
             <br>
             <br>
             <h2>Or sign in with: </h2>
-            <button class="googlesignin">Sign in with Google</button>
+            <a href="<?php echo htmlspecialchars($googleloginurl);?>" class="googlesignin">Sign in with Google</a>
             <br>
             <button class="facebookesignin">Sign in with Facebook</button>
     </div>

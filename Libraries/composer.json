@@ -2,6 +2,7 @@
     "require": {
         "guzzlehttp/guzzle": "7.9.2",
         "paypal/rest-api-sdk-php": "^1.14",
-        "sonata-project/google-authenticator": "^2.3"
+        "sonata-project/google-authenticator": "^2.3",
+        "google/apiclient": "^2.18"
     }
 }
