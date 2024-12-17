@@ -41,7 +41,7 @@ $googleloginurl = $client->createAuthUrl();
             <br>
             <br>
             <h2>Or sign in with: </h2>
-            <a href="<?php echo htmlspecialchars($googleloginurl);?>" class="googlesignin">Sign in with Google</a>
+            <a href="<?php echo htmlspecialchars($googleloginurl); ?>" class="googlesignin">Sign in with Google</a>
             <br>
             <button class="facebookesignin">Sign in with Facebook</button>
     </div>

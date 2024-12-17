@@ -9,6 +9,8 @@ To do:
 
 Last steps: 
 - Website hosting
+- T&Cs(Terms and conditions)
+- Mail server
 - Plan id for subscriptions and uncomment createSubscriptionplan instruction
 - Logo
 
