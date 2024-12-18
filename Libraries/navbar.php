@@ -62,15 +62,16 @@
     }
     ?>
     <!-- Create a 3rd navbar for profile picture and name-->
-    <ul class="">
-        <li><a class="profile">
-            <?=$_SESSION["username"]?>
-            <img width="20px" height="20px" src="../uploads/<?= $_SESSION['username'] ?>/profileimg/img.jpeg" alt="Profile picture">
-        </a>
+    <ul class="profilenavbar">
+        <li>
+            <a class="profile" href="settings.profile.php">
+                <p><?= $_SESSION["username"] ?></p>
+                <img id="profileimg" src="../uploads/<?= $_SESSION['username'] ?>/profileimg/img.jpeg" alt="Profile picture">
+            </a>
         </li>
     </ul>
 
-    
+
 </body>
 <!--Include jquery libary-->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

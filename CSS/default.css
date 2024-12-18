@@ -198,6 +198,37 @@ ul.innavbar li:hover {
 ul.innavbar li a p.navbararrow {
   display: none;
 }
+/*Profilenavbar*/
+ul.profilenavbar li {
+  display: flex;
+  position: fixed;
+  top: 0 !important;
+  right: 0 !important;
+  justify-content: center;
+  list-style-type: none;
+}
+ul.profilenavbar li a img {
+  width: 50px; /* Fixed width */
+  height: 50px; /* Fixed height */
+  border-radius: 50%; /* Makes it a perfect circle */
+  object-fit: cover; /* Crops the image to fit the circle */
+}
+
+
+ul.profilenavbar li a {
+  padding: 1vw;
+  background-color: #282828;
+  display: flex;
+}
+
+ul.profilenavbar li a p {
+  margin-block-start: 0 !important;
+  margin-block-end: 0 !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 
 /* Responsive Design for smaller screens */
 @media screen and (max-width: 768px) {
