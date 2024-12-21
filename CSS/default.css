@@ -159,9 +159,12 @@ ul.innavbar {
   border-left: 1px solid #3f3f3f;
   border-right: 1px solid #3f3f3f;
   position:absolute;
+  margin-block-start: 0 !important; /* Override the user agent stylesheet */
+  margin-block-end: 0 !important; /* Override the user agent stylesheet */
+  padding-inline-start: 0 !important; /* Override the user agent stylesheet */
   margin: 0vw 0vw 0vw 15vw !important; /* Override the user agent stylesheet */
   padding: 0 !important; /* Override the user agent stylesheet */
-  top: 0vh;
+  top: 0vh !important;
   min-height: 100%;
   width: 20vw;
   background-color: #282828;
@@ -199,6 +202,10 @@ ul.innavbar li a p.navbararrow {
   display: none;
 }
 /*Profilenavbar*/
+ul.profilenavbar {
+  margin-block-start: 0 !important; /* Override the user agent stylesheet */
+  margin-block-end: 0 !important; /* Override the user agent stylesheet */
+}
 ul.profilenavbar li {
   display: flex;
   position: fixed;
@@ -208,8 +215,8 @@ ul.profilenavbar li {
   list-style-type: none;
 }
 ul.profilenavbar li a img {
-  width: 50px; /* Fixed width */
-  height: 50px; /* Fixed height */
+  width: 4vw; /* Fixed width */
+  height: 4vw; /* Fixed height */
   border-radius: 50%; /* Makes it a perfect circle */
   object-fit: cover; /* Crops the image to fit the circle */
 }
@@ -229,7 +236,22 @@ ul.profilenavbar li a p {
   align-items: center;
 }
 
-
+.postgrid {
+  overflow-y: scroll;
+  text-align: left !important;
+  max-height: 85vh !important;
+  margin-left: 6vw; 
+}
+#dmtextinpfld {
+  margin-left: 0 !important;
+  top: 70vh;
+  left:0vw;
+  width: 50vw;
+}
+#followerchart {
+  width: 40vw;
+  height: 40vw;
+}
 /* Responsive Design for smaller screens */
 @media screen and (max-width: 768px) {
   ul.outnavbar {
@@ -312,8 +334,11 @@ ul.profilenavbar li a p {
     padding: 0.2vw;
   }
   .postgrid {
+    
+    text-align: left !important;
+    max-height: 70vh !important;
+    margin-left: 6vw; 
     overflow-y: scroll;
-    max-height: 60vh;
   }
   #dmtextinpfld {
     top: 70vh;
@@ -321,6 +346,21 @@ ul.profilenavbar li a p {
   }
   .normalcontentnavbar {
     margin-left: 0vw !important;
+  }
+  .hidden {
+    display: none !important;
+  }
+  ul.profilenavbar li a img {
+    width: 10vw; /* Fixed width */
+    height: 10vw; /* Fixed height */
+    border-radius: 50%; /* Makes it a perfect circle */
+    object-fit: cover; /* Crops the image to fit the circle */
+  }
+  .searchbar {
+    width: 50vw !important;
+  }
+  .submitbutton {
+    display: none;
   }
 }
 
@@ -391,11 +431,6 @@ ul.profilenavbar li a p {
   padding: 1.5vw;
   background-color: #282828;
 }
-.postgrid {
-  overflow-y: scroll;
-  max-height: 95vh;
-  text-align: left;
-}
 .postscontainer {
   margin-left: 30%;
   text-align: left;
@@ -434,3 +469,5 @@ button {
   padding: 5px 10px;
   cursor: pointer;
 }
+
+

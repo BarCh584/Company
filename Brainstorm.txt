@@ -3,6 +3,7 @@ To do:
 - DM chats listed using ID's
 - Improving Design
 - Profil picture
+- Statistics
 - Extending settings
 - Mobile version optimizations
 - Google and facebook sign up
@@ -11,6 +12,7 @@ Last steps:
 - Website hosting
 - T&Cs(Terms and conditions)
 - Mail server
+- uncomment monthly subscription crontab task on raspberry pi
 - Plan id for subscriptions and uncomment createSubscriptionplan instruction
 - Logo
 

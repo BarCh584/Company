@@ -12,6 +12,7 @@
     <?php
     session_start();
     include("translation.php");
+    include('../Libraries/createfollowercount.php');
     function createnavbar($buttontohighlight)
     {
         $buttons = [
@@ -40,6 +41,7 @@
     {
         $settingsButtons = [
             "settings.profile" => ["settings.profile.php", "settings.profile.png", "Account details"],
+            "settings.statistics" => ["settings.statistics.php", "settings.statistics.png", "Statistics"],
             "settings.subscriptions" => ["settings.subscriptions.php", "settings.subscription.png", "Subscriptions"],
             "settings.paymentinformationpaypal" => ["settings.paymentinformationpaypal.php", "settings.paymentinformationpaypal.png", "Payment & finances"],
             "settings.preferences" => ["settings.preferences.php", "settings.preferences.png", "Preferences"],

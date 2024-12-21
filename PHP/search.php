@@ -16,7 +16,7 @@
     <ul class="innavbar">
     <form method="POST" class="content">
         <input type="text" class="searchbar" placeholder="Search for a username" name="username">
-        <input type="submit" name="submit" value="Search" class="submitbutton">
+        <input type="submit" name="submit" value="Search" class="submitbutton" id="submitbutton">
     </form>
     <?php
     if (!isset($_SESSION['id'])) {

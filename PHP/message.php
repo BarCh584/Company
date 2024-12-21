@@ -36,11 +36,12 @@
         <script>
             $(document).ready(function () {
                 let lastMessageTimestamp = null; // Track the latest message timestamp
-
+                console.log("Document ready");
                 function scrolltobottom() {
-                    const chatMessages = $('#chatMessages');
+                    const chatMessages = $('.postgrid');
                     if (chatMessages.length) {
                         chatMessages.scrollTop(chatMessages[0].scrollHeight);
+                        console.log("Scrolled to bottom");
                     }
                 }
 
@@ -90,7 +91,7 @@
                                     // Check if the message is new
                                     if (!lastMessageTimestamp || messageTimestamp > lastMessageTimestamp) {
                                         newMessages = true;
-                                        $("#chatMessages").append(
+                                        $(".postgrid").append(
                                             `<div class='postgriditem'>
                                     <h3>${message.sender}: ${message.message} 
                                     <small style='color: #3f3f3f'>${message.createdat}</small></h3>
@@ -161,7 +162,7 @@
                 if (!in_array($pairKey, $pairs)) {
                     $pairs[] = $pairKey;
                     $contact = $row["sender"] === $currentUser ? $row["receiver"] : $row["sender"];
-                    echo "<li><a class='dmitem' href='message.php?username=$contact'><h4>$contact</h4></a></li>";
+                    echo "<li><a class='dmitem" . (isset($_GET["username"]) ? " hidden" : " visible") . "' href='message.php?username=$contact'><h4>$contact</h4></a></li>";
                 }
             }
             echo "</ul>";
@@ -210,10 +211,11 @@
             $result = $stmt->get_result();
 
             // Ensure only one postgrid
-            echo "<div class='postgrid' id='chatMessages' style='margin-left: 3vw; overflow-y:scroll; max-height: 90vh;'>";
+            echo "<div class='postgrid'>";
             while ($row = $result->fetch_assoc()) {
-                echo "<div class='postgriditem'>";
-                echo "<h3>{$row['sender']} <small style='color: #3f3f3f'>{$row['createdat']}</small>
+                echo "<div class='postgriditem'>
+                <h3>{$row['sender']} 
+                <small style='color: #3f3f3f'>{$row['createdat']}</small>
                 <br>{$row['message']} 
                 
             </h3>";
@@ -227,7 +229,7 @@
 
         showchatmessages($currentUser, $chatUser);
         if ($chatUser): ?>
-            <form method="POST" id="messageform" style="margin-left: 30vw">
+            <form method="POST" id="messageform">
                 <input class="textinpfld" id="dmtextinpfld" type="text" name="message" placeholder="Message"><br>
             </form>
         <?php endif; ?>
