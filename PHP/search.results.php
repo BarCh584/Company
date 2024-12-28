@@ -1,3 +1,33 @@
+<?php
+include_once '../Libraries/navbar.php';
+include('../Libraries/subscription_plan.php');
+include('../Libraries/currency_converter.php');
+createnavbar("search");
+// Database connection details
+$servername = "localhost";
+$db_username = "root";
+$db_password = "";
+$dbname = "Company";
+
+// Create a new database connection
+$conn = new mysqli($servername, $db_username, $db_password, $dbname);
+
+// Check if the connection failed
+if ($conn->connect_error) {
+    die("Connection failed: {$conn->connect_error}");
+}
+$currencystmt = $conn->prepare("SELECT priceforcontentint, priceforcontentcurrency FROM users WHERE email = ?");
+$currencystmt->bind_param("s", $_SESSION['email']);
+if ($currencystmt->execute()) {
+    $currencystmt->bind_result($priceforcontentint, $priceforcontentcurrency);
+    $currencystmt->fetch();
+    $preferencedcurrency = $priceforcontentcurrency;
+    $price = $priceforcontentint;
+    $currencystmt->close(); // Close the statement to prevent data leaks
+    //createSubscriptionplan($preferencedcurrency, $price); sandbox account not created yet for testing
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,37 +40,6 @@
 </head>
 
 <body>
-    <?php
-    include_once '../Libraries/navbar.php';
-    include('../Libraries/subscription_plan.php');
-    include('../Libraries/currency_converter.php');
-    createnavbar("search");
-    // Database connection details
-    $servername = "localhost";
-    $db_username = "root";
-    $db_password = "";
-    $dbname = "Company";
-
-    // Create a new database connection
-    $conn = new mysqli($servername, $db_username, $db_password, $dbname);
-
-    // Check if the connection failed
-    if ($conn->connect_error) {
-        die("Connection failed: {$conn->connect_error}");
-    }
-    $currencystmt = $conn->prepare("SELECT priceforcontentint, priceforcontentcurrency FROM users WHERE email = ?");
-    $currencystmt->bind_param("s", $_SESSION['email']);
-    if ($currencystmt->execute()) {
-        $currencystmt->bind_result($priceforcontentint, $priceforcontentcurrency);
-        $currencystmt->fetch();
-        $preferencedcurrency = $priceforcontentcurrency;
-        $price = $priceforcontentint;
-        $currencystmt->close(); // Close the statement to prevent data leaks
-        //createSubscriptionplan($preferencedcurrency, $price); sandbox account not created yet for testing
-    }
-
-    ?>
-
     <div class="postscontainer">
         <!-- Search form -->
         <?php
@@ -54,7 +53,12 @@
                 $creatorstmt->execute();
                 $creatorstmtresult = $creatorstmt->get_result();
                 $creatorstmtfinances = $creatorstmtresult->fetch_assoc();
-                $userid = $user["id"];
+                if ($user) {
+                    $userid = $user["id"];
+                } else {
+                    echo "<p>User not found.</p>";
+                    exit();
+                }
                 $consumerstmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
                 $consumerstmt->bind_param("s", $_SESSION['email']);
                 $consumerstmt->execute();
@@ -64,9 +68,15 @@
                 $subscriptionstmtbuybutton = $conn->prepare("SELECT * FROM subscriptions WHERE subscriber=? AND creator=?");
                 $subscriptionstmtbuybutton->bind_param("ss", $_SESSION['username'], $searchedusername);
                 $subscriptionstmtbuybutton->execute();
-                $subscriptionstmtbuybutton->store_result();
-                echo "<div class='contentuser'><h3>Username: $searchedusername</h3><a href='message.php?username=$searchedusername'>Message</a><a href='show-live-stream.php?username=$searchedusername'> Show live-stream</a></div>";
-                if($subscriptionstmtbuybutton->num_rows == 0) echo "<form method='POST'><input type='submit' value='Buy content for:".$creatoramount."'></form>";  // Only show content buy button if user is not subscribed
+                $subscriptionstmtbuybutton->store_result(); ?>
+                <div class='contentuser'>
+                    <h3>Username:<?=$searchedusername?></h3>
+                    <a href='message.php?username=<?=$searchedusername?>'>Message</a>
+                    <a href='show-live-stream.php?username=<?=$searchedusername?>'>Show live-stream</a>
+                </div>
+                <?php
+                if ($subscriptionstmtbuybutton->num_rows == 0 && $_GET["username"] != $_SESSION['username'])
+                    echo "<form method='POST'><input type='submit' value='Buy content for:" . $creatoramount . "'></form>";  // Only show content buy button if user is not subscribed
                 $posts = getPostsByUserId($conn, $userid);
                 $currency = userlocationcurrency();
                 print ("<h3>Preferred currency:" . $currency . "</h3>");
@@ -75,7 +85,7 @@
                 $subscriptionstmt->bind_param("ss", $_SESSION['username'], $searchedusername);
                 $subscriptionstmt->execute();
                 $subscriptionstmt->store_result();
-                if ($subscriptionstmt->num_rows == 0) {
+                if ($subscriptionstmt->num_rows == 0 && $_GET["username"] != $_SESSION['username']) {
                     $subscriptionstmt->close(); // Close the prepared statement to prevent data leaks
                     echo "
                 <div class='paymentform'>
@@ -134,7 +144,7 @@
                             displayLikeDislikeButtons($post["id"], 'post', $post["likes"], $post["dislikes"]);
 
                             // Comment form
-                            echo "<form method='POST' class='postcommentform'>
+                            echo "<form method='POST' style='margin-left:2.5vw;' class='postcommentform'>
                             <input type='hidden' name='postid' value='{$post["id"]}'>
                             <input type='text' class='textinpfld' placeholder='Comment' name='comment' required>
                             <input type='submit' name='submit_comment' value='Comment' class='submitbutton'>
@@ -152,7 +162,7 @@
                             $comments = $commentstmt->get_result();
 
                             if ($comments->num_rows > 0) {
-                                echo "<div class='comments'>";
+                                echo "<div style='margin-left:2.5vw;' class='comments'>";
                                 while ($comment = $comments->fetch_assoc()) {
                                     echo "<div class='comment'>";
                                     echo "<p><strong>" . htmlspecialchars($comment["username"]) . "</strong>: " . htmlspecialchars($comment["comment"]) . "</p>";
@@ -160,7 +170,7 @@
                                     displayLikeDislikeButtons($comment["id"], 'comment', $comment["likes"], $comment["dislikes"]);
 
                                     // Reply button and form
-                                    echo "<form method='POST' class='replyform'>
+                                    echo "<form method='POST' style='margin-left: 2.5vw' class='replyform'>
                                 <input type='hidden' name='commentid' value='{$comment["id"]}'>
                                 <input type='text' class='textinpfld' placeholder='Reply' name='reply' required>
                                 <input type='submit' name='submit_reply' value='Reply' class='submitbutton'>
@@ -177,7 +187,7 @@
                                     $replies = $repliesstmt->get_result();
 
                                     if ($replies->num_rows > 0) {
-                                        echo "<div class='replies'>";
+                                        echo "<div style='margin-left: 2.5vw' class='replies'>";
                                         while ($reply = $replies->fetch_assoc()) {
                                             echo "<p><strong>" . htmlspecialchars($reply["username"]) . "</strong>: " . htmlspecialchars($reply["reply"]) . "</p>";
                                             echo "<small>Replied on: " . htmlspecialchars($reply["createdat"]) . "</small>";
@@ -203,10 +213,15 @@
             echo "<p>User not found.</p>";
         }
 
+        // Process form submissions
+        handleCommentSubmission($conn);
+        handleLikesDislikes($conn);
+        handleReplySubmission($conn);
+
         // Close database connection
-        $conn->close();
+        //$conn->close();
         ?>
-        </s>
+    </div>
 </body>
 <style>
     .likeanddislike {
@@ -295,7 +310,8 @@ function handleLikesDislikes($conn)
         $stmt->bind_param("isi", $user_id, $content_type, $content_id);
         $stmt->execute();
         $result = $stmt->get_result();
-        $existingAction = $result->fetch_assoc()['action'];
+        $existingActionRow = $result->fetch_assoc();
+        $existingAction = $existingActionRow ? $existingActionRow['action'] : null;
 
         if ($existingAction) {
             if ($existingAction === $action) {
@@ -398,7 +414,7 @@ function displayLikeDislikeButtons($id, $type, $likes, $dislikes)
     $stmt->bind_param("isi", $user_id, $type, $id);
     $stmt->execute();
     $result = $stmt->get_result();
-    $userAction = $result->fetch_assoc()['action'];
+    $userAction = $result->fetch_assoc()['action'] ?? null; // Check if the user has interacted with this item
 
     $likeActive = $userAction === 'like' ? 'active' : '';
     $dislikeActive = $userAction === 'dislike' ? 'active' : '';
@@ -421,6 +437,7 @@ function displayLikeDislikeButtons($id, $type, $likes, $dislikes)
 handleCommentSubmission($conn);
 handleLikesDislikes($conn);
 handleReplySubmission($conn);
+
 ?>
 
 

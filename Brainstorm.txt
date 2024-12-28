@@ -2,7 +2,6 @@ To do:
 - Startpage
 - DM chats listed using ID's
 - Improving Design
-- Profil picture
 - Statistics
 - Extending settings
 - Mobile version optimizations

@@ -9,28 +9,31 @@
 </head>
 
 <body>
+    <?php
+    include_once '../Libraries/navbar.php';
+    createnavbar("settings.profile");
+    createsettingsnavbar("settings.profile"); ?>
+    <div class="normalcontentnavbar">
         <?php
-        include_once '../Libraries/navbar.php';
-        createnavbar("settings.profile");
-        createsettingsnavbar("settings.profile"); ?>
-        <div class="normalcontentnavbar">
-            <?php
-            form();
-            function form()
-            {
-                $servername = "localhost";
-                $username = "root";
-                $password = "";
-                $dbname = "Company";
-                $conn = new mysqli($servername, $username, $password, $dbname);
-                $sql = $conn->prepare("SELECT * FROM users WHERE email = ?");
-                $sql->bind_param("s", $_SESSION['email']);
-                $sql->execute();
-                $result = $sql->get_result();
-                if ($result->num_rows > 0) {
-                    while ($row = $result->fetch_assoc()) {
-                        echo "
-            <form class='form' method='POST'>
+        form();
+        function form()
+        {
+            $servername = "localhost";
+            $username = "root";
+            $password = "";
+            $dbname = "Company";
+            $conn = new mysqli($servername, $username, $password, $dbname);
+            $sql = $conn->prepare("SELECT * FROM users WHERE email = ?");
+            $sql->bind_param("s", $_SESSION['email']);
+            $sql->execute();
+            $result = $sql->get_result();
+
+
+
+            if ($result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    echo "
+            <form class='form' method='POST' enctype='multipart/form-data'>
                 <div class='content'>
                     <h1>Account</h1>
                     <input type='text' name='username' class='twotextinpfld' placeholder='Username: {$row['username']}' value='{$row['username']}'><br>
@@ -40,18 +43,30 @@
                     <input type='submit' class='submitbutton' value='Save'>
                 </div>
             </form>";
-                    }
                 }
-                $conn->close();
             }
+
             ?>
-            <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+            <form class='form' method='POST' enctype='multipart/form-data' id='profileImageForm'>
+                <input type='file' name='profileimg' id='profileimg'><br>
+                <!--<input type='submit' class='submitbutton' value='Save'>-->
+            </form>
             <script>
-                if (window.innerWidth < 768) {
-                    $(".innavbar").hide();
-                }
+                document.getElementById('profileimg').addEventListener('change', function(event) {
+                    document.getElementById('profileImageForm').submit();
+                });
             </script>
-        </div>
+            <?php
+            $conn->close();
+        }
+        ?>
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+        <script>
+            if (window.innerWidth < 768) {
+                $(".innavbar").hide();
+            }
+        </script>
+    </div>
     </div>
 </body>
 
@@ -73,6 +88,30 @@ if ($conn->connect_error) {
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_FILES["profileimg"])) {
+        $targetdir = "../uploads/".$_SESSION['username']."/profileimg/";
+        $targetfile = $targetdir . "profile_picture." . strtolower(pathinfo($_FILES["profileimg"]["name"], PATHINFO_EXTENSION));
+        $imagefiletype = strtolower(pathinfo($targetfile, PATHINFO_EXTENSION));
+        $check = getimagesize($_FILES["profileimg"]["tmp_name"]);
+        $arrayimgextensions = ["jpg", "jpeg", "png", "gif", "bmp", "webp"];
+        if ($check == false) {
+            die("File is not a valid image format.");
+        }
+        if ($_FILES["profileimg"]["size"] > 5000000) {
+            die("File is too large.");
+        }
+        if (!in_array($imagefiletype, $arrayimgextensions)) {
+            die("File is not a valid image format. Valid formats are jpg, jpeg, png, gif, bmp, webp.");
+        }
+        if (!file_exists($targetdir)) {
+            mkdir($targetdir, 0777, true);
+        }
+        foreach (glob("{$targetdir}*") as $file) {
+            unlink($file); // Delete all files in the directory meaning all profile pictures will be deleted and replaced
+        }
+        move_uploaded_file($_FILES["profileimg"]["tmp_name"], $targetfile);
+        header("Refresh:0"); // Refresh to initialize the new profile picture
+    }
     if (isset($_POST["password"]) && isset($_POST["confirmpassword"])) {
         if ($_POST["password"] === $_POST["confirmpassword"]) {
             $hashed_password = password_hash($_POST["password"], PASSWORD_DEFAULT);

@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,9 +13,8 @@
 
 <body>
     <?php
-    session_start();
     include("translation.php");
-    include('../Libraries/createfollowercount.php');
+    include('../Libraries/createdefaulttableentries.php');
     function createnavbar($buttontohighlight)
     {
         $buttons = [
@@ -62,13 +64,23 @@
         </ul>
         <?php
     }
+    // Get user profile picture
+// Get user profile picture
+    $directory = "../uploads/" . $_SESSION['username'] . "/profileimg/profile_picture.";
+    $imgformats = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'tiff'];
+    $filesfound = [];
+
+    foreach ($imgformats as $format) {
+        $pattern = $directory . $format;
+        $filesfound = array_merge($filesfound, glob($pattern)); // Append found files to $filesfound
+    }
     ?>
     <!-- Create a 3rd navbar for profile picture and name-->
     <ul class="profilenavbar">
         <li>
             <a class="profile" href="settings.profile.php">
                 <p><?= $_SESSION["username"] ?></p>
-                <img id="profileimg" src="../uploads/<?= $_SESSION['username'] ?>/profileimg/img.jpeg" alt="Profile picture">
+                <img id="profileimg" src="<?=$filesfound[0]?>" alt="Profile picture">
             </a>
         </li>
     </ul>
