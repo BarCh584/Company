@@ -23,45 +23,101 @@
     if ($conn->connect_error) {
         die("Connection failed: {$conn->connect_error}");
     }
+
+    // get the right time for the chart from the options
+    
     // for followerchart
-    $followerchartarray = array();
-    $followerstmt = $conn->prepare("SELECT followers FROM dailyfollowerchart WHERE username = ?");
-    $followerstmt->bind_param("s", $_SESSION['username']);
-    $followerstmt->execute();
-    $followerstmt->bind_result($followers);
-    while ($followerstmt->fetch()) {
-        array_push($followerchartarray, $followers);
-    }
-    $followerstmt->close();
-    // for likes and dislikes
-    $likesanddislikeschartarraylikes = array();
-    $likesanddislikeschartarraydislikes = array();
-    $likesanddislikesstmt = $conn->prepare("SELECT likes, dislikes FROM dailylikesdislikeschart WHERE username = ?");
-    $likesanddislikesstmt->bind_param("s", $_SESSION['username']);
-    $likesanddislikesstmt->execute();
-    $likesanddislikesstmt->bind_result($likes, $dislikes);
-    while ($likesanddislikesstmt->fetch()) {
-        array_push($likesanddislikeschartarraylikes, $likes);
-        array_push($likesanddislikeschartarraydislikes, $dislikes);
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        if (isset($_POST["charttimeoptions"])) {
+            $selecttime = $_POST["charttimeoptions"];
+            $dateused = "";
+            switch ($selecttime) {
+                case "week":
+                    $dateused = "DATE_SUB(CURDATE(), INTERVAL 1 WEEK)";
+                    break;
+                case "month":
+                    $dateused = "DATE_SUB(CURDATE(), INTERVAL 1 MONTH)";
+                    break;
+                case "Q1":
+                    $dateused = "DATE_SUB(CURDATE(), INTERVAL 3 MONTH)";
+                    break;
+                case "half":
+                    $dateused = "DATE_SUB(CURDATE(), INTERVAL 6 MONTH)";
+                    break;
+                case "Q3":
+                    $dateused = "DATE_SUB(CURDATE(), INTERVAL 9 MONTH)";
+                    break;
+                case "year":
+                    $dateused = "DATE_SUB(CURDATE(), INTERVAL 1 YEAR)";
+                    break;
+                case "all":
+                    $dateused = "DATE_SUB(CURDATE(), INTERVAL 100 YEAR)";
+                    break;
+            }
+            $followerchartarray = [];
+            $followerstmt = $conn->prepare("SELECT followers FROM dailyfollowerchart WHERE username = ? AND createdat >= ?");
+            $dateused_result = $conn->query("SELECT $dateused as filtered_date")->fetch_assoc()["filtered_date"]; // Get the actual date
+            $followerstmt->bind_param("ss", $_SESSION['username'], $dateused_result); // Use the computed date
+            $followerstmt->execute();
+            $followerstmt->bind_result($followers);
+            while ($followerstmt->fetch()) {
+                array_push($followerchartarray, $followers);
+            }
+            $followerstmt->close();
+            // for likes and dislikes
+            $likesanddislikeschartarraylikes = array();
+            $likesanddislikeschartarraydislikes = array();
+            $likesanddislikesstmt = $conn->prepare("SELECT likes, dislikes FROM dailylikesdislikeschart WHERE username = ? AND createdat >= ?");
+            $likesanddislikesstmt->bind_param("ss", $_SESSION['username'], $dateused_result);
+            $likesanddislikesstmt->execute();
+            $likesanddislikesstmt->bind_result($likes, $dislikes);
+            while ($likesanddislikesstmt->fetch()) {
+                array_push($likesanddislikeschartarraylikes, $likes);
+                array_push($likesanddislikeschartarraydislikes, $dislikes);
+            }
+        }
     }
     ?>
 
     <div class="normalcontentnavbar">
         <h1>Analytics</h1>
-        <select id="charttimeoptions" onchange="changechart();">
-            <option value="week">Weekly</option>
-            <option value="month">Monthly</option>
-            <option value="Q1">3 Months</option>
-            <option value="half">6 Months</option>
-            <option value="Q3">9 Months</option>
-            <option value="year">Yearly</option>
-            <option value="all">All time</option>
-        </select>
-        <select id="chartoptions" onchange="changechart();">
-            <option value="follower">Follower count</option>
-            <option value="likes">Likes count</option>
-            <option value="dislikes">Dislikes count</option>
-        </select>
+        <form method="POST" id="chartForm">
+            <select id="charttimeoptions" name="charttimeoptions" onchange="submitForm();">
+                <option value="week" <?php if (isset($selecttime) && $selecttime === "week")
+                    echo "selected"; ?>>Weekly
+                </option>
+                <option value="month" <?php if (isset($selecttime) && $selecttime === "month")
+                    echo "selected"; ?>>Monthly
+                </option>
+                <option value="Q1" <?php if (isset($selecttime) && $selecttime === "Q1")
+                    echo "selected"; ?>>3 Months
+                </option>
+                <option value="half" <?php if (isset($selecttime) && $selecttime === "half")
+                    echo "selected"; ?>>6 Months
+                </option>
+                <option value="Q3" <?php if (isset($selecttime) && $selecttime === "Q3")
+                    echo "selected"; ?>>9 Months
+                </option>
+                <option value="year" <?php if (isset($selecttime) && $selecttime === "year")
+                    echo "selected"; ?>>Yearly
+                </option>
+                <option value="all" <?php if (isset($selecttime) && $selecttime === "all")
+                    echo "selected"; ?>>All time
+                </option>
+            </select>
+
+            <select id="chartoptions" name="chartoptions" onchange="submitForm();">
+                <option value="follower">Follower count</option>
+                <option value="likes">Likes count</option>
+                <option value="dislikes">Dislikes count</option>
+            </select>
+        </form>
+        <script>
+            function submitForm() {
+                document.getElementById('chartForm').submit();
+                changechart();
+            }
+        </script>
     </div>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script>

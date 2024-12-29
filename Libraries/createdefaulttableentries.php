@@ -1,7 +1,6 @@
 <?php
 /* Create an entry at the beginning of each day at 00:00:00 UTC */
 if (date('H') == 0 && date('i') == 0 && date('s') == 0) {
-    session_start();
     $servername = "localhost";
     $dbusername = "root";
     $password = "";
@@ -23,8 +22,7 @@ if (date('H') == 0 && date('i') == 0 && date('s') == 0) {
     }
 
     // Insert the likes and dislikes count
-    $getliksanddislikesstmt = $conn->prepare("SELECT likes, dislikes FROM posts WHERE accountname = ?");
-    $getliksanddislikesstmt->bind_param("s", $_SESSION['username']);
+    $getliksanddislikesstmt = $conn->prepare("SELECT likes, dislikes FROM posts");
     $getliksanddislikesstmt->execute();
     $getliksanddislikesstmt->store_result();
     $getliksanddislikesstmt->bind_result($likes, $dislikes);
