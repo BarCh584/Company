@@ -237,8 +237,9 @@
 
                 </script>
             </select>
-            <br>
+            <h6>Note, that the currency set for the content will be the currency used to display the content of other creators</h6>
             <input type="text" name="amount" value="<?=$price?>" class="textinpfld" placeholder="Amount">
+            
             <br>
             <input type="submit" value="Submit" class="submitbutton">
         </form>

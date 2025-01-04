@@ -14,7 +14,8 @@ session_start();
 <body>
     <?php
     include("translation.php");
-    include('../Libraries/createdefaulttableentries.php');
+    //include('../Libraries/createdefaultdailytableentries.php');
+    //include('../Libraries/createdefaultmonthlytableentries.php');
     function createnavbar($buttontohighlight)
     {
         $buttons = [

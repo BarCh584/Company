@@ -10,7 +10,6 @@
 
 <body>
     <?php
-    include("../Libraries/createdefaulttableentries.php");
     include_once('../Libraries/navbar.php');
     createnavbar("settings.profile");
     createsettingsnavbar('settings.statistics');
@@ -30,34 +29,34 @@
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (isset($_POST["charttimeoptions"])) {
             $selecttime = $_POST["charttimeoptions"];
-            $dateused = "";
+            $selectchartoption = $_POST["chartoptions"];
+            $dateused = null;
             switch ($selecttime) {
                 case "week":
-                    $dateused = "DATE_SUB(CURDATE(), INTERVAL 1 WEEK)";
+                    $dateused = date("Y-m-d", strtotime("-1 week"));
                     break;
                 case "month":
-                    $dateused = "DATE_SUB(CURDATE(), INTERVAL 1 MONTH)";
+                    $dateused = date("Y-m-d", strtotime("-1 month"));
                     break;
                 case "Q1":
-                    $dateused = "DATE_SUB(CURDATE(), INTERVAL 3 MONTH)";
+                    $dateused = date("Y-m-d", strtotime("-3 month"));
                     break;
                 case "half":
-                    $dateused = "DATE_SUB(CURDATE(), INTERVAL 6 MONTH)";
+                    $dateused = date("Y-m-d", strtotime("-6 month"));
                     break;
                 case "Q3":
-                    $dateused = "DATE_SUB(CURDATE(), INTERVAL 9 MONTH)";
+                    $dateused = date("Y-m-d", strtotime("-9 month"));
                     break;
                 case "year":
-                    $dateused = "DATE_SUB(CURDATE(), INTERVAL 1 YEAR)";
+                    $dateused = date("Y-m-d", strtotime("-1 year"));
                     break;
                 case "all":
-                    $dateused = "DATE_SUB(CURDATE(), INTERVAL 100 YEAR)";
+                    $dateused = date("Y-m-d", strtotime("-100 year"));
                     break;
             }
             $followerchartarray = [];
-            $followerstmt = $conn->prepare("SELECT followers FROM dailyfollowerchart WHERE username = ? AND createdat >= ?");
-            $dateused_result = $conn->query("SELECT $dateused as filtered_date")->fetch_assoc()["filtered_date"]; // Get the actual date
-            $followerstmt->bind_param("ss", $_SESSION['username'], $dateused_result); // Use the computed date
+            $followerstmt = $conn->prepare("SELECT followers FROM `dailyfollowerchart` WHERE createdat >= ? AND username = ?");
+            $followerstmt->bind_param("ss",$dateused,$_SESSION['username']); // Use the computed date
             $followerstmt->execute();
             $followerstmt->bind_result($followers);
             while ($followerstmt->fetch()) {
@@ -67,14 +66,24 @@
             // for likes and dislikes
             $likesanddislikeschartarraylikes = array();
             $likesanddislikeschartarraydislikes = array();
-            $likesanddislikesstmt = $conn->prepare("SELECT likes, dislikes FROM dailylikesdislikeschart WHERE username = ? AND createdat >= ?");
-            $likesanddislikesstmt->bind_param("ss", $_SESSION['username'], $dateused_result);
+            $likesanddislikesstmt = $conn->prepare("SELECT likes, dislikes FROM `dailylikesdislikeschart` WHERE createdat >= ? AND username = ?");
+            $likesanddislikesstmt->bind_param("ss", $dateused,$_SESSION['username']);
             $likesanddislikesstmt->execute();
             $likesanddislikesstmt->bind_result($likes, $dislikes);
             while ($likesanddislikesstmt->fetch()) {
                 array_push($likesanddislikeschartarraylikes, $likes);
                 array_push($likesanddislikeschartarraydislikes, $dislikes);
             }
+            $likesanddislikesstmt->close();
+            $revenuechartarray = array();
+            $revenuestmt = $conn->prepare("SELECT amount, currency FROM `monthlypaymentchart` WHERE createdat >= ? AND creator = ?");
+            $revenuestmt->bind_param("ss", $dateused, $_SESSION['username']);
+            $revenuestmt->execute();
+            $revenuestmt->bind_result($amount, $currency);
+            while ($revenuestmt->fetch()) {
+                array_push($revenuechartarray, array("amount" => $amount, "currency" => $currency));
+            }
+            $revenuestmt->close();
         }
     }
     ?>
@@ -107,9 +116,10 @@
             </select>
 
             <select id="chartoptions" name="chartoptions" onchange="submitForm();">
-                <option value="follower">Follower count</option>
-                <option value="likes">Likes count</option>
-                <option value="dislikes">Dislikes count</option>
+                <option value="follower" <?php if(isset($selectchartoption) && $selectchartoption === "follower") print("selected"); ?>>Follower count</option>
+                <option value="revenue" <?php if(isset($selectchartoption) && $selectchartoption == "revenue") print("selected")?>>Revenue count</option>
+                <option value="likes" <?php if(isset($selectchartoption) && $selectchartoption === "likes") print("selected"); ?>>Likes count</option>
+                <option value="dislikes" <?php if(isset($selectchartoption) && $selectchartoption === "dislikes") print("selected"); ?>>Dislikes count</option>
             </select>
         </form>
         <script>
@@ -138,6 +148,8 @@
                 yValues = <?php echo json_encode($likesanddislikeschartarraylikes); ?>;
             } else if (selectchartoption == "dislikes") {
                 yValues = <?php echo json_encode($likesanddislikeschartarraydislikes); ?>;
+            } else if(selectchartoption == "revenue"){
+                yValues = <?php echo json_encode($revenuechartarray); ?>;
             } else {
                 yValues = <?php echo json_encode($followerchartarray); ?>; // if not defined because the user has not selected an option, default to follower count
             }
@@ -168,31 +180,29 @@
                     Monthdays.push(i);
                 }
                 xValues = Monthdays;
-            } else if (optionselected == "Q1") {
-                let Quarter = ["Jan", "Feb", "Mar"];
-                for (let i = 0; i < Quarter.length; i++) {
-                    xValues[i] = Quarter[i];
+            } else {
+                let startDate;
+                switch (optionselected) {
+                    case "Q1":
+                        startDate = new Date(new Date().setMonth(new Date().getMonth() - 3));
+                        break;
+                    case "half":
+                        startDate = new Date(new Date().setMonth(new Date().getMonth() - 6));
+                        break;
+                    case "Q3":
+                        startDate = new Date(new Date().setMonth(new Date().getMonth() - 9));
+                        break;
+                    case "year":
+                        startDate = new Date(new Date().setFullYear(new Date().getFullYear() - 1));
+                        break;
+                    case "all":
+                        startDate = new Date(new Date().setFullYear(new Date().getFullYear() - 100));
+                        break;
                 }
-            } else if (optionselected == "half") {
-                let Half = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"];
-                for (let i = 0; i < Half.length; i++) {
-                    xValues[i] = Half[i];
-                }
-            } else if (optionselected == "Q3") {
-                let Quarter = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"];
-                for (let i = 0; i < Quarter.length; i++) {
-                    xValues[i] = Quarter[i];
-                }
-            } else if (optionselected === "year") {
-                // Yearly data
-                const year = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-                for (let i = 0; i < year.length; i++) {
-                    xValues[i] = year[i % 12];
-                }
-            } else if (optionselected == "all") {
-                let All = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-                for (let i = 0; i < All.length; i++) {
-                    xValues[i] = All[i];
+                let currentDate = new Date();
+                while (startDate <= currentDate) {
+                    xValues.push(startDate.toISOString().split('T')[0]); // Format date as YYYY-MM-DD
+                    startDate.setDate(startDate.getDate() + 1); // Increment date by 1 day
                 }
             }
             if (selectchartoption != null) {
@@ -211,7 +221,6 @@
                 canvas.id = "chart";
                 document.getElementsByClassName("normalcontentnavbar")[0].appendChild(canvas);
             }
-            console.log(yValues);
             new Chart("chart", {
                 type: "line",
                 data: {
@@ -243,7 +252,6 @@
                                 const currentValue = yValues[currentIndex]; // Current value
                                 const previousValue = currentIndex > 0 ? yValues[currentIndex - 1] : null; // Previous value
                                 let comparison = "";
-
                                 if (previousValue !== null) {
                                     if (currentValue > previousValue) {
                                         comparison = `(+${currentValue - previousValue})`; // Current is greater
@@ -253,7 +261,6 @@
                                         comparison = `(same)`; // No change
                                     }
                                 }
-
                                 return `${currentValue} ${comparison}`; // Display value with comparison
                             }
                         }

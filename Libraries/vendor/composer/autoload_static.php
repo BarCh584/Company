@@ -20,10 +20,6 @@ class ComposerStaticInit85a841823338cc1ed6a1f5924cc64a47
         array (
             'phpseclib3\\' => 11,
         ),
-        'S' => 
-        array (
-            'Sonata\\GoogleAuthenticator\\' => 27,
-        ),
         'P' => 
         array (
             'Psr\\Log\\' => 8,
@@ -42,7 +38,6 @@ class ComposerStaticInit85a841823338cc1ed6a1f5924cc64a47
             'GuzzleHttp\\Promise\\' => 19,
             'GuzzleHttp\\' => 11,
             'Google\\Service\\' => 15,
-            'Google\\Authenticator\\' => 21,
             'Google\\Auth\\' => 12,
             'Google\\' => 7,
         ),
@@ -60,10 +55,6 @@ class ComposerStaticInit85a841823338cc1ed6a1f5924cc64a47
         'phpseclib3\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpseclib/phpseclib/phpseclib',
-        ),
-        'Sonata\\GoogleAuthenticator\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/sonata-project/google-authenticator/src',
         ),
         'Psr\\Log\\' => 
         array (
@@ -105,10 +96,6 @@ class ComposerStaticInit85a841823338cc1ed6a1f5924cc64a47
         'Google\\Service\\' => 
         array (
             0 => __DIR__ . '/..' . '/google/apiclient-services/src',
-        ),
-        'Google\\Authenticator\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/sonata-project/google-authenticator/src',
         ),
         'Google\\Auth\\' => 
         array (
@@ -160,6 +147,7 @@ class ComposerStaticInit85a841823338cc1ed6a1f5924cc64a47
         'Google_Task_Retryable' => __DIR__ . '/..' . '/google/apiclient/src/aliases.php',
         'Google_Task_Runner' => __DIR__ . '/..' . '/google/apiclient/src/aliases.php',
         'Google_Utils_UriTemplate' => __DIR__ . '/..' . '/google/apiclient/src/aliases.php',
+        'PHPGangsta_GoogleAuthenticator' => __DIR__ . '/..' . '/phpgangsta/googleauthenticator/PHPGangsta/GoogleAuthenticator.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

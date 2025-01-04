@@ -2,11 +2,17 @@ To do:
 - Startpage
 - DM chats listed using ID's
 - Improving Design
-- Statistics
 - Extending settings
 - Mobile version optimizations
 - Google and facebook sign up
-
+- Report function (for each post, comment and reply)
+- Legal aspects:
+    - GDPR
+    - TMG
+    - Impressunspflicht
+    - Child saving laws
+    - NetzDG
+    - ToS
 Last steps: 
 - Website hosting
 - T&Cs(Terms and conditions)

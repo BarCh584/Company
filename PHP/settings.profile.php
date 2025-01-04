@@ -16,6 +16,9 @@
     <div class="normalcontentnavbar">
         <?php
         form();
+        function deleteaccount() {
+            header("Location: index.php");
+        }
         function form()
         {
             $servername = "localhost";
@@ -51,12 +54,22 @@
                 <input type='file' name='profileimg' id='profileimg'><br>
                 <!--<input type='submit' class='submitbutton' value='Save'>-->
             </form>
+            <form method="POST">
+                <input type="submit" name="deleteacc" class="submitbutton" value="Delete Account">
+            </form>
             <script>
                 document.getElementById('profileimg').addEventListener('change', function(event) {
                     document.getElementById('profileImageForm').submit();
                 });
             </script>
             <?php
+            if($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deleteacc'])){
+                $sql = $conn->prepare("DELETE FROM users WHERE email = ?");
+                $sql->bind_param("s", $_SESSION['email']);
+                $sql->execute();
+                session_destroy();
+                deleteaccount();
+            }
             $conn->close();
         }
         ?>

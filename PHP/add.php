@@ -1,5 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+<?php
+$submit = false;
+if ($submit == true) {
+    if ($stmt->execute()) {
+        $submit = false;
+        header("Location: search.results.php?username=" . $username);
+    } else {
+        echo "Error: " . $stmt->error;
+    }
+}
+?>
 
 <head>
     <meta charset="UTF-8">
@@ -95,11 +106,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $stmt = $conn->prepare("INSERT INTO posts (accountid, comment, title, accountname) VALUES (?, ?, ?, ?)");
                     $stmt->bind_param("ssss", $accountid, $comment, $title, $username);
                 }
-                if ($stmt->execute()) {
-                    echo "<h3>Your post was successfully created</h3>";
-                } else {
-                    echo "Error: " . $stmt->error;
-                }
+                $submit = true;
             } else {
                 echo "Please fill in the required fields.";
             }

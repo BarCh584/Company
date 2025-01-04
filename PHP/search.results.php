@@ -70,9 +70,9 @@ if ($currencystmt->execute()) {
                 $subscriptionstmtbuybutton->execute();
                 $subscriptionstmtbuybutton->store_result(); ?>
                 <div class='contentuser'>
-                    <h3>Username:<?=$searchedusername?></h3>
-                    <a href='message.php?username=<?=$searchedusername?>'>Message</a>
-                    <a href='show-live-stream.php?username=<?=$searchedusername?>'>Show live-stream</a>
+                    <h3>Username:<?= $searchedusername ?></h3>
+                    <a href='message.php?username=<?= $searchedusername ?>'>Message</a>
+                    <a href='show-live-stream.php?username=<?= $searchedusername ?>'>Show live-stream</a>
                 </div>
                 <?php
                 if ($subscriptionstmtbuybutton->num_rows == 0 && $_GET["username"] != $_SESSION['username'])
@@ -131,7 +131,6 @@ if ($currencystmt->execute()) {
                             echo "<h4>" . htmlspecialchars($post["title"]) . "</h4>";
                             echo "<p>" . htmlspecialchars($post["comment"]) . "</p>";
                             echo "<p><small>Posted on: " . htmlspecialchars($post["createdat"]) . "</small></p>";
-
                             if ($post["file"]) {
                                 $fileExtension = strtolower(pathinfo($post["file"], PATHINFO_EXTENSION));
                                 if (in_array($fileExtension, ["mp3", "mp4", "wav"])) {
@@ -141,7 +140,7 @@ if ($currencystmt->execute()) {
                                 }
                             }
 
-                            displayLikeDislikeButtons($post["id"], 'post', $post["likes"], $post["dislikes"]);
+                            uibuttons($post["id"], 'post', $post["likes"], $post["dislikes"]);
 
                             // Comment form
                             echo "<form method='POST' style='margin-left:2.5vw;' class='postcommentform'>
@@ -167,7 +166,7 @@ if ($currencystmt->execute()) {
                                     echo "<div class='comment'>";
                                     echo "<p><strong>" . htmlspecialchars($comment["username"]) . "</strong>: " . htmlspecialchars($comment["comment"]) . "</p>";
                                     echo "<small>Commented on: " . htmlspecialchars($comment["createdat"]) . "</small>";
-                                    displayLikeDislikeButtons($comment["id"], 'comment', $comment["likes"], $comment["dislikes"]);
+                                    uibuttons($comment["id"], 'comment', $comment["likes"], $comment["dislikes"]);
 
                                     // Reply button and form
                                     echo "<form method='POST' style='margin-left: 2.5vw' class='replyform'>
@@ -401,7 +400,7 @@ function getPostsByUserId($conn, $userid)
 /**
  * Display likes/dislikes buttons
  */
-function displayLikeDislikeButtons($id, $type, $likes, $dislikes)
+function uibuttons($id, $type, $likes, $dislikes)
 {
     global $conn;
     $user_id = $_SESSION['id'];
@@ -430,6 +429,8 @@ function displayLikeDislikeButtons($id, $type, $likes, $dislikes)
             <input type='hidden' name='{$type}id' value='{$id}'>
             <button type='submit' class='$dislikeActive'>👎 $dislikes</button>
         </form>
+        <button class='report-button'>Report</button>
+
     ";
 }
 
@@ -439,7 +440,82 @@ handleLikesDislikes($conn);
 handleReplySubmission($conn);
 
 ?>
+<script>
+    $(document).ready(function () {
+        // Function to open the report popup
+        function openReportPopup(contentId, contentType) {
+            const popupHtml = `
+            <div id="reportPopup" class="popup">
+                <div class="popup-content">
+                <span class="close">&times;</span>
+                <h3>Report ${contentType}</h3>
+                <form id="reportForm">
+                    <input type="hidden" name="contentId" value="${contentId}">
+                    <input type="hidden" name="contentType" value="${contentType}">
+                    <label>
+                    <input type="radio" name="reportReason" value="spam" required> Spam
+                    </label><br>
+                    <label>
+                    <input type="radio" name="reportReason" value="abuse" required> Abuse
+                    </label><br>
+                    <label>
+                    <input type="radio" name="reportReason" value="inappropriate" required> Inappropriate Content
+                    </label><br>
+                    <label>
+                    <input type="radio" name="reportReason" value="other" required> Other
+                    </label><br>
+                    <textarea name="reportDetails" placeholder="Provide more details (optional)"></textarea><br>
+                    <button type="submit">Submit Report</button>
+                </form>
+                </div>
+            </div>
+            `;
+            $('body').append(popupHtml);
+            // Close the popup when the close button is clicked
+            $('.popup .close').click(function () {
+                $('#reportPopup').remove();
+            });
+            // Handle form submission
+            $('#reportForm').submit(function (event) {
+                event.preventDefault();
+                const formData = $(this).serialize();
+                $.post('report.php', formData, function (response) {
+                    alert('Report submitted successfully.');
+                    $('#reportPopup').remove();
+                }).fail(function () {
+                    alert('Failed to submit report.');
+                });
+            });
+        }
 
+        // Add event listeners to report buttons (assuming they exist)
+        $('.report-button').click(function () {
+            const contentId = $(this).data('content-id');
+            const contentType = $(this).data('content-type');
+            openReportPopup(contentId, contentType);
+        });
+        $('body').append(popupHtml);
+        // Close the popup when the close button is clicked
+        $('.popup .close').click(function () {
+            $('#reportPopup').remove();
+        });
+        // Handle form submission
+        $('#reportForm').submit(function (event) {
+            event.preventDefault();
+            const formData = $(this).serialize();
+            $.post('report.php', formData, function (response) {
+                alert('Report submitted successfully.');
+                $('#reportPopup').remove();
+            }).fail(function () {
+                alert('Failed to submit report.');
+            });
+        });
+    });
+    // Example usage: Open the report popup for a post with ID 1
+    // openReportPopup(1, 'post');
+    // Add event listeners to report buttons (assuming they exist)
+
+</script>
 
 
 </html>

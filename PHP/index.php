@@ -14,7 +14,7 @@ $account = new Account($client);
 $googleLoginUrl = "https://cloud.appwrite.io/v1/account/sessions/oauth2/google?project=accessframe";
 session_start();
 
-if($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["googlesubmit"])) {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["googlesubmit"])) {
     try {
         $user = $account->get();
         if ($user) {
@@ -22,7 +22,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["googlesubmit"])) {
             $_SESSION['userId'] = $user['$id'];
             $_SESSION['email'] = $user['email'];
             $_SESSION['name'] = $user['name'];
-    
+
             // Redirect to the dashboard
             header("Location: startpage.php");
             exit();
@@ -114,7 +114,18 @@ if (isset($_POST['emailadd']) && isset($_POST['pswrd'])) {
                     $_SESSION['pswrd'] = $pswrd;
                     $_SESSION['id'] = $id;
                     $_SESSION['username'] = $username;
-                    header("Location: startpage.php");
+                    // Check if user has 2FA enabled
+                    $twoFAstmt = $conn->prepare("SELECT 2FAstatus FROM users WHERE email = ?");
+                    $twoFAstmt->bind_param("s", $email);
+                    $twoFAstmt->execute();
+                    $twoFAstmt->store_result();
+                    $twoFAstmt->bind_result($twoFAstatus);
+                    $twoFAstmt->fetch();
+                    if ($twoFAstatus == 1) {
+                        header("Location: 2FA.php");
+                    } else {
+                        header("Location: startpage.php");
+                    }
                 } else {
                     echo "<script>alert('Incorrect password');</script>";
                 }
