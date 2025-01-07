@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="../CSS/default.css">
     <script src="script.js"></script>
     <title>Document</title>
+    <link rel="icon" href="../Logo.png">
 </head>
 
 <body>

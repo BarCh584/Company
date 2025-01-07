@@ -44,6 +44,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["googlesubmit"])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="../CSS/default.css?v=<?php echo time(); ?>">
+    <link rel="icon" href="../Logo.png">
 </head>
 
 <body>

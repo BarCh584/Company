@@ -37,6 +37,7 @@ if ($currencystmt->execute()) {
     <title>Document</title>
     <link rel="stylesheet" href="../CSS/default.css?v=<?php echo time(); ?>">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link rel="icon" href="../Logo.png">
 </head>
 
 <body>
@@ -73,13 +74,18 @@ if ($currencystmt->execute()) {
                     <h3>Username:<?= $searchedusername ?></h3>
                     <a href='message.php?username=<?= $searchedusername ?>'>Message</a>
                     <a href='show-live-stream.php?username=<?= $searchedusername ?>'>Show live-stream</a>
+                    <br><br>
+                    <a href="search.results.php?username=<?= $searchedusername ?>&show=posts">Posts</a>
+                    <a href="search.results.php?username=<?= $searchedusername ?>&show=images">Images</a>
+                    <a href="search.results.php?username=<?= $searchedusername ?>&show=videos">Videos</a>
+                    <a href="search.results.php?username=<?= $searchedusername ?>&show=projects">Projects</a>
                 </div>
                 <?php
                 if ($subscriptionstmtbuybutton->num_rows == 0 && $_GET["username"] != $_SESSION['username'])
                     echo "<form method='POST'><input type='submit' value='Buy content for:" . $creatoramount . "'></form>";  // Only show content buy button if user is not subscribed
                 $posts = getPostsByUserId($conn, $userid);
                 $currency = userlocationcurrency();
-                print ("<h3>Preferred currency:" . $currency . "</h3>");
+                //print ("<h3>Preferred currency:" . $currency . "</h3>");
                 // Check if session user is subscribed to that creator 
                 $subscriptionstmt = $conn->prepare(("SELECT * FROM subscriptions WHERE subscriber=? AND creator=?"));
                 $subscriptionstmt->bind_param("ss", $_SESSION['username'], $searchedusername);
@@ -123,86 +129,104 @@ if ($currencystmt->execute()) {
                 } else {
                     $subscriptionstmt->close(); // Close the prepared statement to prevent data leaks
                     /* If subscriptions is valid, display content of creator */
-                    if ($posts->num_rows > 0) {
-                        echo "<div class='postgrid'>";
-                        while ($post = $posts->fetch_assoc()) {
-                            echo "<div class='postgriditem'>";
-                            echo "<h4>" . htmlspecialchars(($post["accountname"])) . "</h4>";
-                            echo "<h4>" . htmlspecialchars($post["title"]) . "</h4>";
-                            echo "<p>" . htmlspecialchars($post["comment"]) . "</p>";
-                            echo "<p><small>Posted on: " . htmlspecialchars($post["createdat"]) . "</small></p>";
-                            if ($post["file"]) {
-                                $fileExtension = strtolower(pathinfo($post["file"], PATHINFO_EXTENSION));
-                                if (in_array($fileExtension, ["mp3", "mp4", "wav"])) {
-                                    echo "<video width='400' controls><source src='{$post["file"]}' type='video/mp4'></video>";
-                                } elseif (in_array($fileExtension, ["jpg", "jpeg", "png", "gif"])) {
-                                    echo "<img src='{$post["file"]}' width='400' />";
+                    if ($posts->num_rows > 0 && isset($_GET["show"])) {
+                        if ($_GET["show"] == "posts") {
+                            echo "<div class='postgrid'>";
+                            while ($post = $posts->fetch_assoc()) {
+                                echo "<div class='postgriditem'>";
+                                echo "<h4>" . htmlspecialchars(($post["accountname"])) . "</h4>";
+                                echo "<h4>" . htmlspecialchars($post["title"]) . "</h4>";
+                                echo "<p>" . htmlspecialchars($post["comment"]) . "</p>";
+                                echo "<p><small>Posted on: " . htmlspecialchars($post["createdat"]) . "</small></p>";
+                                if ($post["file"]) {
+                                    $fileExtension = strtolower(pathinfo($post["file"], PATHINFO_EXTENSION));
+                                    if (in_array($fileExtension, ["mp3", "mp4", "wav"])) {
+                                        echo "<video width='400' controls><source src='{$post["file"]}' type='video/mp4'></video>";
+                                    } elseif (in_array($fileExtension, ["jpg", "jpeg", "png", "gif"])) {
+                                        echo "<img src='{$post["file"]}' width='400' />";
+                                    }
                                 }
-                            }
 
-                            uibuttons($post["id"], 'post', $post["likes"], $post["dislikes"]);
+                                uibuttons($post["id"], 'post', $post["likes"], $post["dislikes"]);
 
-                            // Comment form
-                            echo "<form method='POST' style='margin-left:2.5vw;' class='postcommentform'>
+                                // Comment form
+                                echo "<form method='POST' style='margin-left:2.5vw;' class='postcommentform'>
                             <input type='hidden' name='postid' value='{$post["id"]}'>
                             <input type='text' class='textinpfld' placeholder='Comment' name='comment' required>
                             <input type='submit' name='submit_comment' value='Comment' class='submitbutton'>
-                          </form>";
+                            </form>";
 
-                            // Fetch and display comments
-                            $commentstmt = $conn->prepare("
-                        SELECT comments.id, comments.comment, comments.likes, comments.dislikes, comments.createdat, users.username 
-                        FROM comments 
-                        JOIN users ON comments.userid = users.id 
-                        WHERE comments.postid = ? ORDER BY comments.likes DESC
-                    ");
-                            $commentstmt->bind_param("i", $post["id"]);
-                            $commentstmt->execute();
-                            $comments = $commentstmt->get_result();
-
-                            if ($comments->num_rows > 0) {
-                                echo "<div style='margin-left:2.5vw;' class='comments'>";
-                                while ($comment = $comments->fetch_assoc()) {
-                                    echo "<div class='comment'>";
-                                    echo "<p><strong>" . htmlspecialchars($comment["username"]) . "</strong>: " . htmlspecialchars($comment["comment"]) . "</p>";
-                                    echo "<small>Commented on: " . htmlspecialchars($comment["createdat"]) . "</small>";
-                                    uibuttons($comment["id"], 'comment', $comment["likes"], $comment["dislikes"]);
-
-                                    // Reply button and form
-                                    echo "<form method='POST' style='margin-left: 2.5vw' class='replyform'>
-                                <input type='hidden' name='commentid' value='{$comment["id"]}'>
-                                <input type='text' class='textinpfld' placeholder='Reply' name='reply' required>
-                                <input type='submit' name='submit_reply' value='Reply' class='submitbutton'>
-                                </form>";
-
-                                    // Fetch and display replies for this comment
-                                    $repliesstmt = $conn->prepare("
-                            SELECT replies.id, replies.reply, replies.createdat, users.username 
-                            FROM replies JOIN users ON replies.userid = users.id 
-                            WHERE replies.commentid = ? ORDER BY replies.createdat DESC
+                                // Fetch and display comments
+                                $commentstmt = $conn->prepare("
+                            SELECT comments.id, comments.comment, comments.likes, comments.dislikes, comments.createdat, users.username 
+                            FROM comments 
+                            JOIN users ON comments.userid = users.id 
+                            WHERE comments.postid = ? ORDER BY comments.likes DESC
                             ");
-                                    $repliesstmt->bind_param("i", $comment["id"]);
-                                    $repliesstmt->execute();
-                                    $replies = $repliesstmt->get_result();
+                                $commentstmt->bind_param("i", $post["id"]);
+                                $commentstmt->execute();
+                                $comments = $commentstmt->get_result();
 
-                                    if ($replies->num_rows > 0) {
-                                        echo "<div style='margin-left: 2.5vw' class='replies'>";
-                                        while ($reply = $replies->fetch_assoc()) {
-                                            echo "<p><strong>" . htmlspecialchars($reply["username"]) . "</strong>: " . htmlspecialchars($reply["reply"]) . "</p>";
-                                            echo "<small>Replied on: " . htmlspecialchars($reply["createdat"]) . "</small>";
+                                if ($comments->num_rows > 0) {
+                                    echo "<div style='margin-left:2.5vw;' class='comments'>";
+                                    while ($comment = $comments->fetch_assoc()) {
+                                        echo "<div class='comment'>";
+                                        echo "<p><strong>" . htmlspecialchars($comment["username"]) . "</strong>: " . htmlspecialchars($comment["comment"]) . "</p>";
+                                        echo "<small>Commented on: " . htmlspecialchars($comment["createdat"]) . "</small>";
+                                        uibuttons($comment["id"], 'comment', $comment["likes"], $comment["dislikes"]);
+                                        // Reply button and form
+                                        echo "<form method='POST' style='margin-left: 2.5vw' class='replyform'>
+                                                <input type='hidden' name='commentid' value='{$comment["id"]}'>
+                                                <input type='text' class='textinpfld' placeholder='Reply' name='reply' required>
+                                                <input type='submit' name='submit_reply' value='Reply' class='submitbutton'>
+                                                </form>";
+                                        // Fetch and display replies for this comment
+                                        $repliesstmt = $conn->prepare("
+                                            SELECT replies.id, replies.reply, replies.createdat, users.username 
+                                            FROM replies JOIN users ON replies.userid = users.id 
+                                            WHERE replies.commentid = ? ORDER BY replies.createdat DESC
+                                            ");
+                                        $repliesstmt->bind_param("i", $comment["id"]);
+                                        $repliesstmt->execute();
+                                        $replies = $repliesstmt->get_result();
+
+                                        if ($replies->num_rows > 0) {
+                                            echo "<div style='margin-left: 2.5vw' class='replies'>";
+                                            while ($reply = $replies->fetch_assoc()) {
+                                                echo "<p><strong>" . htmlspecialchars($reply["username"]) . "</strong>: " . htmlspecialchars($reply["reply"]) . "</p>";
+                                                echo "<small>Replied on: " . htmlspecialchars($reply["createdat"]) . "</small>";
+                                            }
+                                            echo "</div>";
                                         }
-                                        echo "</div>";
+                                        $repliesstmt->close(); // Close the prepared statement to prevent data leaks
                                     }
-                                    $repliesstmt->close(); // Close the prepared statement to prevent data leaks
-                                }
 
-                                echo "</div>"; // Close comment div
+                                    echo "</div>"; // Close comment div
+                                }
+                                echo "</div>"; // Close comments div
                             }
-                            echo "</div>"; // Close comments div
+                            echo "</div><br>"; // Close postgriditem
+                        } else if ($_GET["show"] == "images") {
+                            echo "<div class='postgrid'>";
+                            $filedir = "../uploads/" . $searchedusername;
+                            $images = glob($filedir . "*.{jgp,jpeg,png,gif}", GLOB_BRACE);
+                            foreach ($images as $image) {
+                                echo "<img src='{$image}' width='400' height='400'/>";
+                            }
+                        } else if ($_GET["show"] == "videos") {
+                            echo "div class='postgrid'>";
+                            $filedir = "../uploads/" . $searchedusername;
+                            $videos = glob($filedir . "*.{mp4,webm,ogg}", GLOB_BRACE);
+                            foreach ($videos as $video) {
+                                echo "<video width='400' controls>
+                                <source src='{$video}' type='video/mp4'>
+                                </video>";
+                            }
+                        } else if ($_GET["show"] == "projects") {
+
                         }
-                        echo "</div><br>"; // Close postgriditem
+                        echo "</div>"; // Close postgrid
                     }
-                    echo "</div>"; // Close postgrid
                 }
             } else {
                 echo "<p>No posts found for this user.</p>";

@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="../CSS/default.css?v=<?php echo time(); ?>">
+    <link rel="icon" href="../Logo.png">
 </head>
 
 <body>
@@ -49,7 +50,7 @@
                 print ("</div>");
             } else {
                 print ("<div>
-                     <p>No user found</p>
+                     <p>User not found</p>
                      </<div>");
             }
         }
