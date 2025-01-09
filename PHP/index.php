@@ -1,41 +1,3 @@
-<?php
-require_once "../Libraries/vendor/autoload.php";
-
-use Appwrite\Client;
-use Appwrite\Services\Account;
-
-// Initialize Appwrite Client
-$client = new Client();
-$client
-    ->setEndpoint('https://cloud.appwrite.io/v1') // Replace with your Appwrite endpoint
-    ->setProject('accessframe');             // Replace with your Appwrite project ID
-
-$account = new Account($client);
-$googleLoginUrl = "https://cloud.appwrite.io/v1/account/sessions/oauth2/google?project=accessframe";
-session_start();
-
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["googlesubmit"])) {
-    try {
-        $user = $account->get();
-        if ($user) {
-            // Store user data in session
-            $_SESSION['userId'] = $user['$id'];
-            $_SESSION['email'] = $user['email'];
-            $_SESSION['name'] = $user['name'];
-
-            // Redirect to the dashboard
-            header("Location: startpage.php");
-            exit();
-        }
-    } catch (Exception $e) {
-        // Redirect to Google OAuth login if session doesn't exist
-        $googleLoginUrl = "https://cloud.appwrite.io/v1/account/sessions/oauth2/google?project=accessframe";
-        header("Location: $googleLoginUrl");
-        exit();
-    }
-}
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -77,15 +39,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["googlesubmit"])) {
         <br>
         <h2>Or sign in with: </h2>
         <form method="POST">
-            <button type="submit" name="googlesubmit" class="googlesignin">Sign in with Google</button>
+        <button type="submit" name="googlesignin" id="googlesignin" class="googlesignin">Sign in with Google</button>
         </form>
         <br>
         <button class="facebookesignin">Sign in with Facebook</button>
     </div>
     </div>
+
 </body>
 
 <?php
+session_start();	
 $servername = "localhost";
 $dbusername = "root";
 $password = "";
@@ -136,6 +100,15 @@ if (isset($_POST['emailadd']) && isset($_POST['pswrd'])) {
         }
     } else {
         $conn->close();
+    }
+}
+
+if (isset($_POST['googlesignin'])) {
+    include_once("main.php");
+    // Save email and password in cookies
+    if (isset($_POST['staysignin'])) {
+        setcookie("email", $_SESSION['email'], time() + (86400 * 30), "/");
+        setcookie("pswrd", $_SESSION['pswrd'], time() + (86400 * 30), "/");
     }
 }
 ?>

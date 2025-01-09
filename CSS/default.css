@@ -272,8 +272,8 @@ ul.profilenavbar li a p {
   }
 
   ul.outnavbar li a img {
-    width: 5vw;
-    height: 5vw;
+    width: 7.5vw;
+    height: 7.5vw;
   }
   ul.outnavbar > li > a > h5 {
     display: none;
@@ -315,9 +315,8 @@ ul.profilenavbar li a p {
   }
   ul.innavbar li a p.navbararrow {
     display: block;
-    margin-left: auto;
+    margin-left: auto - 6vw;
     text-align: right;
-    margin-right: 1vw;
   }
   ul.innavbar {
     margin: 0 !important; /* Override the user agent stylesheet */
