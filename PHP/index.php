@@ -19,9 +19,15 @@
                 autocomplete="email"><br>
             <input type="password" class="textinpfld" name="pswrd" minlength="8" placeholder="Password" required
                 autocomplete="current-password"><br>
-            <label>Stay sign-in</label>
-            <input type="checkbox" value="staysignin">
-            <input type="submit" class="submitbutton">
+            <?php
+            if (!isset($_COOKIE['email']) && !isset($_COOKIE['pswrd'])) {
+                
+                echo "
+                <label>Stay sign-in</label>
+                <input type='checkbox' name='staysignin' value='staysignin'>";
+            }
+            ?>
+            <input type="submit" name="submitbutton" class="submitbutton">
         </form>
         <br>
         <div class="line">
@@ -39,7 +45,8 @@
         <br>
         <h2>Or sign in with: </h2>
         <form method="POST">
-        <button type="submit" name="googlesignin" id="googlesignin" class="googlesignin">Sign in with Google</button>
+            <button type="submit" name="googlesignin" id="googlesignin" class="googlesignin">Sign in with
+                Google</button>
         </form>
         <br>
         <button class="facebookesignin">Sign in with Facebook</button>
@@ -49,7 +56,8 @@
 </body>
 
 <?php
-session_start();	
+error_reporting(E_ALL);
+session_start();
 $servername = "localhost";
 $dbusername = "root";
 $password = "";
@@ -102,7 +110,7 @@ if (isset($_POST['emailadd']) && isset($_POST['pswrd'])) {
         $conn->close();
     }
 }
-
+// Google sign in and save email and password in cookies
 if (isset($_POST['googlesignin'])) {
     include_once("main.php");
     // Save email and password in cookies
@@ -110,6 +118,24 @@ if (isset($_POST['googlesignin'])) {
         setcookie("email", $_SESSION['email'], time() + (86400 * 30), "/");
         setcookie("pswrd", $_SESSION['pswrd'], time() + (86400 * 30), "/");
     }
+}
+// Normal sign in and save email and password in cookies
+if (isset($_POST['emailadd']) && isset($_POST['pswrd']) && isset($_POST['submitbutton'])) {
+    // Save email and password in cookies
+    if (isset($_POST['staysignin'])) {
+        setcookie("email", $_POST['emailadd'], time() + (86400 * 30), "/");
+        setcookie("pswrd", $_POST['pswrd'], time() + (86400 * 30), "/");
+        echo "<script>console.log('Cookies set');</script>";
+    }
+}
+
+// Automatically fill in the login form if cookies are set
+if (isset($_COOKIE['email']) && isset($_COOKIE['pswrd'])) {
+    echo "<script>
+        document.querySelector('input[name=\"emailadd\"]').value = '{$_COOKIE['email']}';
+        document.querySelector('input[name=\"pswrd\"]').value = '{$_COOKIE['pswrd']}';
+        console.log('Cookies set');
+    </script>";
 }
 ?>
 

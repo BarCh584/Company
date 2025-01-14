@@ -10,16 +10,17 @@
 </head>
 
 <body>
+    <?php
+    require "../Libraries/vendor/autoload.php";
+    include_once('../Libraries/navbar.php');
+    createnavbar("settings.profile");
+    createsettingsnavbar('settings.preferences');
+
+    ?>
     <div class="container">
         <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 
-        <?php
-        require "../Libraries/vendor/autoload.php";
-        include_once('../Libraries/navbar.php');
-        createnavbar("settings.profile");
-        createsettingsnavbar('settings.preferences');
-        
-        ?>
+
         <div class="normalcontentnavbar">
             <h1>Preferences</h1>
             <form method="POST">

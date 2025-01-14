@@ -14,15 +14,17 @@
     include('../Libraries/navbar.php');
     createnavbar("live-stream");
     ?>
-    <div style="background-color: #f1f1f1; margin-left: 15vw;">
-        <video id="video" autoplay></video>
-    </div>
-    <div style="margin-left: 15vw;">
-        <button id="startbutton">Start</button>
-        <button id="stopbutton">Stop</button>
+    <div class="container">
+        <div style="background-color: #f1f1f1; margin-left: 15vw;">
+            <video id="video" autoplay></video>
+        </div>
+        <div style="margin-left: 15vw;">
+            <button id="startbutton">Start</button>
+            <button id="stopbutton">Stop</button>
+        </div>
     </div>
     <script>
-            
+
         const videoelement = document.getElementById("video");
         const startbutton = document.getElementById("startbutton");
         const stopbutton = document.getElementById("stopbutton");

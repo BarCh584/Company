@@ -11,29 +11,37 @@
 </head>
 
 <body>
-    <div id="grid">
-        <h1>
-            Sign up
-        </h1>
-        <form method="POST">
-            <input type="text" name="username" class="textinpfld" placeholder="username" required><br>
-            <input type="email" name="email" class="textinpfld" placeholder="email" required><br>
-            <input type="password" name="password" class="textinpfld" placeholder="password" minlength="8" required><br>
-            <input type="password" name="confirmpassword" class="textinpfld" placeholder="confirm password" minlength="8" required><br>
-            <input type="submit" name="submit" class="submitbutton">
-        </form>
-        <br>
-        <a href="index.php">
-            Or log-in
-        </a>
-        <br>
-        <br>
-        <h2>Or sign in with: </h2>
-        <button class="googlesignin">Sign in with Google</button>
-        <br>
-        <button class="facebookesignin">Sign in with Facebook</button>
-    </div>
+    <?php
+    include_once('../Libraries/navbar.php');
+    createnavbar("signup");
+    ?>
+    <div class="container">
 
+        <div id="grid">
+            <h1>
+                Sign up
+            </h1>
+            <form method="POST">
+                <input type="text" name="username" class="textinpfld" placeholder="username" required><br>
+                <input type="email" name="email" class="textinpfld" placeholder="email" required><br>
+                <input type="password" name="password" class="textinpfld" placeholder="password" minlength="8"
+                    required><br>
+                <input type="password" name="confirmpassword" class="textinpfld" placeholder="confirm password"
+                    minlength="8" required><br>
+                <input type="submit" name="submit" class="submitbutton">
+            </form>
+            <br>
+            <a href="index.php">
+                Or log-in
+            </a>
+            <br>
+            <br>
+            <h2>Or sign in with: </h2>
+            <button class="googlesignin">Sign in with Google</button>
+            <br>
+            <button class="facebookesignin">Sign in with Facebook</button>
+        </div>
+    </div>
     <?php
     $servername = "localhost";
     $serverusername = "root";
@@ -52,7 +60,7 @@
         $email = $_SESSION['email'];
         $_SESSION['password'] = $conn->real_escape_string($_POST['password']);
         $password = $_SESSION['password'];
-        if($password != $_POST['confirmpassword']){
+        if ($password != $_POST['confirmpassword']) {
             echo "Passwords do not match";
             exit();
         }

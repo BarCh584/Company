@@ -21,10 +21,10 @@ if ($submit == true) {
 </head>
 
 <body>
+    <?php
+    include_once('../Libraries/navbar.php');
+    createnavbar("add"); ?>
     <div class="container">
-        <?php
-        include_once('../Libraries/navbar.php');
-        createnavbar("add"); ?>
         <div class="normalcontentnavbar">
             <form method="POST" enctype="multipart/form-data" class="content">
                 <label>Title</label><br>

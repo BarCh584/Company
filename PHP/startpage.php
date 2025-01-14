@@ -11,11 +11,12 @@
 </head>
 
 <body>
-    <div class="container">
-        <?php
+<?php
         include_once('../Libraries/navbar.php');
         createnavbar("startpage");
         ?>
+    <div class="container">
+
         <?php
         /*if (!isset($_SESSION['id'])) {
             die("You must be logged in to post comments.");

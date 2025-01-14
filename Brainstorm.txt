@@ -4,7 +4,8 @@ To do:
 - Improving Design
 - Extending settings
 - Mobile version optimizations
-- Google and facebook sign up
+- Facebook sign up
+- Google sign in optimizations (Kinda works)
 - Report function (for each post, comment and reply)
 - Legal aspects:
     - GDPR

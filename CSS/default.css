@@ -4,7 +4,16 @@ body {
   margin: 0;
   padding: 0;
 }
-h1,h2,h3,h4,h5,h6,p,label,input,li a {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+label,
+input,
+li a {
   color: #ffffff;
 }
 /* Navbar styling */
@@ -24,12 +33,20 @@ ul.outnavbar {
   transition: transform 0.3s ease-in-out;
 }
 
-h1,h2,h3,h4,h5,h6,p,label,input,a.dmitem {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+label,
+input,
+a.dmitem {
   color: #ffffff;
   font-family: Arial, Helvetica, sans-serif;
   margin-block-start: 0 !important; /* Override the user agent stylesheet */
   margin-block-end: 0 !important; /* Override the user agent stylesheet */
-
 }
 a.dmitem {
   display: flex;
@@ -70,7 +87,6 @@ ul.outnavbar li a img {
 ul.outnavbar a:hover {
   background-color: #3f3f3f;
 }
-
 
 .textinpfld {
   height: 3em;
@@ -154,12 +170,11 @@ textarea::placeholder {
   outline-offset: 2px;
 }
 
-
 /*Innavbar*/
 ul.innavbar {
   border-left: 1px solid #3f3f3f;
   border-right: 1px solid #3f3f3f;
-  position:absolute;
+  position: absolute;
   margin-block-start: 0 !important; /* Override the user agent stylesheet */
   margin-block-end: 0 !important; /* Override the user agent stylesheet */
   padding-inline-start: 0 !important; /* Override the user agent stylesheet */
@@ -221,7 +236,6 @@ ul.profilenavbar li a img {
   object-fit: cover; /* Crops the image to fit the circle */
 }
 
-
 ul.profilenavbar li a {
   padding: 1vw;
   background-color: #282828;
@@ -240,17 +254,111 @@ ul.profilenavbar li a p {
   overflow-y: scroll;
   text-align: left !important;
   max-height: 85vh !important;
-  margin-left: 6vw; 
+  margin-left: 6vw;
 }
 #dmtextinpfld {
   margin-left: 0 !important;
   top: 70vh;
-  left:0vw;
+  left: 0vw;
   width: 50vw;
 }
 #followerchart {
   width: 40vw;
   height: 40vw;
+}
+
+/*Normalcontentnavbar*/
+
+.normalcontentnavbar {
+  margin-left: 35vw;
+  text-align: center;
+  list-style-type: none;
+}
+.normalcontentnavbar li {
+  margin-bottom: 2vw;
+  /*text-align: left; align to the left*/
+}
+.normalcontentnavbar li a:hover {
+  background-color: #3f3f3f;
+}
+.normalcontentnavbar li a {
+  text-align: left;
+  padding: 0vw 32.5vw 1vw 32.5vw;
+  text-align: center;
+}
+.searchlist {
+  left: 30vw;
+  top: 10vw;
+  position: absolute;
+}
+.searchlist li {
+  list-style-type: none;
+  align-content: center;
+  text-align: center;
+  width: fit-content;
+}
+.searchlist li a {
+  padding: 1.5vw;
+  background-color: #282828;
+}
+.postscontainer {
+  margin-left: 30%;
+  text-align: left;
+}
+.container {
+  unicode-bidi: normal !important;
+  text-align: center;
+}
+
+/*like and dislike button*/
+button.active {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+}
+
+button {
+  background-color: transparent;
+  border: 1px solid #ccc;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+/* cookie banner*/
+.cookie-banner {
+  visibility: hidden;
+  position: fixed;
+  bottom: 40px;
+  left: 20vw;
+  width: 50vw;
+  align-items: center;
+  justify-content: center;
+  background-color: #282828;
+  height: 40vw;
+  cursor: pointer;
+}
+
+.cookies {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.cookiebuttons {
+  display: flex;
+  position: absolute;
+  bottom: 5vw;
+  cursor: pointer;
+}
+.close {
+  background-color: #717171;
+  border: none;
+  color: white;
+  border-radius: 2px;
+  cursor: pointer;
 }
 /* Responsive Design for smaller screens */
 @media screen and (max-width: 650px) {
@@ -334,10 +442,9 @@ ul.profilenavbar li a p {
     padding: 0.2vw;
   }
   .postgrid {
-    
     text-align: left !important;
     max-height: 70vh !important;
-    margin-left: 6vw; 
+    margin-left: 6vw;
     overflow-y: scroll;
   }
   #dmtextinpfld {
@@ -397,53 +504,20 @@ ul.profilenavbar li a p {
   }
 }
 
-/*Normalcontentnavbar*/
-
-.normalcontentnavbar {
-  margin-left: 35vw;
-  text-align: center;
-  list-style-type: none;
-}
-.normalcontentnavbar li {
-  margin-bottom: 2vw;
-  /*text-align: left; align to the left*/
-}
-.normalcontentnavbar li a:hover {
-  background-color: #3f3f3f;
-}
-.normalcontentnavbar li a {
-  text-align: left;
-  padding: 0vw 32.5vw 1vw 32.5vw;
-  text-align: center;
-}
-.searchlist {
-  left: 30vw;
-  top: 10vw;
-  position:absolute;
-}
-.searchlist li {
-  list-style-type: none;
-  align-content: center;
-  text-align: center;
-  width:fit-content;
-}
-.searchlist li a {
-  padding: 1.5vw;
-  background-color: #282828;
-}
-.postscontainer {
-  margin-left: 30%;
-  text-align: left;
-}
-.container {
-  unicode-bidi: normal !important;
-  text-align: center;
-}
-@media (prefers-color-scheme:light) {
+@media (prefers-color-scheme: light) {
   body {
     background-color: #ffffff;
   }
-  h1,h2,h3,h4,h5,h6,p,label,input,li a {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  label,
+  input,
+  li a {
     color: #000000;
   }
   ul.outnavbar {
@@ -454,18 +528,4 @@ ul.profilenavbar li a p {
     background-color: #ffffff;
     border-right: 1px solid #3f3f3f;
   }
-}
-/*like and dislike button*/
-button.active {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-}
-
-button {
-  background-color: transparent;
-  border: 1px solid #ccc;
-  padding: 5px 10px;
-  cursor: pointer;
 }

@@ -32,12 +32,13 @@ function updatelang($lang)
 </head>
 
 <body>
-    <div class="container">
-        <?php
-        include_once('../Libraries/navbar.php');
+<?php
+        include('../Libraries/navbar.php');
         createnavbar("settings.profile");
         createsettingsnavbar('settings.languages');
         ?>
+    <div class="container">
+
         <div class="normalcontentnavbar">
             <form action="settings.preferences.php" method="post">
                 <br>

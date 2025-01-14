@@ -13,7 +13,6 @@
     <?php
     include_once('../Libraries/navbar.php');
     createnavbar("message");
-
     $currentUser = $_SESSION["username"];
     $chatUser = $_GET["username"] ?? null;
 
