@@ -4,6 +4,7 @@
         "paypal/rest-api-sdk-php": "^1.14",
         "google/apiclient": "^2.18",
         "appwrite/appwrite": "^12.1",
-        "phpgangsta/googleauthenticator": "dev-master"
+        "phpgangsta/googleauthenticator": "dev-master",
+        "cboden/ratchet": "^0.4.4"
     }
 }
