@@ -5,6 +5,7 @@
         "google/apiclient": "^2.18",
         "appwrite/appwrite": "^12.1",
         "phpgangsta/googleauthenticator": "dev-master",
+        "ratchet/rfc6455": "^0.3.1",
         "cboden/ratchet": "^0.4.4"
     }
 }

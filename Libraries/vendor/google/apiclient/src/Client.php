@@ -1237,7 +1237,7 @@ class Client
         if (defined('\GuzzleHttp\ClientInterface::MAJOR_VERSION')) {
             $guzzleVersion = ClientInterface::MAJOR_VERSION;
         } elseif (defined('\GuzzleHttp\ClientInterface::VERSION')) {
-            $guzzleVersion = ClientInterface::MAJOR_VERSION;
+            $guzzleVersion = (int)substr(ClientInterface::VERSION, 0, 1);
         }
 
         if (5 === $guzzleVersion) {
@@ -1246,9 +1246,9 @@ class Client
                 'defaults' => ['exceptions' => false],
             ];
             if ($this->isAppEngine()) {
-                if (class_exists(\GuzzleHttp\Handler\StreamHandler::class)) {
+                if (class_exists(StreamHandler::class)) {
                     // set StreamHandler on AppEngine by default
-                    $options['handler'] = new \GuzzleHttp\Handler\StreamHandler();
+                    $options['handler'] = new StreamHandler();
                     $options['defaults']['verify'] = '/etc/ca-certificates.crt';
                 }
             }

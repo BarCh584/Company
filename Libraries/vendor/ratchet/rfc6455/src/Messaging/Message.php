@@ -18,7 +18,8 @@ class Message implements \IteratorAggregate, MessageInterface {
         $this->len = 0;
     }
 
-    public function getIterator(): \Traversable {
+    #[\ReturnTypeWillChange]
+    public function getIterator() {
         return $this->_frames;
     }
 
@@ -26,7 +27,7 @@ class Message implements \IteratorAggregate, MessageInterface {
      * {@inheritdoc}
      */
     #[\ReturnTypeWillChange]
-    public function count(): int {
+    public function count() {
         return count($this->_frames);
     }
 
