@@ -5,7 +5,7 @@ use PayPal\Api\Amount;
 
 function userlocationcurrency()
 {
-    $ip = !empty($_SERVER['HTTP_CLIENT_IP']) ? $_SERVER['HTTP_CLIENT_IP'] : (!empty($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR']);
+    $ip = file_get_contents('https://api.ipify.org');
 
     switch ($ip) {
         case "::1": // "::1" is the localhost IP address
@@ -13,9 +13,9 @@ function userlocationcurrency()
         default:
             $ip = filter_var($ip, FILTER_VALIDATE_IP);
     }
-    $detailrequest = json_decode(file_get_contents("http://ip-api.com/{$ip}/json/"), true);
+    $detailrequest = json_decode(file_get_contents("http://ip-api.com/json/{$ip}"), true);
     if ($detailrequest === null) {
-        die("<p>Invalid ip request</p>");
+        die("<p>Invalid ip request, IP: {$ip}</p>");
     } else if ($detailrequest['status'] == 'fail') {
         die("<p>Failed to get user location</p>");
     } else {

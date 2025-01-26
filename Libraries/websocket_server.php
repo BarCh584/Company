@@ -74,6 +74,6 @@ class ChatServer implements MessageComponentInterface {
     }
 }
 
-$server = new \Ratchet\App('localhost', 8080);
-$server->route('/chat', new ChatServer);
+$server = new \Ratchet\App('192.168.178.180', 8080, '0.0.0.0');
+$server->route('/chat', new ChatServer, ['*']);
 $server->run();

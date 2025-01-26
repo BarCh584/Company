@@ -1,7 +1,7 @@
 <?php
 include_once '../Libraries/navbar.php';
-include('../Libraries/subscription_plan.php');
-include('../Libraries/currency_converter.php');
+include '../Libraries/subscription_plan.php';
+include '../Libraries/currency_converter.php';
 createnavbar("search");
 // Database connection details
 $servername = "localhost";
@@ -26,6 +26,39 @@ if ($currencystmt->execute()) {
     $currencystmt->close(); // Close the statement to prevent data leaks
     //createSubscriptionplan($preferencedcurrency, $price); sandbox account not created yet for testing
 }
+function handleCommentSubmission($conn)
+{
+    if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["submit_comment"], $_POST["postid"])) {
+        $comment = $conn->real_escape_string($_POST["comment"]);
+        $postid = $conn->real_escape_string($_POST["postid"]);
+        $userid = $conn->real_escape_string($_SESSION['id']); // Get the logged-in user's ID from session
+
+        // Insert the comment into the database
+        $commentstmt = $conn->prepare("INSERT INTO comments (postid, userid, comment) VALUES (?, ?, ?)");
+        $commentstmt->bind_param("iis", $postid, $userid, $comment);
+        $commentstmt->execute();
+
+        // Redirect to avoid form resubmission
+        header("Location: {$_SERVER['REQUEST_URI']}");
+        exit();
+    }
+}
+function handleReplySubmission($conn)
+{
+    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit_reply"], $_POST["commentid"])) {
+        $reply = $conn->real_escape_string($_POST["reply"]);
+        $commentid = $conn->real_escape_string($_POST["commentid"]);
+        $userid = $conn->real_escape_string($_SESSION['id']);
+
+        $replystmt = $conn->prepare("INSERT INTO replies (commentid, userid, reply) VALUES (?, ?, ?)");
+        $replystmt->bind_param("iis", $commentid, $userid, $reply);
+        $replystmt->execute();
+
+        header("Location: {$_SERVER['REQUEST_URI']}");
+        exit();
+    }
+
+}
 ?>
 
 <!DOCTYPE html>
@@ -47,7 +80,6 @@ if ($currencystmt->execute()) {
         if (isset($_GET["username"])) {
             $searchedusername = htmlspecialchars($_GET["username"]);
             $user = getUserIdByUsername($conn, $searchedusername);
-
             if ($user) {
                 $creatorstmt = $conn->prepare("SELECT * FROM users WHERE username = ?");
                 $creatorstmt->bind_param("s", $searchedusername);
@@ -82,12 +114,12 @@ if ($currencystmt->execute()) {
                 </div>
                 <?php
                 if ($subscriptionstmtbuybutton->num_rows == 0 && $_GET["username"] != $_SESSION['username'])
-                    echo "<form method='POST'><input type='submit' value='Buy content for:" . $creatoramount . "'></form>";  // Only show content buy button if user is not subscribed
+                    echo "<form method='POST'><input type='submit' value='Buy content for: {$creatoramount}'></form>";  // Only show content buy button if user is not subscribed
                 $posts = getPostsByUserId($conn, $userid);
                 $currency = userlocationcurrency();
                 //print ("<h3>Preferred currency:" . $currency . "</h3>");
                 // Check if session user is subscribed to that creator 
-                $subscriptionstmt = $conn->prepare(("SELECT * FROM subscriptions WHERE subscriber=? AND creator=?"));
+                $subscriptionstmt = $conn->prepare("SELECT * FROM subscriptions WHERE subscriber=? AND creator=?");
                 $subscriptionstmt->bind_param("ss", $_SESSION['username'], $searchedusername);
                 $subscriptionstmt->execute();
                 $subscriptionstmt->store_result();
@@ -131,10 +163,10 @@ if ($currencystmt->execute()) {
                     /* If subscriptions is valid, display content of creator */
                     if ($posts->num_rows > 0 && isset($_GET["show"])) {
                         if ($_GET["show"] == "posts") {
-                            echo "<div class='postgrid'>";
+                            echo "<div class='postgrid' style='margin-left:0vw !important;'>";
                             while ($post = $posts->fetch_assoc()) {
                                 echo "<div class='postgriditem'>";
-                                echo "<h4>" . htmlspecialchars(($post["accountname"])) . "</h4>";
+                                echo "<h4>" . htmlspecialchars($post["accountname"]) . "</h4>";
                                 echo "<h4>" . htmlspecialchars($post["title"]) . "</h4>";
                                 echo "<p>" . htmlspecialchars($post["comment"]) . "</p>";
                                 echo "<p><small>Posted on: " . htmlspecialchars($post["createdat"]) . "</small></p>";
@@ -146,9 +178,7 @@ if ($currencystmt->execute()) {
                                         echo "<img src='{$post["file"]}' width='400' />";
                                     }
                                 }
-
                                 uibuttons($post["id"], 'post', $post["likes"], $post["dislikes"]);
-
                                 // Comment form
                                 echo "<form method='POST' style='margin-left:2.5vw;' class='postcommentform'>
                             <input type='hidden' name='postid' value='{$post["id"]}'>
@@ -167,83 +197,128 @@ if ($currencystmt->execute()) {
                                 $commentstmt->execute();
                                 $comments = $commentstmt->get_result();
 
-                                if ($comments->num_rows > 0) {
-                                    echo "<div style='margin-left:2.5vw;' class='comments'>";
-                                    while ($comment = $comments->fetch_assoc()) {
-                                        echo "<div class='comment'>";
-                                        echo "<p><strong>" . htmlspecialchars($comment["username"]) . "</strong>: " . htmlspecialchars($comment["comment"]) . "</p>";
-                                        echo "<small>Commented on: " . htmlspecialchars($comment["createdat"]) . "</small>";
-                                        uibuttons($comment["id"], 'comment', $comment["likes"], $comment["dislikes"]);
-                                        // Reply button and form
-                                        echo "<form method='POST' style='margin-left: 2.5vw' class='replyform'>
-                                                <input type='hidden' name='commentid' value='{$comment["id"]}'>
-                                                <input type='text' class='textinpfld' placeholder='Reply' name='reply' required>
-                                                <input type='submit' name='submit_reply' value='Reply' class='submitbutton'>
-                                                </form>";
-                                        // Fetch and display replies for this comment
-                                        $repliesstmt = $conn->prepare("
-                                            SELECT replies.id, replies.reply, replies.createdat, users.username 
-                                            FROM replies JOIN users ON replies.userid = users.id 
-                                            WHERE replies.commentid = ? ORDER BY replies.createdat DESC
-                                            ");
-                                        $repliesstmt->bind_param("i", $comment["id"]);
-                                        $repliesstmt->execute();
-                                        $replies = $repliesstmt->get_result();
+                                if ($comments->num_rows > 0) { ?>
+                                    <div style='margin-left:2.5vw;' class='comments'>
+                                        <?php while ($comment = $comments->fetch_assoc()) { ?>
+                                            <div class='comment'>
+                                                <p><strong><?= htmlspecialchars($comment["username"]) ?></strong>:
+                                                    <?= htmlspecialchars($comment["comment"]) ?>
+                                                </p>
+                                                <small>Commented on: <?= htmlspecialchars($comment["createdat"]) ?></small>
+                                                <?php uibuttons($comment["id"], 'comment', $comment["likes"], $comment["dislikes"]); ?>
+                                                <!-- Reply button and form -->
+                                                <form method='POST' style='margin-left: 2.5vw' class='replyform'>
+                                                    <input type='hidden' name='commentid' value='<?= $comment["id"] ?>'>
+                                                    <input type='text' class='textinpfld' placeholder='Reply' name='reply' required>
+                                                    <input type='submit' name='submit_reply' value='Reply' class='submitbutton'>
+                                                </form>
+                                                <!-- Fetch and display replies for this comment -->
+                                                <?php
+                                                $repliesstmt = $conn->prepare("
+                                                    SELECT replies.id, replies.reply, replies.likes, replies.dislikes, replies.createdat, users.username 
+                                                    FROM replies JOIN users ON replies.userid = users.id 
+                                                    WHERE replies.commentid = ? ORDER BY replies.createdat DESC
+                                                ");
+                                                $repliesstmt->bind_param("i", $comment["id"]);
+                                                $repliesstmt->execute();
+                                                $replies = $repliesstmt->get_result();
 
-                                        if ($replies->num_rows > 0) {
-                                            echo "<div style='margin-left: 2.5vw' class='replies'>";
-                                            while ($reply = $replies->fetch_assoc()) {
-                                                echo "<p><strong>" . htmlspecialchars($reply["username"]) . "</strong>: " . htmlspecialchars($reply["reply"]) . "</p>";
-                                                echo "<small>Replied on: " . htmlspecialchars($reply["createdat"]) . "</small>";
-                                            }
-                                            echo "</div>";
-                                        }
-                                        $repliesstmt->close(); // Close the prepared statement to prevent data leaks
-                                    }
-
-                                    echo "</div>"; // Close comment div
-                                }
-                                echo "</div>"; // Close comments div
-                            }
-                            echo "</div><br>"; // Close postgriditem
-                        } else if ($_GET["show"] == "images") {
-                            echo "<div class='postgrid'>";
-                            $filedir = "../uploads/" . $searchedusername;
-                            $images = glob($filedir . "*.{jgp,jpeg,png,gif}", GLOB_BRACE);
+                                                if ($replies->num_rows > 0) { ?>
+                                                    <div style='margin-left: 2.5vw' class='replies'>
+                                                        <?php while ($reply = $replies->fetch_assoc()) { ?>
+                                                            <p><strong><?= htmlspecialchars($reply["username"]) ?></strong>:
+                                                                <?= htmlspecialchars($reply["reply"]) ?>
+                                                            </p>
+                                                            <small>Replied on: <?= htmlspecialchars($reply["createdat"]) ?></small>
+                                                            <?php uibuttons($reply["id"], 'reply', $reply["likes"], $reply["dislikes"]); ?>
+                                                        <?php } ?>
+                                                    </div>
+                                                <?php }
+                                                $repliesstmt->close(); // Close the prepared statement to prevent data leaks
+                                                ?>
+                                            </div>
+                                        <?php } ?>
+                                    </div>
+                                <?php } ?>
+                            </div> <!-- Close postgriditem -->
+                            <?php
+                            } ?>
+                        </div><br> <!-- Close postgrid -->
+                    <?php } else if ($_GET["show"] == "images") { ?>
+                            <div class='postgrid'> <?php
+                            $filedir = "../uploads/{$searchedusername}";
+                            $images = glob("{$filedir}*.{jgp,jpeg,png,gif}", GLOB_BRACE);
                             foreach ($images as $image) {
                                 echo "<img src='{$image}' width='400' height='400'/>";
                             }
-                        } else if ($_GET["show"] == "videos") {
-                            echo "div class='postgrid'>";
-                            $filedir = "../uploads/" . $searchedusername;
-                            $videos = glob($filedir . "*.{mp4,webm,ogg}", GLOB_BRACE);
-                            foreach ($videos as $video) {
-                                echo "<video width='400' controls>
+                        } else if ($_GET["show"] == "videos") { ?>
+                                    <div class='postgrid'> <?php
+                                    $filedir = "../uploads/{$searchedusername}";
+                                    $videos = glob("{$filedir}*.{mp4,webm,ogg}", GLOB_BRACE);
+                                    foreach ($videos as $video) {
+                                        echo "<video width='400' controls>
                                 <source src='{$video}' type='video/mp4'>
                                 </video>";
-                            }
+                                    }
                         } else if ($_GET["show"] == "projects") {
-
-                        }
-                        echo "</div>"; // Close postgrid
-                    }
+                            // Fetch and display projects
+                        } ?>
+                        </div> <!-- Close postgrid -->
+                    <?php }
                 }
             } else {
                 echo "<p>No posts found for this user.</p>";
             }
-
         } else {
             echo "<p>User not found.</p>";
         }
-
         // Process form submissions
         handleCommentSubmission($conn);
         handleLikesDislikes($conn);
         handleReplySubmission($conn);
-
         // Close database connection
-        //$conn->close();
+        $conn->close();
         ?>
+    </div>
+    <div class='report-banner'>
+        <p>Report content for:</p><br>
+        <div class='reasons'>
+        <form method="POST">
+            <div name="reasonselector" class='reasonselector'>
+                <p>Nudity or pornography</p>
+                <input type='radio' name='reason' placeholder='reason'>
+            </div>
+            <div name="reasonselector" class='reasonselector'>
+                <p>Hate speech</p>
+                <input type='radio' name='reason' placeholder='reason'>
+            </div>
+            <div name="reasonselector"class='reasonselector'>
+                <p>Harassment or bullying</p>
+                <input type='radio' name='reason' placeholder='reason'>
+            </div>
+            <div name="reasonselector" class='reasonselector'>
+                <p>False information</p>
+                <input type='radio' name='reason' placeholder='reason'>
+            </div>
+            <div name="reasonselector"class='reasonselector'>
+                <p>Promotes and/or sells illegal activities</p>
+                <input type='radio' name='reason' placeholder='reason'>
+            </div>
+            <div name="reasonselector" class='reasonselector'>
+                <p>Harmful content</p>
+                <input type='radio' name='reason' placeholder='reason'>
+            </div>
+            <div name="reasonselector" class='reasonselector'>
+                <p>Impersonation</p>
+                <input type='radio' name='reason' placeholder='reason'>
+            </div>
+        </div>
+        <div class='buttons'>
+                <button type="submit" name="reportsubmit" class="reportsubmit">Submit</button>
+            </form>
+            <button class="">Imprint</button>
+            <button class="">Privacy policy</button>
+        </div>
     </div>
 </body>
 <style>
@@ -281,50 +356,20 @@ if ($currencystmt->execute()) {
 /**
  * Handle comment submission
  */
-function handleCommentSubmission($conn)
-{
-    if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["submit_comment"], $_POST["postid"])) {
-        $comment = $conn->real_escape_string($_POST["comment"]);
-        $postid = $conn->real_escape_string($_POST["postid"]);
-        $userid = $conn->real_escape_string($_SESSION['id']); // Get the logged-in user's ID from session
 
-        // Insert the comment into the database
-        $commentstmt = $conn->prepare("INSERT INTO comments (postid, userid, comment) VALUES (?, ?, ?)");
-        $commentstmt->bind_param("iis", $postid, $userid, $comment);
-        $commentstmt->execute();
-
-        // Redirect to avoid form resubmission
-        header("Location: {$_SERVER['REQUEST_URI']}");
-        exit();
-    }
-}
-function handleReplySubmission($conn)
-{
-    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit_reply"], $_POST["commentid"])) {
-        $reply = $conn->real_escape_string($_POST["reply"]);
-        $commentid = $conn->real_escape_string($_POST["commentid"]);
-        $userid = $conn->real_escape_string($_SESSION['id']);
-
-        $replystmt = $conn->prepare("INSERT INTO replies (commentid, userid, reply) VALUES (?, ?, ?)");
-        $replystmt->bind_param("iis", $commentid, $userid, $reply);
-        $replystmt->execute();
-
-        header("Location: {$_SERVER['REQUEST_URI']}");
-        exit();
-    }
-}
 /**
  * Handle like or dislike actions for posts and comments
  */
 function handleLikesDislikes($conn)
 {
     if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["action"])) {
-        global $conn;
         $user_id = $_SESSION['id']; // Assuming the user is logged in
         $action = $_POST["action"];
         $content_type = isset($_POST["postid"]) ? 'post' : 'comment';
-        $content_id = $content_type === 'post' ? $_POST["postid"] : $_POST["commentid"];
-
+        $content_id = $content_type === 'post' ? ($_POST["postid"] ?? null) : ($_POST["commentid"] ?? null);
+        if ($content_id === null) {
+            return;
+        }
         // Check if the user has already interacted with this item
         $stmt = $conn->prepare("
             SELECT action FROM user_interactions 
@@ -335,7 +380,6 @@ function handleLikesDislikes($conn)
         $result = $stmt->get_result();
         $existingActionRow = $result->fetch_assoc();
         $existingAction = $existingActionRow ? $existingActionRow['action'] : null;
-
         if ($existingAction) {
             if ($existingAction === $action) {
                 // Deselect: Remove the interaction
@@ -345,7 +389,6 @@ function handleLikesDislikes($conn)
                 ");
                 $deleteStmt->bind_param("isi", $user_id, $content_type, $content_id);
                 $deleteStmt->execute();
-
                 // Decrease the corresponding count
                 $updateStmt = $conn->prepare("
                     UPDATE {$content_type}s SET {$action}s = {$action}s - 1 WHERE id = ?
@@ -360,7 +403,6 @@ function handleLikesDislikes($conn)
                 ");
                 $updateInteractionStmt->bind_param("sisi", $action, $user_id, $content_type, $content_id);
                 $updateInteractionStmt->execute();
-
                 // Decrease the count for the previous action
                 $oppositeAction = ($action === 'like') ? 'dislike' : 'like';
                 $decreaseStmt = $conn->prepare("
@@ -368,7 +410,6 @@ function handleLikesDislikes($conn)
                 ");
                 $decreaseStmt->bind_param("i", $content_id);
                 $decreaseStmt->execute();
-
                 // Increase the count for the new action
                 $increaseStmt = $conn->prepare("
                     UPDATE {$content_type}s SET {$action}s = {$action}s + 1 WHERE id = ?
@@ -394,12 +435,6 @@ function handleLikesDislikes($conn)
         }
     }
 }
-
-
-
-/**
- * Fetch user ID by username
- */
 function getUserIdByUsername($conn, $username)
 {
     $stmt = $conn->prepare("SELECT id FROM users WHERE username=?");
@@ -409,10 +444,6 @@ function getUserIdByUsername($conn, $username)
     $stmt->close();
     return $result;
 }
-
-/**
- * Fetch posts by user ID
- */
 function getPostsByUserId($conn, $userid)
 {
     $stmt = $conn->prepare("SELECT * FROM posts WHERE accountid=?");
@@ -420,10 +451,6 @@ function getPostsByUserId($conn, $userid)
     $stmt->execute();
     return $stmt->get_result();
 }
-
-/**
- * Display likes/dislikes buttons
- */
 function uibuttons($id, $type, $likes, $dislikes)
 {
     global $conn;
@@ -441,7 +468,6 @@ function uibuttons($id, $type, $likes, $dislikes)
 
     $likeActive = $userAction === 'like' ? 'active' : '';
     $dislikeActive = $userAction === 'dislike' ? 'active' : '';
-
     echo "
         <form method='post' style='display: inline;'>
             <input type='hidden' name='action' value='like'>
@@ -458,67 +484,26 @@ function uibuttons($id, $type, $likes, $dislikes)
     ";
 }
 
-// Process form submissions
-handleCommentSubmission($conn);
-handleLikesDislikes($conn);
-handleReplySubmission($conn);
+// Report submission
+if($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["reportsubmit"], $_POST["reason"])) {
+    print("<script>alert('Report reason: ".$_POST["reason"]."');</script>");
+    
+    /*
+    $reason = $conn->real_escape_string($_POST["reason"]);
+    $content_id = $conn->real_escape_string($_POST["content_id"]);
+    $content_type = $conn->real_escape_string($_POST["content_type"]);
+    $user_id = $conn->real_escape_string($_SESSION['id']);
 
+    $reportstmt = $conn->prepare("INSERT INTO reports (user_id, content_id, content_type, reason) VALUES (?, ?, ?, ?)");
+    $reportstmt->bind_param("iiss", $user_id, $content_id, $content_type, $reason);
+    $reportstmt->execute();
+    $reportstmt->close();
+    echo "<script>alert('Report submitted successfully.');</script>";*/
+}
 ?>
 <script>
     $(document).ready(function () {
         // Function to open the report popup
-        function openReportPopup(contentId, contentType) {
-            const popupHtml = `
-            <div id="reportPopup" class="popup">
-                <div class="popup-content">
-                <span class="close">&times;</span>
-                <h3>Report ${contentType}</h3>
-                <form id="reportForm">
-                    <input type="hidden" name="contentId" value="${contentId}">
-                    <input type="hidden" name="contentType" value="${contentType}">
-                    <label>
-                    <input type="radio" name="reportReason" value="spam" required> Spam
-                    </label><br>
-                    <label>
-                    <input type="radio" name="reportReason" value="abuse" required> Abuse
-                    </label><br>
-                    <label>
-                    <input type="radio" name="reportReason" value="inappropriate" required> Inappropriate Content
-                    </label><br>
-                    <label>
-                    <input type="radio" name="reportReason" value="other" required> Other
-                    </label><br>
-                    <textarea name="reportDetails" placeholder="Provide more details (optional)"></textarea><br>
-                    <button type="submit">Submit Report</button>
-                </form>
-                </div>
-            </div>
-            `;
-            $('body').append(popupHtml);
-            // Close the popup when the close button is clicked
-            $('.popup .close').click(function () {
-                $('#reportPopup').remove();
-            });
-            // Handle form submission
-            $('#reportForm').submit(function (event) {
-                event.preventDefault();
-                const formData = $(this).serialize();
-                $.post('report.php', formData, function (response) {
-                    alert('Report submitted successfully.');
-                    $('#reportPopup').remove();
-                }).fail(function () {
-                    alert('Failed to submit report.');
-                });
-            });
-        }
-
-        // Add event listeners to report buttons (assuming they exist)
-        $('.report-button').click(function () {
-            const contentId = $(this).data('content-id');
-            const contentType = $(this).data('content-type');
-            openReportPopup(contentId, contentType);
-        });
-        $('body').append(popupHtml);
         // Close the popup when the close button is clicked
         $('.popup .close').click(function () {
             $('#reportPopup').remove();
@@ -534,12 +519,25 @@ handleReplySubmission($conn);
                 alert('Failed to submit report.');
             });
         });
+        // Close the popup when the close button is clicked
+        $('.popup .close').click(function () {
+            $('#reportPopup').remove();
+        });
+        // Report functionality
+        $(".report-banner").css("visibility", "hidden");
+        $(".report-button").click(function () {
+            // Blur the background and make it clickable per default 
+            $(".report-banner").css("visibility", "visible");
+            $('body > *:not(.report-banner)').css('filter', 'blur(4px)');
+            $('body > *:not(.report-banner)').css('pointer-events', 'all');
+        });
+        $('.reportsubmit').click(function () {
+            // Closes the banner if the user clicks on a button with the class "close"
+            $(".report-banner").css("visibility", "hidden");
+            $('body > *:not(.report-banner)').css('filter', 'blur(0px)');
+            $('body > *:not(.report-banner)').css('pointer-events', 'all');
+        });
     });
-    // Example usage: Open the report popup for a post with ID 1
-    // openReportPopup(1, 'post');
-    // Add event listeners to report buttons (assuming they exist)
-
 </script>
-
 
 </html>

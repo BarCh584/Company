@@ -108,7 +108,7 @@
         const chatWindow = document.getElementById('chatWindow');
         const messageInput = document.getElementById('dmtextinpfld');
 
-        let ws = new WebSocket('ws://localhost:8080/chat');
+        let ws = new WebSocket('ws://192.168.178.180:8080/chat');
 
         ws.onopen = () => {
             console.log('WebSocket connection established.');
@@ -139,7 +139,7 @@
         ws.onclose = () => {
             console.log('WebSocket connection closed. Attempting to reconnect...');
             setTimeout(() => {
-                ws = new WebSocket('ws://localhost:8080/chat');
+                ws = new WebSocket('ws://192.168.178.180:8080/chat');
             }, 5000);
         };
 

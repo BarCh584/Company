@@ -324,7 +324,20 @@ button {
   padding: 5px 10px;
   cursor: pointer;
 }
+/*report banner*/
 
+.report-banner {
+  visibility: hidden;
+  position: fixed;
+  padding: 3vw 5vw;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: auto;
+  align-items: center;
+  justify-content: center;
+  background-color: #282828;
+}
 /* cookie banner*/
 .cookie-banner {
   visibility: hidden;
