@@ -111,6 +111,7 @@
         let ws = new WebSocket('ws://192.168.178.180:8080/chat');
 
         ws.onopen = () => {
+            chatWindow.scrollTop = chatWindow.scrollHeight;
             console.log('WebSocket connection established.');
         };
 

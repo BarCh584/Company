@@ -17,8 +17,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         $uname = $_POST["username"];
-        if(strlen($uname) < 1) {
-            $stmt = $conn->prepare("SELECT username FROM users ORDER BY username ASC");
+        if (strlen($uname) == 0 || $uname == "") {
+            $stmt = $conn->prepare("SELECT username FROM users ORDER BY username DESC");
+            $stmt->execute();
+            $result = $stmt->get_result();
         }
         $stmt = $conn->prepare("SELECT username FROM users WHERE username LIKE CONCAT(?, '%')");
         $stmt->bind_param("s", $uname);
@@ -28,7 +30,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($result->num_rows > 0) {
             echo "<div>";
             while ($row = $result->fetch_assoc()) {
-                echo "<li><a href='search.results.php?username=" . htmlspecialchars($row["username"]) . "'>" . htmlspecialchars($row["username"]) . "</a></li><br>";
+                $directory = "../uploads/" . $row["username"] . "/profileimg/profile_picture.";
+                $imgformats = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'tiff'];
+                $filesfound = [];
+                foreach ($imgformats as $format) {
+                    $pattern = $directory . $format;
+                    $filesfound = array_merge($filesfound, glob($pattern)); // Append found files to $filesfound
+                }
+                if (count($filesfound) == 0) {
+                    $filesfound = ["../Images/Navbar/black/hollow/settings.profile.png"];
+                }
+                echo "<li><a href='search.results.php?username=" . htmlspecialchars($row["username"]) . "'><img class='imagesrc' id='imagesrc' src='$filesfound[0]'>" . htmlspecialchars($row["username"]) . "</a></li><br>";
             }
             echo "</div>";
         } else {
@@ -41,3 +53,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script>
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        $(".imagesrc").each(function () {
+            this.src = this.src.replace("black", "white"); // White icons for dark mode
+        })
+    }
+    else {
+        $(".imagesrc").each(function () {
+            this.src = this.src.replace("white", "black") // black icons for dark mode
+        })
+    }
+</script>

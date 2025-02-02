@@ -1,4 +1,5 @@
 To do:
+- CHANGE EMAIL
 - Startpage
 - DM chats listed using ID's
 - Improving Design
@@ -9,11 +10,10 @@ To do:
 - Report function (for each post, comment and reply)
 - Legal aspects:
     - GDPR
-    - TMG
     - Impressunspflicht
     - Child saving laws
-    - NetzDG
-    - ToS
+    - NetzDG (Remove illegal content within 24h)
+    - ToS (AGB)
 Last steps: 
 - Website hosting
 - T&Cs(Terms and conditions)
@@ -25,4 +25,3 @@ Last steps:
 For later:
 
 - Live streaming to the www 
-- Sneak peak (1-2 free images) before payment (optional)

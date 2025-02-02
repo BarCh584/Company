@@ -2,7 +2,7 @@
 <html lang="en">
 <?php
 $submit = false;
-if ($submit == true) {
+if ($submit) {
     if ($stmt->execute()) {
         $submit = false;
         header("Location: search.results.php?username=" . $username);
@@ -55,7 +55,7 @@ $password = "";
 $dbname = "Company";
 $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+    die("Connection failed: {$conn->connect_error}");
 }
 
 // Handling post submissions
@@ -68,7 +68,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $result = $account->get_result();
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
-            echo "Welcome " . htmlspecialchars($row['username']);
             if (!empty($_POST['comment']) || !empty($_POST['file'])) {
                 $title = $conn->real_escape_string($_POST['title']);
                 $comment = $conn->real_escape_string($_POST['comment']);
@@ -79,13 +78,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $file = null;
                 if (isset($_FILES['file']) && $_FILES['file']['error'] === UPLOAD_ERR_OK) {
                     $filename = basename($_FILES["file"]["name"]);
-                    $targetdir = "../uploads/" . $username . "/";
+                    $targetdir = "../uploads/{$username}/posts/";
                     if (!is_dir($targetdir)) {
                         mkdir($targetdir, 0777, true);
                     }
-                    $targetfilepath = $targetdir . $filename;
+                    /*if(filesize($_FILES["file"]["tmp_name"]) > 100000000) {
+                        die("File is too large.");
+                    }*/
+                    $targetfilepath = "{$targetdir}{$filename}";
                     $filetype = strtolower(pathinfo($targetfilepath, PATHINFO_EXTENSION));
-                    $allowedtypes = array("jpg", "jpeg", "png", "gif", "mp3", "mp4", "wav");
+                    $allowedtypes = ["jpg", "jpeg", "png", "gif", "mp3", "mp4", "wav", "mkv"];
 
                     if (in_array($filetype, $allowedtypes)) {
                         if (move_uploaded_file($_FILES["file"]["tmp_name"], $targetfilepath)) {
@@ -95,7 +97,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             echo "Sorry, there was an error uploading your file.";
                         }
                     } else {
-                        echo "Your file must be of type: " . implode(", ", $allowedtypes);
+                        echo "Your file must be of type: " . implode(",", $allowedtypes);
                     }
                 }
 
@@ -103,9 +105,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 if ($file != null) {
                     $stmt = $conn->prepare("INSERT INTO posts (accountid, comment, title, file, accountname) VALUES (?, ?, ?, ?, ?)");
                     $stmt->bind_param("sssss", $accountid, $comment, $title, $file, $username);
+                    $stmt->execute();
                 } else {
                     $stmt = $conn->prepare("INSERT INTO posts (accountid, comment, title, accountname) VALUES (?, ?, ?, ?)");
                     $stmt->bind_param("ssss", $accountid, $comment, $title, $username);
+                    $stmt->execute();
                 }
                 $submit = true;
             } else {

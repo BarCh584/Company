@@ -34,11 +34,22 @@
                     error: function () {
                         alert('An error occurred while processing your request.');
                     }
-
                 });
             }
         }
-
+        $(document).ready(function() {
+            $.ajax({
+                    url: '../Libraries/searchcode.php',
+                    type: 'POST',
+                    data: { username: username },
+                    success: function (response) {
+                        $('#search-results').html(response);
+                    },
+                    error: function () {
+                        alert('An error occurred while processing your request.');
+                    }
+                });
+        });
     </script>
 </body>
 

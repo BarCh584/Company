@@ -245,16 +245,17 @@ function handleReplySubmission($conn)
                             } ?>
                         </div><br> <!-- Close postgrid -->
                     <?php } else if ($_GET["show"] == "images") { ?>
-                            <div class='postgrid'> <?php
-                            $filedir = "../uploads/{$searchedusername}";
-                            $images = glob("{$filedir}*.{jgp,jpeg,png,gif}", GLOB_BRACE);
+                            <div class='imggrid'> <?php
+                            $filedir = "../uploads/{$searchedusername}/posts/";
+                            $images = glob($filedir . "*.{jpg,jpeg,png,gif}", GLOB_BRACE);
                             foreach ($images as $image) {
-                                echo "<img src='{$image}' width='400' height='400'/>";
+                                echo "<img class='imggridchild' src='{$image}' />"; // Display the image
+                                echo "<script>console.log('{$image}');</script>";
                             }
                         } else if ($_GET["show"] == "videos") { ?>
-                                    <div class='postgrid'> <?php
-                                    $filedir = "../uploads/{$searchedusername}";
-                                    $videos = glob("{$filedir}*.{mp4,webm,ogg}", GLOB_BRACE);
+                                    <div class='imggrid'> <?php
+                                    $filedir = "../uploads/{$searchedusername}/posts";
+                                    $videos = glob("{$filedir}*.{mp4,webm,ogg,mkv}", GLOB_BRACE);
                                     foreach ($videos as $video) {
                                         echo "<video width='400' controls>
                                 <source src='{$video}' type='video/mp4'>
@@ -263,7 +264,7 @@ function handleReplySubmission($conn)
                         } else if ($_GET["show"] == "projects") {
                             // Fetch and display projects
                         } ?>
-                        </div> <!-- Close postgrid -->
+                        </div> <!-- Close imggrid -->
                     <?php }
                 }
             } else {
@@ -283,38 +284,31 @@ function handleReplySubmission($conn)
     <div class='report-banner'>
         <p>Report content for:</p><br>
         <div class='reasons'>
-        <form method="POST">
-            <div name="reasonselector" class='reasonselector'>
-                <p>Nudity or pornography</p>
-                <input type='radio' name='reason' placeholder='reason'>
-            </div>
-            <div name="reasonselector" class='reasonselector'>
-                <p>Hate speech</p>
-                <input type='radio' name='reason' placeholder='reason'>
-            </div>
-            <div name="reasonselector"class='reasonselector'>
-                <p>Harassment or bullying</p>
-                <input type='radio' name='reason' placeholder='reason'>
-            </div>
-            <div name="reasonselector" class='reasonselector'>
-                <p>False information</p>
-                <input type='radio' name='reason' placeholder='reason'>
-            </div>
-            <div name="reasonselector"class='reasonselector'>
-                <p>Promotes and/or sells illegal activities</p>
-                <input type='radio' name='reason' placeholder='reason'>
-            </div>
-            <div name="reasonselector" class='reasonselector'>
-                <p>Harmful content</p>
-                <input type='radio' name='reason' placeholder='reason'>
-            </div>
-            <div name="reasonselector" class='reasonselector'>
-                <p>Impersonation</p>
-                <input type='radio' name='reason' placeholder='reason'>
-            </div>
+            <form method="POST">
+                <label>
+                    <input type="radio" name="reason" value="Nudity or pornography">Nudity or pornography
+                </label>
+                <label>
+                    <input type="radio" name="reason" value="Hate Speech">Hate speech
+                </label>
+                <label>
+                    <input type="radio" name="reason" value="Harassment or bullying">Harassment or bullying
+                </label>
+                <label>
+                    <input type="radio" name="reason" value="False information">False information
+                </label>
+                <label>
+                    <input type="radio" name="reason" value="Promotes and/or sells illegal activities">Promotes and/or sells illegal activities
+                </label>
+                <label>
+                    <input type="radio" name="reason" value="Harmful content">Harmful content
+                </label>
+                <label>
+                    <input type="radio" name="reason" value="Impersonation">Impersonation
+                </label>
         </div>
         <div class='buttons'>
-                <button type="submit" name="reportsubmit" class="reportsubmit">Submit</button>
+            <button type="submit" name="reportsubmit" class="reportsubmit">Submit</button>
             </form>
             <button class="">Imprint</button>
             <button class="">Privacy policy</button>
@@ -485,9 +479,9 @@ function uibuttons($id, $type, $likes, $dislikes)
 }
 
 // Report submission
-if($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["reportsubmit"], $_POST["reason"])) {
-    print("<script>alert('Report reason: ".$_POST["reason"]."');</script>");
-    
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["reportsubmit"], $_POST["reason"])) {
+    print ("<script>alert('Report reason: " . $_POST["reason"] . "');</script>");
+
     /*
     $reason = $conn->real_escape_string($_POST["reason"]);
     $content_id = $conn->real_escape_string($_POST["content_id"]);

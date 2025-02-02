@@ -13,6 +13,7 @@ h6,
 p,
 label,
 input,
+li,
 li a {
   color: #ffffff;
 }
@@ -81,9 +82,13 @@ ul.outnavbar li a {
 ul.outnavbar li a img {
   width: 2vw;
   height: auto;
-  padding-right: 1vw;
+  margin-right: 1vw;
 }
 
+a img#imagesrc {
+  border-radius: 50%; /* Makes it a perfect circle */
+  object-fit: cover; /* Crops the image to fit the circle */
+}
 ul.outnavbar a:hover {
   background-color: #3f3f3f;
 }
@@ -105,6 +110,11 @@ ul.outnavbar a:hover {
   border-radius: 0.33em;
   background-color: #717171;
   color: #ffffff;
+}
+/*Impress list*/
+
+.impresslist {
+  padding-left: 1vw;
 }
 /* Input field styling */
 input[type="text"],
@@ -189,7 +199,7 @@ ul.innavbar {
 ul.innavbar li a img {
   width: 2vw;
   height: 2vw;
-  padding-right: 1vw;
+  margin-right: 1vw;
 }
 ul.innavbar li {
   list-style-type: none;
@@ -229,15 +239,10 @@ ul.profilenavbar li {
   justify-content: center;
   list-style-type: none;
 }
-ul.profilenavbar li a img {
-  width: 4vw; /* Fixed width */
-  height: 4vw; /* Fixed height */
-  border-radius: 50%; /* Makes it a perfect circle */
-  object-fit: cover; /* Crops the image to fit the circle */
-}
+
 
 ul.profilenavbar li a {
-  padding: 1vw;
+  margin-right: 1vw; /* Use margin instead of padding */
   background-color: #282828;
   display: flex;
 }
@@ -256,6 +261,18 @@ ul.profilenavbar li a p {
   max-height: 85vh !important;
   margin-left: 45vw;
 }
+.imggrid {
+  overflow-y: scroll;
+  text-align: left !important;
+  max-height: 85vh !important;
+  display: grid;
+  grid-template-columns: auto auto auto;
+}
+.imggridchild {
+  padding-bottom: 1vh;
+  width: 25vw;
+  height: 25vh;
+}
 #dmtextinpfld {
   margin-left: 0 !important;
   top: 70vh;
@@ -267,6 +284,13 @@ ul.profilenavbar li a p {
   height: 40vw;
 }
 
+/*Impress*/
+.impress {
+  text-align: left;
+  margin-left: 20vw;
+  margin-top: 5vh;
+  padding: 1vh;
+}
 /*Normalcontentnavbar*/
 
 .normalcontentnavbar {
@@ -302,7 +326,7 @@ ul.profilenavbar li a p {
   background-color: #282828;
 }
 .postscontainer {
-  margin-left: 30%;
+  margin-left: 20%;
   text-align: left;
 }
 .container {
@@ -337,6 +361,12 @@ button {
   align-items: center;
   justify-content: center;
   background-color: #282828;
+}
+
+.reasons {
+  display: flex; /* Change from block to flex */
+  flex-direction: column; /* Arrange children in a vertical column */
+  height: 100%; /* Ensure the parent has a defined height */
 }
 /* cookie banner*/
 .cookie-banner {
