@@ -20,11 +20,12 @@
         $checkstmt->bind_result($last_payment_date);
         $checkstmt->fetch();
         $checkstmt->close();
-        
+        global $status;
+        $status = "OK";
         $one_month_ago = date('Y-m-d', strtotime('-1 month'));
         if ($last_payment_date == $one_month_ago) {
-            $monthlypaymentstmt = $conn->prepare("INSERT INTO monthlypaymentchart (currency, amount, creator, subscriber) VALUES (?, ?, ?, ?)");
-            $monthlypaymentstmt->bind_param("siss", $currency, $amount, $creator, $subscriber);
+            $monthlypaymentstmt = $conn->prepare("INSERT INTO monthlypaymentchart (currency, amount, creator, subscriber, status) VALUES (?, ?, ?, ?, ?)");
+            $monthlypaymentstmt->bind_param("siss", $currency, $amount, $creator, $subscriber, $status);
             $monthlypaymentstmt->execute();
             $monthlypaymentstmt->close();
         }

@@ -13,6 +13,7 @@
 
     <?php
     include_once('../Libraries/navbar.php');
+    include_once("../Libraries/currency_converter.php");
     createnavbar("settings.profile");
     createsettingsnavbar('settings.subscriptions'); ?>
     <!--jquery-->
@@ -25,7 +26,9 @@
         </script>
 
         <div class="contentnavbar">
+            <h1>Subscribed to:</h1>
             <?php
+            /* Show subscriptions */
             $servername = "localhost";
             $username = "root";
             $password = "";
@@ -44,9 +47,37 @@
             if ($displaysubscriptionsstmtresult->num_rows > 0) {
                 while ($row = $displaysubscriptionsstmtresult->fetch_assoc()) {
                     echo "<div class='subscription'>";
-                    echo "<p>Subscribed to creator: " . $row['creator'] . "</p>";
+                    echo "<p>" . $row['creator'] . "  <small>since {$row['createdat']}</small></p>";
                     echo "</div>";
                 }
+            }
+
+            // Show payments
+            $paymentstmt = $conn->prepare("SELECT * FROM monthlypaymentchart WHERE subscriber = ?");
+            $paymentstmt->bind_param("s", $_SESSION["username"]);
+            $paymentstmt->execute();
+            $paymentstmtrslt = $paymentstmt->get_result();
+            if ($paymentstmtrslt->num_rows == 0) {
+                die("<div class='subscriptions><p>No payments made yet</p></div>'");
+            } else { ?>
+                <table>
+                    <tr>
+                        <th><p>Descriptions</p></th>
+                        <th><p>Payment</p></th>
+                        <th><p>Status</p></th>
+                    </tr>
+                    <?php while ($row = $paymentstmtrslt->fetch_assoc()) {
+                        $convertedamopunt = getexchangerate($row["creator"], $_SESSION["username"]);
+                        ?>
+                        <tr>
+                            <td><p>Contract fee<br><small> <?=$row["createdat"]?></small></p></td>
+                            <td><p><?= $convertedamopunt ?></p></td>
+                            <td><p><?=$row["status"]?></p></td>
+                        </tr>
+                        <?php
+
+                    }
+                echo "</table>";
             }
             ?>
         </div>

@@ -43,40 +43,40 @@ function getexchangerate($creator, $username)
     $creatorstmt->bind_result($creatorpriceforcontentint, $creatorpriceforcontentcurrency);
     $creatorstmt->fetch();
     $origincurrency = $creatorpriceforcontentcurrency;
-    $originmoney = $creatorpriceforcontentint;
-    $creatorstmt->close();
+    if ($creatorpriceforcontentcurrency == null) {
+        $origincurrency = "USD";
+    }
+        $originmoney = $creatorpriceforcontentint;
+        $creatorstmt->close();
 
-    $userstmt = $conn->prepare("SELECT priceforcontentcurrency FROM users WHERE username = ?");
-    $userstmt->bind_param("s", $username);
-    $userstmt->execute();
-    $userstmt->bind_result($userpriceforcontentcurrency);
-    $userstmt->fetch();
-    $destinationcurrency = $userpriceforcontentcurrency;
-    $userstmt->close();
+        $userstmt = $conn->prepare("SELECT priceforcontentcurrency FROM users WHERE username = ?");
+        $userstmt->bind_param("s", $username);
+        $userstmt->execute();
+        $userstmt->bind_result($userpriceforcontentcurrency);
+        $userstmt->fetch();
+        $destinationcurrency = $userpriceforcontentcurrency;
+        $userstmt->close();
 
-    //Get currency symbol from symbols.json
-    $symbolsjsonfilepath = __DIR__ . "/symbols.json";
-    $jsondata = json_decode(file_get_contents($symbolsjsonfilepath), true);
-    if($jsondata === null)
-    {
-        die("Failed to get currency symbols");
+        //Get currency symbol from symbols.json
+        $symbolsjsonfilepath = __DIR__ . "/symbols.json";
+        $jsondata = json_decode(file_get_contents($symbolsjsonfilepath), true);
+        if ($jsondata === null) {
+            die("Failed to get currency symbols");
+        }
+
+        // Use exchange rate API to get exchange rate
+        $apikey = "7fef6d78105346ffecb0af5e";
+        $apiurl = "https://v6.exchangerate-api.com/v6/{$apikey}/latest/{$origincurrency}";
+        $response = file_get_contents($apiurl);
+        $data = json_decode($response, true);
+
+        if ($data && $data['result'] == 'success') {
+            // Extract the exchange rate
+            $exchangerate = $data['conversion_rates'][$destinationcurrency];
+            return round($exchangerate * $originmoney) . (array_key_exists($destinationcurrency, $jsondata) ? $jsondata[$destinationcurrency] : $destinationcurrency);
+        } else {
+            die("Failed to get exchange rate");
+        }
     }
 
-    // Use exchange rate API to get exchange rate
-    $apikey = "7fef6d78105346ffecb0af5e";
-    $apiurl = "https://v6.exchangerate-api.com/v6/{$apikey}/latest/{$origincurrency}";
-    $response = file_get_contents($apiurl);
-    $data = json_decode($response, true);
-
-    if($data && $data['result'] == 'success')
-    {
-        // Extract the exchange rate
-        $exchangerate = $data['conversion_rates'][$destinationcurrency];
-        return round($exchangerate*$originmoney) . (array_key_exists($destinationcurrency, $jsondata) ? $jsondata[$destinationcurrency] : $destinationcurrency);
-    }
-    else
-    {
-        die("Failed to get exchange rate");
-    }
-}
 ?>

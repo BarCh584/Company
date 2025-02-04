@@ -140,7 +140,7 @@ function handleReplySubmission($conn)
                     paypal.Buttons({
                         createSubscription: function(data, actions) {
                             return actions.subscription.create({
-                                'plan_id': 'planId' // Adjust planid to real planid for it to work
+                                'plan_id': planId // Adjust planid to real planid for it to work
                             });
                         },
                         onApprove: function(data, actions) {
@@ -154,7 +154,7 @@ function handleReplySubmission($conn)
                         }
                     }).render('#paypalcontainer');
                 }).catch (error => console.error('Error:', error));
-                    }); 
+                    
 
                 </script>";
                     die("<p>You are not subscribed to this creator. Please subscribe to view their content.</p>");
@@ -298,7 +298,8 @@ function handleReplySubmission($conn)
                     <input type="radio" name="reason" value="False information">False information
                 </label>
                 <label>
-                    <input type="radio" name="reason" value="Promotes and/or sells illegal activities">Promotes and/or sells illegal activities
+                    <input type="radio" name="reason" value="Promotes and/or sells illegal activities">Promotes and/or
+                    sells illegal activities
                 </label>
                 <label>
                     <input type="radio" name="reason" value="Harmful content">Harmful content

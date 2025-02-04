@@ -4,6 +4,17 @@ body {
   margin: 0;
   padding: 0;
 }
+
+/*table css*/
+table {
+  border-collapse: collapse;
+}
+td,
+th {
+  padding: 1vw;
+  border: 1px solid white;
+}
+/*basic colors*/
 h1,
 h2,
 h3,
@@ -16,6 +27,18 @@ input,
 li,
 li a {
   color: #ffffff;
+}
+
+/*align all items in a div*/
+.messageitems {
+  display: flex;
+  margin-left: 5vw;
+}
+/*smiley button*/
+.smiley {
+  width: 2.5vw;
+  height: 2.5vw;
+  vertical-align: middle;
 }
 /* Navbar styling */
 ul.outnavbar {
@@ -179,7 +202,13 @@ textarea::placeholder {
   outline: 2px solid transparent;
   outline-offset: 2px;
 }
-
+.credits {
+  margin-left: 40vw;
+  text-align: left;
+}
+.credits a {
+  color: rgb(49, 49, 255);
+}
 /*Innavbar*/
 ul.innavbar {
   border-left: 1px solid #3f3f3f;
@@ -239,7 +268,6 @@ ul.profilenavbar li {
   justify-content: center;
   list-style-type: none;
 }
-
 
 ul.profilenavbar li a {
   margin-right: 1vw; /* Use margin instead of padding */
