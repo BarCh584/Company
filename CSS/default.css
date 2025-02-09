@@ -14,6 +14,16 @@ th {
   padding: 1vw;
   border: 1px solid white;
 }
+emoji-picker {
+  display: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1000;
+  max-width: 100vw;
+  max-height: 100vh;
+  overflow: auto;
+}
 /*basic colors*/
 h1,
 h2,
@@ -35,10 +45,14 @@ li a {
   margin-left: 5vw;
 }
 /*smiley button*/
-.smiley {
-  width: 2.5vw;
-  height: 2.5vw;
+#emojibutton {
+  width: 3.75vw;
+  height: 3.75vh;
+}
+#emojibutton > img {
   vertical-align: middle;
+  width: 2.5vw;
+  height: 2.5vh;
 }
 /* Navbar styling */
 ul.outnavbar {

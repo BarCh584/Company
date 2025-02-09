@@ -97,16 +97,39 @@
     <div class="normalcontentnavbar">
         <?php if ($chatUser): ?>
             <div class="messageitems">
+            <emoji-picker></emoji-picker>
                 <form id="messageForm">
                     <input class="textinpfld" id="dmtextinpfld" type="text" name="message" placeholder="Message" required>
 
                 </form>
-                <input type="image" id="smiley" class="smiley" src="../Images/message/smiley.png">
-                <div id="emojipicker"></div>
+                <button id="emojibutton"><img src="../Images/message/smiley.png"></button>
+                
             </div>
         <?php endif; ?>
     </div>
+    <script type="module">
+        import 'https://unpkg.com/emoji-picker-element';
 
+        document.addEventListener("DOMContentLoaded", function () {
+            const emojiPicker = document.querySelector("emoji-picker");
+            const textInput = document.getElementById("dmtextinpfld");
+            const emojiButton = document.getElementById("emojibutton");
+
+            emojiButton.addEventListener("click", () => {
+                emojiPicker.style.display = emojiPicker.style.display === "none" ? "block" : "none";
+            });
+
+            emojiPicker.addEventListener("emoji-click", (event) => {
+                textInput.value += event.detail.unicode;
+            });
+
+            document.addEventListener("click", (event) => {
+                if (!emojiButton.contains(event.target) && !emojiPicker.contains(event.target)) {
+                    emojiPicker.style.display = "none";
+                }
+            });
+        });
+    </script>
     <script>
 
         const currentUser = "<?= $currentUser ?>";
@@ -186,34 +209,7 @@
             chatWindow.scrollTop = chatWindow.scrollHeight;
         }
     </script>
-    <script src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@emoji-mart/data"></script>
-    <script src="https://unpkg.com/@emoji-mart/react"></script>
-    <script>
-        const { useState } = React;
-        const { createRoot } = ReactDOM;
-        const { Picker } = window.EmojiMart;
-        const data = window.EmojiMart.data;
-        function EmojiPicker() {
-            const [emoji, setEmoji] = useState("");
 
-            return (
-                <div>
-                    <Picker data={data} onEmojiSelect={(e) => {
-                        document.getElementById("textInput").value += e.native;
-                    }} />
-                </div>
-            );
-        }
-
-        document.getElementById("emojiButton").addEventListener("click", () => {
-            const pickerContainer = document.getElementById("emojiPicker");
-            pickerContainer.innerHTML = ""; // Clear previous picker if exists
-
-            const root = createRoot(pickerContainer);
-            root.render(<EmojiPicker />);
-        });
 
     </script>
 </body>
