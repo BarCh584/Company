@@ -13,9 +13,10 @@
 
     <?php
     include_once('../Libraries/navbar.php');
-    include_once("../Libraries/currency_converter.php");
     createnavbar("settings.profile");
-    createsettingsnavbar('settings.subscriptions'); ?>
+    createsettingsnavbar('settings.subscriptions');
+    include_once("../Libraries/currency_converter.php");
+ ?>
     <!--jquery-->
     <div class="normalcontentnavbar">
         <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>

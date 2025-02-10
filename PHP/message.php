@@ -63,7 +63,7 @@
         if (!$chatUser)
             return;
 
-        echo "<h1>Chat with $chatUser</h1>";
+        echo "<h1 id='chattitle'>Chat with $chatUser</h1>";
 
         $conn = connectDatabase();
         $stmt = $conn->prepare("
@@ -97,39 +97,52 @@
     <div class="normalcontentnavbar">
         <?php if ($chatUser): ?>
             <div class="messageitems">
-            <emoji-picker></emoji-picker>
                 <form id="messageForm">
                     <input class="textinpfld" id="dmtextinpfld" type="text" name="message" placeholder="Message" required>
-
                 </form>
-                <button id="emojibutton"><img src="../Images/message/smiley.png"></button>
-                
+                <div id="emojidiv" style="position: relative;">
+                    <button id="emojibutton"><img id="smileyimg" src="../Images/message/black/smiley.png"></button>
+                    <emoji-picker></emoji-picker>
+                </div>
             </div>
         <?php endif; ?>
     </div>
     <script type="module">
-        import 'https://unpkg.com/emoji-picker-element';
+    import 'https://unpkg.com/emoji-picker-element';
 
-        document.addEventListener("DOMContentLoaded", function () {
-            const emojiPicker = document.querySelector("emoji-picker");
-            const textInput = document.getElementById("dmtextinpfld");
-            const emojiButton = document.getElementById("emojibutton");
+    document.addEventListener("DOMContentLoaded", function () {
+        const emojiPicker = document.querySelector("emoji-picker");
+        const textInput = document.getElementById("dmtextinpfld");
+        const emojiButton = document.getElementById("emojibutton");
 
-            emojiButton.addEventListener("click", () => {
-                emojiPicker.style.display = emojiPicker.style.display === "none" ? "block" : "none";
-            });
+        // Set initial state of emojiPicker to "none"
+        emojiPicker.style.display = "none";
 
-            emojiPicker.addEventListener("emoji-click", (event) => {
-                textInput.value += event.detail.unicode;
-            });
-
-            document.addEventListener("click", (event) => {
-                if (!emojiButton.contains(event.target) && !emojiPicker.contains(event.target)) {
-                    emojiPicker.style.display = "none";
-                }
-            });
+        emojiButton.addEventListener("click", () => {
+            emojiPicker.style.display = emojiPicker.style.display === "none" ? "block" : "none";
         });
-    </script>
+
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            $("#smileyimg").each(function () {
+                this.src = this.src.replace("black", "white"); // White icons for dark mode
+            });
+        } else {
+            $("#smileyimg").each(function () {
+                this.src = this.src.replace("white", "black"); // Black icons for light mode
+            });
+        }
+
+        emojiPicker.addEventListener("emoji-click", (event) => {
+            textInput.value += event.detail.unicode;
+        });
+
+        document.addEventListener("click", (event) => {
+            if (!emojiButton.contains(event.target) && !emojiPicker.contains(event.target)) {
+                emojiPicker.style.display = "none";
+            }
+        });
+    });
+</script>
     <script>
 
         const currentUser = "<?= $currentUser ?>";

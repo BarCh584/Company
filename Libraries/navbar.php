@@ -169,7 +169,7 @@ session_start();
         $(".filled").each(function () {
             this.src = this.src.replace("hollow", "filled");
         })
-        if (window.innerWidth >= 768) {
+        if (window.innerWidth >= 650) {
             $(".innavbar").show();
         }
         // cookie banner script

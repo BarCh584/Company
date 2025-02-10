@@ -17,6 +17,10 @@
         ?>
 
         <div class="credits" style="text-align: left !important;">
+                <h1>Legal aspects</h1>
+                <h3><a href="generaltermsandconditions.php">General terms & conditions</a></h3>
+                <h3><a href="privacypolicy.php">Privacy policy</a></h3>
+                <h3><a href="Impress.php">Impress</a></h3>
                 <h1>Special thanks to:</h1>
                 <h3>Flaticon icons from the following links:</h3>
                 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>

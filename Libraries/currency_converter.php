@@ -1,7 +1,5 @@
 <?php
 require 'vendor/autoload.php';
-use CurrencyApi\CurrencyApi\CurrencyApiClient;
-use PayPal\Api\Amount;
 
 function userlocationcurrency()
 {

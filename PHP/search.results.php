@@ -467,12 +467,12 @@ function uibuttons($id, $type, $likes, $dislikes)
         <form method='post' style='display: inline;'>
             <input type='hidden' name='action' value='like'>
             <input type='hidden' name='{$type}id' value='{$id}'>
-            <button type='submit' class='$likeActive'>👍 $likes</button>
+            <button type='submit' style='display: inline;' class='$likeActive'><img class='likedislike' src='../Images/Posts-comments-replies/black/hollow/like.png'> <span>$likes</span></button>
         </form>
         <form method='post' style='display: inline;'>
             <input type='hidden' name='action' value='dislike'>
             <input type='hidden' name='{$type}id' value='{$id}'>
-            <button type='submit' class='$dislikeActive'>👎 $dislikes</button>
+            <button type='submit' style='display: inline;' class='$dislikeActive'><img class='likedislike' src='../Images/Posts-comments-replies/black/hollow/dislike.png'> <span>$dislikes</span></button>
         </form>
         <button class='report-button'>Report</button>
 
@@ -498,6 +498,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["reportsubmit"], $_POST
 ?>
 <script>
     $(document).ready(function () {
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            $(".likedislike").each(function () {
+                this.src = this.src.replace("black", "white"); // White icons for dark mode
+            });
+        }
+        else {
+            $(".likedislike").each(function () {
+                this.src = this.src.replace("white", "black") // black icons for dark mode
+            });
+        }
+        /*$("#hollow").each(function () {
+            this.src = this.src.replace("filled", "hollow");
+        });
+
+        $("#filled").each(function () {
+            this.src = this.src.replace("hollow", "filled");
+        });*/
         // Function to open the report popup
         // Close the popup when the close button is clicked
         $('.popup .close').click(function () {
