@@ -57,7 +57,6 @@ function handleReplySubmission($conn)
         header("Location: {$_SERVER['REQUEST_URI']}");
         exit();
     }
-
 }
 ?>
 
@@ -74,7 +73,7 @@ function handleReplySubmission($conn)
 </head>
 
 <body>
-    <div class="postscontainer">
+    <div class="normalcontentnavbar">
         <!-- Search form -->
         <?php
         if (isset($_GET["username"])) {
@@ -162,10 +161,11 @@ function handleReplySubmission($conn)
                     $subscriptionstmt->close(); // Close the prepared statement to prevent data leaks
                     /* If subscriptions is valid, display content of creator */
                     if ($posts->num_rows > 0 && isset($_GET["show"])) {
-                        if ($_GET["show"] == "posts") {
+                        if ($_GET["show"] == "posts" && !isset($_GET["postid"])) {
                             echo "<div class='postgrid' style='margin-left:0vw !important;'>";
                             while ($post = $posts->fetch_assoc()) {
-                                echo "<div class='postgriditem'>";
+                            
+                                echo "<a href='search.postid.php?postid=$post[id]'><div class='postgriditem'>";
                                 echo "<h4>" . htmlspecialchars($post["accountname"]) . "</h4>";
                                 echo "<h4>" . htmlspecialchars($post["title"]) . "</h4>";
                                 echo "<p>" . htmlspecialchars($post["comment"]) . "</p>";
@@ -173,74 +173,27 @@ function handleReplySubmission($conn)
                                 if ($post["file"]) {
                                     $fileExtension = strtolower(pathinfo($post["file"], PATHINFO_EXTENSION));
                                     if (in_array($fileExtension, ["mp3", "mp4", "wav"])) {
-                                        echo "<video width='400' controls><source src='{$post["file"]}' type='video/mp4'></video>";
+                                        echo "<video width='400' controls><source src='../uploads/{$_GET['username']}/posts/{$post["file"]}' type='video/mp4'></video>";
                                     } elseif (in_array($fileExtension, ["jpg", "jpeg", "png", "gif"])) {
-                                        echo "<img src='{$post["file"]}' width='400' />";
+                                        echo "<img src='../uploads/{$_GET['username']}/posts/{$post["file"]}' width='400' /><br>";
                                     }
                                 }
-                                uibuttons($post["id"], 'post', $post["likes"], $post["dislikes"]);
-                                // Comment form
-                                echo "<form method='POST' style='margin-left:2.5vw;' class='postcommentform'>
-                            <input type='hidden' name='postid' value='{$post["id"]}'>
-                            <input type='text' class='textinpfld' placeholder='Comment' name='comment' required>
-                            <input type='submit' name='submit_comment' value='Comment' class='submitbutton'>
-                            </form>";
-
-                                // Fetch and display comments
-                                $commentstmt = $conn->prepare("
-                            SELECT comments.id, comments.comment, comments.likes, comments.dislikes, comments.createdat, users.username 
-                            FROM comments 
-                            JOIN users ON comments.userid = users.id 
-                            WHERE comments.postid = ? ORDER BY comments.likes DESC
-                            ");
-                                $commentstmt->bind_param("i", $post["id"]);
-                                $commentstmt->execute();
-                                $comments = $commentstmt->get_result();
-
-                                if ($comments->num_rows > 0) { ?>
-                                    <div style='margin-left:2.5vw;' class='comments'>
-                                        <?php while ($comment = $comments->fetch_assoc()) { ?>
-                                            <div class='comment'>
-                                                <p><strong><?= htmlspecialchars($comment["username"]) ?></strong>:
-                                                    <?= htmlspecialchars($comment["comment"]) ?>
-                                                </p>
-                                                <small>Commented on: <?= htmlspecialchars($comment["createdat"]) ?></small>
-                                                <?php uibuttons($comment["id"], 'comment', $comment["likes"], $comment["dislikes"]); ?>
-                                                <!-- Reply button and form -->
-                                                <form method='POST' style='margin-left: 2.5vw' class='replyform'>
-                                                    <input type='hidden' name='commentid' value='<?= $comment["id"] ?>'>
-                                                    <input type='text' class='textinpfld' placeholder='Reply' name='reply' required>
-                                                    <input type='submit' name='submit_reply' value='Reply' class='submitbutton'>
-                                                </form>
-                                                <!-- Fetch and display replies for this comment -->
-                                                <?php
-                                                $repliesstmt = $conn->prepare("
-                                                    SELECT replies.id, replies.reply, replies.likes, replies.dislikes, replies.createdat, users.username 
-                                                    FROM replies JOIN users ON replies.userid = users.id 
-                                                    WHERE replies.commentid = ? ORDER BY replies.createdat DESC
-                                                ");
-                                                $repliesstmt->bind_param("i", $comment["id"]);
-                                                $repliesstmt->execute();
-                                                $replies = $repliesstmt->get_result();
-
-                                                if ($replies->num_rows > 0) { ?>
-                                                    <div style='margin-left: 2.5vw' class='replies'>
-                                                        <?php while ($reply = $replies->fetch_assoc()) { ?>
-                                                            <p><strong><?= htmlspecialchars($reply["username"]) ?></strong>:
-                                                                <?= htmlspecialchars($reply["reply"]) ?>
-                                                            </p>
-                                                            <small>Replied on: <?= htmlspecialchars($reply["createdat"]) ?></small>
-                                                            <?php uibuttons($reply["id"], 'reply', $reply["likes"], $reply["dislikes"]); ?>
-                                                        <?php } ?>
-                                                    </div>
-                                                <?php }
-                                                $repliesstmt->close(); // Close the prepared statement to prevent data leaks
-                                                ?>
-                                            </div>
-                                        <?php } ?>
-                                    </div>
-                                <?php } ?>
-                            </div> <!-- Close postgriditem -->
+                                // get number of comments^
+                                $commentsonpoststmt = $conn->prepare("SELECT COUNT(*), id FROM comments WHERE postid = ?");
+                                $commentsonpoststmt->bind_param("i", $post["id"]);
+                                $commentsonpoststmt->execute();
+                                $commentsonpoststmt->bind_result($comments, $commentid);
+                                $commentsonpoststmt->fetch();
+                                $commentsonpoststmt->close(); // Close the statement to prevent data leaks
+                                $repliesonpoststmt = $conn->prepare("SELECT COUNT(*) FROM replies WHERE commentid = ?");    
+                                $repliesonpoststmt->bind_param("i", $commentid);
+                                $repliesonpoststmt->execute();
+                                $repliesonpoststmt->bind_result($replies);
+                                $repliesonpoststmt->fetch();
+                                $repliesonpoststmt->close(); // Close the statement to prevent data leaks
+                                uibuttons($post["id"], 'post', $post["likes"], $post["dislikes"], $comments+$replies);
+                                ?>
+                            </div></a> <!-- Close postgriditem -->
                             <?php
                             } ?>
                         </div><br> <!-- Close postgrid -->
@@ -316,37 +269,7 @@ function handleReplySubmission($conn)
         </div>
     </div>
 </body>
-<style>
-    .likeanddislike {
-        display: inline-block;
-        text-align: left;
-        border: none;
-        background: none;
-        padding: 0;
-        width: 5vw;
-        height: 5vh;
-    }
 
-    .likeanddislike:active {
-        display: inline-block;
-        text-align: left;
-        border: none;
-        background: none;
-        padding: 0;
-        width: 5vw;
-        height: 5vh;
-    }
-
-    .likeanddislike>input {
-        width: 2.5vw;
-        height: 2.5vh;
-    }
-
-    .likeanddislike>input:active {
-        width: 2.5vw;
-        height: 2.5vh;
-    }
-</style>
 <?php
 /**
  * Handle comment submission
@@ -358,14 +281,26 @@ function handleReplySubmission($conn)
 function handleLikesDislikes($conn)
 {
     if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["action"])) {
-        $user_id = $_SESSION['id']; // Assuming the user is logged in
+        if (!isset($_SESSION['id'])) {
+            return; // User must be logged in
+        }
+
+        $user_id = $_SESSION['id'];
         $action = $_POST["action"];
         $content_type = isset($_POST["postid"]) ? 'post' : 'comment';
-        $content_id = $content_type === 'post' ? ($_POST["postid"] ?? null) : ($_POST["commentid"] ?? null);
-        if ($content_id === null) {
+        $content_id = isset($_POST["postid"]) ? $_POST["postid"] : ($_POST["commentid"] ?? null);
+        
+        if (!$content_id) {
             return;
         }
-        // Check if the user has already interacted with this item
+
+        // Table name validation to prevent SQL injection
+        $validTables = ['posts', 'comments'];
+        $table = ($content_type === 'post') ? 'posts' : 'comments';
+
+        $conn->begin_transaction(); // Start transaction
+
+        // Check existing interaction
         $stmt = $conn->prepare("
             SELECT action FROM user_interactions 
             WHERE user_id = ? AND content_type = ? AND content_id = ?
@@ -374,62 +309,64 @@ function handleLikesDislikes($conn)
         $stmt->execute();
         $result = $stmt->get_result();
         $existingActionRow = $result->fetch_assoc();
-        $existingAction = $existingActionRow ? $existingActionRow['action'] : null;
-        if ($existingAction) {
-            if ($existingAction === $action) {
-                // Deselect: Remove the interaction
-                $deleteStmt = $conn->prepare("
-                    DELETE FROM user_interactions 
-                    WHERE user_id = ? AND content_type = ? AND content_id = ?
-                ");
-                $deleteStmt->bind_param("isi", $user_id, $content_type, $content_id);
-                $deleteStmt->execute();
-                // Decrease the corresponding count
-                $updateStmt = $conn->prepare("
-                    UPDATE {$content_type}s SET {$action}s = {$action}s - 1 WHERE id = ?
-                ");
-                $updateStmt->bind_param("i", $content_id);
-                $updateStmt->execute();
-            } else {
-                // Toggle: Update the action
+        $existingAction = $existingActionRow['action'] ?? null;
+
+        if ($existingAction === $action) {
+            // Remove interaction
+            $deleteStmt = $conn->prepare("
+                DELETE FROM user_interactions 
+                WHERE user_id = ? AND content_type = ? AND content_id = ?
+            ");
+            $deleteStmt->bind_param("isi", $user_id, $content_type, $content_id);
+            $deleteStmt->execute();
+
+            // Decrease count
+            $updateStmt = $conn->prepare("
+                UPDATE $table SET {$action}s = {$action}s - 1 WHERE id = ? AND {$action}s > 0
+            ");
+            $updateStmt->bind_param("i", $content_id);
+            $updateStmt->execute();
+        } else {
+            // Toggle interaction
+            if ($existingAction) {
+                $oppositeAction = ($action === 'like') ? 'dislike' : 'like';
+
+                // Update user interaction
                 $updateInteractionStmt = $conn->prepare("
                     UPDATE user_interactions SET action = ? 
                     WHERE user_id = ? AND content_type = ? AND content_id = ?
                 ");
                 $updateInteractionStmt->bind_param("sisi", $action, $user_id, $content_type, $content_id);
                 $updateInteractionStmt->execute();
-                // Decrease the count for the previous action
-                $oppositeAction = ($action === 'like') ? 'dislike' : 'like';
+
+                // Adjust counts
                 $decreaseStmt = $conn->prepare("
-                    UPDATE {$content_type}s SET {$oppositeAction}s = {$oppositeAction}s - 1 WHERE id = ?
+                    UPDATE $table SET {$oppositeAction}s = {$oppositeAction}s - 1 WHERE id = ? AND {$oppositeAction}s > 0
                 ");
                 $decreaseStmt->bind_param("i", $content_id);
                 $decreaseStmt->execute();
-                // Increase the count for the new action
-                $increaseStmt = $conn->prepare("
-                    UPDATE {$content_type}s SET {$action}s = {$action}s + 1 WHERE id = ?
+            } else {
+                // New interaction
+                $insertStmt = $conn->prepare("
+                    INSERT INTO user_interactions (user_id, content_type, content_id, action) 
+                    VALUES (?, ?, ?, ?)
                 ");
-                $increaseStmt->bind_param("i", $content_id);
-                $increaseStmt->execute();
+                $insertStmt->bind_param("isis", $user_id, $content_type, $content_id, $action);
+                $insertStmt->execute();
             }
-        } else {
-            // No existing interaction: Add the new action
-            $insertStmt = $conn->prepare("
-                INSERT INTO user_interactions (user_id, content_type, content_id, action) 
-                VALUES (?, ?, ?, ?)
-            ");
-            $insertStmt->bind_param("isis", $user_id, $content_type, $content_id, $action);
-            $insertStmt->execute();
 
-            // Increase the corresponding count
+            // Increase count for the new action
             $increaseStmt = $conn->prepare("
-                UPDATE {$content_type}s SET {$action}s = {$action}s + 1 WHERE id = ?
+                UPDATE $table SET {$action}s = {$action}s + 1 WHERE id = ?
             ");
             $increaseStmt->bind_param("i", $content_id);
             $increaseStmt->execute();
         }
+
+        $conn->commit(); // Commit transaction
     }
 }
+
 function getUserIdByUsername($conn, $username)
 {
     $stmt = $conn->prepare("SELECT id FROM users WHERE username=?");
@@ -446,7 +383,7 @@ function getPostsByUserId($conn, $userid)
     $stmt->execute();
     return $stmt->get_result();
 }
-function uibuttons($id, $type, $likes, $dislikes)
+function uibuttons($id, $type, $likes, $dislikes, $comments)
 {
     global $conn;
     $user_id = $_SESSION['id'];
@@ -473,6 +410,10 @@ function uibuttons($id, $type, $likes, $dislikes)
             <input type='hidden' name='action' value='dislike'>
             <input type='hidden' name='{$type}id' value='{$id}'>
             <button type='submit' style='display: inline;' class='$dislikeActive'><img class='likedislike' src='../Images/Posts-comments-replies/black/hollow/dislike.png'> <span>$dislikes</span></button>
+        </form>
+        <form method='post' style='display: inline'>
+            <input type='hidden' name='action' value='comment'>
+            <button type='submit' style='display: inline;'><img class='likedislike' src='../Images/Posts-comments-replies/black/hollow/comment.png'><span>$comments</span></button>
         </form>
         <button class='report-button'>Report</button>
 

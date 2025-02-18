@@ -51,8 +51,9 @@
             $(".innavbar").hide();
         }
     </script>
+    
+    <div class="innormalcontentnavbar">
     <h3>Change the price for your content</h3>
-    <div class="normalcontentnavbar">
         <form method="POST">
             <select class="textinpfld" name="currency" value="currency">
                 <script>

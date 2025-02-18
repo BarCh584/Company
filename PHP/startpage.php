@@ -11,17 +11,16 @@
 </head>
 
 <body>
-<?php
-        include_once('../Libraries/navbar.php');
-        createnavbar("startpage");
-        ?>
-    <div class="container">
-
+    <?php
+    include_once('../Libraries/navbar.php');
+    createnavbar("startpage");
+    ?>
+    <div class="normalcontentnavbar">
         <?php
-        /*if (!isset($_SESSION['id'])) {
+        if (!isset($_SESSION['id'])) {
             die("You must be logged in to post comments.");
-        }*/
-        /*$servername = "localhost";
+        }
+        $servername = "localhost";
         $username = "root";
         $password = "";
         $dbname = "Company";
@@ -29,12 +28,26 @@
         if ($conn->connect_error) {
             die("Connection failed: " . $conn->connect_error);
         }
-        $sql = "SELECT id, email, username, password FROM users WHERE username = '" . $_SESSION['username'] . "'";
-        $result = $conn->query($sql);
-        if ($result->num_rows > 0) {
-
-        }*/
-
+        $stmt = $conn->prepare("SELECT * FROM posts ORDER BY RAND() LIMIT 1");
+        $stmt->execute();
+        $result = $stmt->get_result();
+        while ($row = $result->fetch_assoc()) {
+            $directory = "../uploads/" . $row['accountname'] . "/profileimg/profile_picture.";
+            $imgformats = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'tiff'];
+            $filesfound = [];
+            foreach ($imgformats as $format) {
+                $pattern = $directory . $format;
+                $filesfound = array_merge($filesfound, glob($pattern)); // Append found files to $filesfound
+            }
+            if (count($filesfound) == 0) {
+                $filesfound = ["../Images/Navbar/black/hollow/settings.profile.png"];
+            }
+            echo "<div class='postgriditem'>
+                <h2><img class='postprofileimg' src='{$filesfound[0]}'>" . $row["accountname"] . "</h2>
+                <h2>" . $row["comment"] . "</h2><br>
+                <p>" . $row["file"] . "</p><br>
+                </div>";
+        }
         ?>
     </div>
 </body>

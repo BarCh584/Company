@@ -14,7 +14,7 @@
     include_once '../Libraries/navbar.php';
     createnavbar("settings.profile");
     createsettingsnavbar("settings.profile"); ?>
-    <div class="normalcontentnavbar">
+    <div class="innormalcontentnavbar">
         <?php
         form();
         function deleteaccount() {

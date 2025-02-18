@@ -18,7 +18,7 @@
     include_once("../Libraries/currency_converter.php");
  ?>
     <!--jquery-->
-    <div class="normalcontentnavbar">
+    <div class="innormalcontentnavbar">
         <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
         <script>
             if (window.innerWidth < 768) {
@@ -26,7 +26,6 @@
             }
         </script>
 
-        <div class="contentnavbar">
             <h1>Subscribed to:</h1>
             <?php
             /* Show subscriptions */
@@ -81,7 +80,6 @@
                 echo "</table>";
             }
             ?>
-        </div>
     </div>
 </body>
 

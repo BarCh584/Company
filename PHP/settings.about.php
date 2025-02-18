@@ -118,6 +118,10 @@
                         <a href="https://www.flaticon.com/free-icons/happy" title="happy icons">Happy icons created by
                                 Freepik - Flaticon</a>
                 </li>
+                <li>
+                        <a href="https://www.flaticon.com/free-icons/comment" title="comment icons">Comment icons
+                                created by onlyhasbi - Flaticon</a>
+                </li>
         </div>
 </body>
 

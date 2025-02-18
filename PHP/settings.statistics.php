@@ -89,7 +89,7 @@
     }
     ?>
 
-    <div class="normalcontentnavbar">
+    <div class="innormalcontentnavbar">
         <h1>Analytics</h1>
         <form method="POST" id="chartForm">
             <select id="charttimeoptions" name="charttimeoptions" onchange="submitForm();">
@@ -139,6 +139,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
     <script>
         function changechart() {
+            // global variables
             // yvalues
             let selectchartoption = document.getElementById("chartoptions").value;
             let optionselected = document.getElementById("charttimeoptions").value;
@@ -220,7 +221,7 @@
                 }
                 let canvas = document.createElement("canvas");
                 canvas.id = "chart";
-                document.getElementsByClassName("normalcontentnavbar")[0].appendChild(canvas);
+                document.getElementsByClassName("innormalcontentnavbar")[0].appendChild(canvas);
             }
             new Chart("chart", {
                 type: "line",

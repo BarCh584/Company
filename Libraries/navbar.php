@@ -8,9 +8,7 @@ session_start();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <link rel="stylesheet" href="../CSS/default.css?v=<?php echo time(); ?>">
-
     <title>AccessFrame</title>
-
 </head>
 
 <body>
@@ -18,7 +16,6 @@ session_start();
     include("translation.php");
     //include('../Libraries/createdefaultdailytableentries.php');
     //include('../Libraries/createdefaultmonthlytableentries.php');
-    
     function createnavbar($buttontohighlight)
     {
         $directory = "../uploads/" . $_SESSION['username'] . "/profileimg/profile_picture.";
@@ -69,7 +66,6 @@ session_start();
         </ul>
         <?php
     }
-
     function createsettingsnavbar($buttontohighlightin)
     {
         $settingsButtons = [
@@ -95,47 +91,46 @@ session_start();
         </ul>
         <?php
     }
-
     ?>
-
-    <!-- Create a cookie banner-->
+    
+    
+    <div class='cookie-banner'>
+        <div>
+            <p>This website uses cookies</p>
+            <p>We use cookies to:</p>
+            <br>
+            <p>1. Store and/or access information on a device</p>
+            <p>2. Create profiles for statistical purposes</p>
+            <p>3. Operate the website to function properly</p>
+            <select>
+                <option>Deutsch</option>
+                <option>English</option>
+            </select>
+        </div>
+        <div class='cookies'>
+            <div class='cookieselector'>
+                <p>Strictly necessary</p>
+                <input type='checkbox' name='essential' placeholder='Essential'>
+            </div>
+            <div class='cookieselector'>
+                <p>Analytics</p>
+                <input type='checkbox' name='analytical' placeholder='Analytics'>
+            </div>
+            <div class='cookieselector'>
+                <p>Statistics</p>
+                <input type='checkbox' name='statistics' placeholder='Statistics'>
+            </div>
+        </div>
+        <div class='cookiebuttons'>
+            <button class='manage'>Manage cookies</button>
+            <button class='close'>Accept only essential cookies</button>
+            <button class='close'>Accept all cookies</button>
+            <button id="imprint">Imprint</button>
+            <button id="privacypolicy">Privacy policy</button>
+            <button id="generaltermsandconditions">General terms & conditions</button>
+        </div>
+    </div>
 </body>
-<div class='cookie-banner'>
-    <div>
-        <p>This website uses cookies</p>
-        <p>We use cookies to:</p>
-        <br>
-        <p>1. Store and/or access information on a device</p>
-        <p>2. Create profiles for statistical purposes</p>
-        <p>3. Operate the website to function properly</p>
-        <select>
-            <option>Deutsch</option>
-            <option>English</option>
-        </select>
-    </div>
-    <div class='cookies'>
-        <div class='cookieselector'>
-            <p>Strictly necessary</p>
-            <input type='checkbox' name='essential' placeholder='Essential'>
-        </div>
-        <div class='cookieselector'>
-            <p>Analytics</p>
-            <input type='checkbox' name='analytical' placeholder='Analytics'>
-        </div>
-        <div class='cookieselector'>
-            <p>Statistics</p>
-            <input type='checkbox' name='statistics' placeholder='Statistics'>
-        </div>
-    </div>
-    <div class='cookiebuttons'>
-        <button class='manage'>Manage cookies</button>
-        <button class='close'>Accept only essential cookies</button>
-        <button class='close'>Accept all cookies</button>
-        <button id="imprint">Imprint</button>
-        <button id="privacypolicy">Privacy policy</button>
-        <button id="generaltermsandconditions">General terms & conditions</button>
-    </div>
-</div>
 <!--Include jquery libary-->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>

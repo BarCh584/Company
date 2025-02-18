@@ -39,7 +39,7 @@ function updatelang($lang)
         ?>
     <div class="container">
 
-        <div class="normalcontentnavbar">
+        <div class="innormalcontentnavbar">
             <form action="settings.preferences.php" method="post">
                 <br>
                 <div class="contentnavbar">

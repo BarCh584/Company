@@ -9,8 +9,6 @@ To do:
 - Google sign in optimizations (Kinda works)
 - Report function (for each post, comment and reply)
 - Legal aspects:
-    - GDPR
-    - Impressunspflicht
     - Child saving laws
     - NetzDG (Remove illegal content within 24h)
     - ToS (AGB)

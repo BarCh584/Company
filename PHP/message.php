@@ -77,11 +77,24 @@
 
         echo "<div id='chatWindow' class='postgrid'>";
         while ($row = $result->fetch_assoc()) {
-            echo "<div class='postgriditem'>
-                <h3>" . htmlspecialchars($row['sender'], ENT_QUOTES, 'UTF-8') . " 
-                <small style='color: #3f3f3f'>" . htmlspecialchars($row['createdat'], ENT_QUOTES, 'UTF-8') . "</small></h3>
-                <p>" . htmlspecialchars($row['message'], ENT_QUOTES, 'UTF-8') . "</p>
-            </div><br>";
+            $directory = "../uploads/" . $row['sender'] . "/profileimg/profile_picture.";
+            $imgformats = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'tiff'];
+            $filesfound = [];
+            foreach ($imgformats as $format) {
+                $pattern = $directory . $format;
+                $filesfound = array_merge($filesfound, glob($pattern)); // Append found files to $filesfound
+            }
+            if (count($filesfound) == 0) {
+                $filesfound = ["../Images/Navbar/black/hollow/settings.profile.png"];
+            }
+            echo "<div class='messagegriditem'>
+                        <img src='{$filesfound[0]}' class='messageprofileimg' alt='Profile picture'>
+                        <div>
+                            <h3 style='margin: 0;'>" . htmlspecialchars($row['sender'], ENT_QUOTES, 'UTF-8') . " 
+                            <small style='color: #3f3f3f'>" . htmlspecialchars($row['createdat'], ENT_QUOTES, 'UTF-8') . "</small></h3>
+                            <p style='margin: 0;'>" . htmlspecialchars($row['message'], ENT_QUOTES, 'UTF-8') . "</p>
+                        </div>
+                    </div><br>";
         }
         echo "</div>";
 
@@ -94,7 +107,7 @@
     }
     ?>
 
-    <div class="normalcontentnavbar">
+    <div class="innormalcontentnavbar">
         <?php if ($chatUser): ?>
             <div class="messageitems">
                 <form id="messageForm">
@@ -108,41 +121,41 @@
         <?php endif; ?>
     </div>
     <script type="module">
-    import 'https://unpkg.com/emoji-picker-element';
+        import 'https://unpkg.com/emoji-picker-element';
 
-    document.addEventListener("DOMContentLoaded", function () {
-        const emojiPicker = document.querySelector("emoji-picker");
-        const textInput = document.getElementById("dmtextinpfld");
-        const emojiButton = document.getElementById("emojibutton");
+        document.addEventListener("DOMContentLoaded", function () {
+            const emojiPicker = document.querySelector("emoji-picker");
+            const textInput = document.getElementById("dmtextinpfld");
+            const emojiButton = document.getElementById("emojibutton");
 
-        // Set initial state of emojiPicker to "none"
-        emojiPicker.style.display = "none";
+            // Set initial state of emojiPicker to "none"
+            emojiPicker.style.display = "none";
 
-        emojiButton.addEventListener("click", () => {
-            emojiPicker.style.display = emojiPicker.style.display === "none" ? "block" : "none";
-        });
-
-        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            $("#smileyimg").each(function () {
-                this.src = this.src.replace("black", "white"); // White icons for dark mode
+            emojiButton.addEventListener("click", () => {
+                emojiPicker.style.display = emojiPicker.style.display === "none" ? "block" : "none";
             });
-        } else {
-            $("#smileyimg").each(function () {
-                this.src = this.src.replace("white", "black"); // Black icons for light mode
-            });
-        }
 
-        emojiPicker.addEventListener("emoji-click", (event) => {
-            textInput.value += event.detail.unicode;
-        });
-
-        document.addEventListener("click", (event) => {
-            if (!emojiButton.contains(event.target) && !emojiPicker.contains(event.target)) {
-                emojiPicker.style.display = "none";
+            if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                $("#smileyimg").each(function () {
+                    this.src = this.src.replace("black", "white"); // White icons for dark mode
+                });
+            } else {
+                $("#smileyimg").each(function () {
+                    this.src = this.src.replace("white", "black"); // Black icons for light mode
+                });
             }
+
+            emojiPicker.addEventListener("emoji-click", (event) => {
+                textInput.value += event.detail.unicode;
+            });
+
+            document.addEventListener("click", (event) => {
+                if (!emojiButton.contains(event.target) && !emojiPicker.contains(event.target)) {
+                    emojiPicker.style.display = "none";
+                }
+            });
         });
-    });
-</script>
+    </script>
     <script>
 
         const currentUser = "<?= $currentUser ?>";
@@ -212,7 +225,7 @@
 
         function displayMessage({ sender, message, createdat }) {
             const messageDiv = document.createElement('div');
-            messageDiv.className = 'postgriditem';
+            messageDiv.className = 'messagegriditem';
             messageDiv.innerHTML = `
             <h3>${sender} 
             <small style="color: #3f3f3f">${createdat}</small></h3>
