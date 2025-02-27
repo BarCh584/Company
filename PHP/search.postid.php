@@ -53,81 +53,6 @@ function timeelapsed($datetime)
             return "$years year" . ($years == 1 ? "" : "s") . " ago";
     }
 }
-function handleLikesDislikes($conn)
-{
-    if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["action"])) {
-        $user_id = $_SESSION['id']; // Assuming the user is logged in
-        $action = $_POST["action"];
-        $content_type = isset($_POST["postid"]) ? 'post' : 'comment';
-        $content_id = $content_type === 'post' ? ($_POST["postid"] ?? null) : ($_POST["commentid"] ?? null);
-        if ($content_id === null) {
-            return;
-        }
-        // Check if the user has already interacted with this item
-        $stmt = $conn->prepare("
-            SELECT action FROM user_interactions 
-            WHERE user_id = ? AND content_type = ? AND content_id = ?
-        ");
-        $stmt->bind_param("isi", $user_id, $content_type, $content_id);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $existingActionRow = $result->fetch_assoc();
-        $existingAction = $existingActionRow ? $existingActionRow['action'] : null;
-        if ($existingAction) {
-            if ($existingAction === $action) {
-                // Deselect: Remove the interaction
-                $deleteStmt = $conn->prepare("
-                    DELETE FROM user_interactions 
-                    WHERE user_id = ? AND content_type = ? AND content_id = ?
-                ");
-                $deleteStmt->bind_param("isi", $user_id, $content_type, $content_id);
-                $deleteStmt->execute();
-                // Decrease the corresponding count
-                $updateStmt = $conn->prepare("
-                    UPDATE {$content_type}s SET {$action}s = {$action}s - 1 WHERE id = ?
-                ");
-                $updateStmt->bind_param("i", $content_id);
-                $updateStmt->execute();
-            } else {
-                // Toggle: Update the action
-                $updateInteractionStmt = $conn->prepare("
-                    UPDATE user_interactions SET action = ? 
-                    WHERE user_id = ? AND content_type = ? AND content_id = ?
-                ");
-                $updateInteractionStmt->bind_param("sisi", $action, $user_id, $content_type, $content_id);
-                $updateInteractionStmt->execute();
-                // Decrease the count for the previous action
-                $oppositeAction = ($action === 'like') ? 'dislike' : 'like';
-                $decreaseStmt = $conn->prepare("
-                    UPDATE {$content_type}s SET {$oppositeAction}s = {$oppositeAction}s - 1 WHERE id = ?
-                ");
-                $decreaseStmt->bind_param("i", $content_id);
-                $decreaseStmt->execute();
-                // Increase the count for the new action
-                $increaseStmt = $conn->prepare("
-                    UPDATE {$content_type}s SET {$action}s = {$action}s + 1 WHERE id = ?
-                ");
-                $increaseStmt->bind_param("i", $content_id);
-                $increaseStmt->execute();
-            }
-        } else {
-            // No existing interaction: Add the new action
-            $insertStmt = $conn->prepare("
-                INSERT INTO user_interactions (user_id, content_type, content_id, action) 
-                VALUES (?, ?, ?, ?)
-            ");
-            $insertStmt->bind_param("isis", $user_id, $content_type, $content_id, $action);
-            $insertStmt->execute();
-
-            // Increase the corresponding count
-            $increaseStmt = $conn->prepare("
-                UPDATE {$content_type}s SET {$action}s = {$action}s + 1 WHERE id = ?
-            ");
-            $increaseStmt->bind_param("i", $content_id);
-            $increaseStmt->execute();
-        }
-    }
-}
 function getUserIdByUsername($conn, $username)
 {
     $stmt = $conn->prepare("SELECT id FROM users WHERE username=?");
@@ -162,16 +87,8 @@ function uibuttons($id, $type, $likes, $dislikes)
     $likeActive = $userAction === 'like' ? 'active' : '';
     $dislikeActive = $userAction === 'dislike' ? 'active' : '';
     echo "
-        <form method='post' style='display: inline;'>
-            <input type='hidden' name='action' value='like'>
-            <input type='hidden' name='{$type}id' value='{$id}'>
-            <button type='submit' style='display: inline;' class='$likeActive'><img class='likedislike' src='../Images/Posts-comments-replies/black/hollow/like.png'> <span>$likes</span></button>
-        </form>
-        <form method='post' style='display: inline;'>
-            <input type='hidden' name='action' value='dislike'>
-            <input type='hidden' name='{$type}id' value='{$id}'>
-            <button type='submit' style='display: inline;' class='$dislikeActive'><img class='likedislike' src='../Images/Posts-comments-replies/black/hollow/dislike.png'> <span>$dislikes</span></button>
-        </form>
+        <button type='button' style='display: inline;' class='$likeActive likebutton' data-action='like' data-id='{$id}' data-type='{$type}'><img class='likedislike' src='../Images/Posts-comments-replies/black/hollow/like.png'> <span>$likes</span></button>
+        <button type='button' style='display: inline;' class='$dislikeActive dislikebutton' data-action='dislike' data-id='{$id}' data-type='{$type}'><img class='likedislike' src='../Images/Posts-comments-replies/black/hollow/dislike.png'> <span>$dislikes</span></button>
         <button class='report-button'>Report</button>
 
     ";
@@ -226,6 +143,53 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["reportsubmit"], $_POST
 }
 
 ?>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.likebutton, .dislikebutton').on('click', function () {
+            let button = $(this);
+            let action = button.data('action');
+            let id = button.data('id');
+            let type = button.data('type');
+            let likeButton = $(`button[data-id='${id}'][data-action='like']`);
+            let dislikeButton = $(`button[data-id='${id}'][data-action='dislike']`);
+            let likeCountSpan = likeButton.find('span');
+            let dislikeCountSpan = dislikeButton.find('span');
+
+            $.post('../Libraries/search.resultsdislikeandlikelib.php', {
+                action: action,
+                contenttype: type,
+                id: id
+            }, function (response) {
+                try {
+                    let data = JSON.parse(response);
+
+                    if (data.status === "success") {
+                        // Update like and dislike counts
+                        likeCountSpan.text(data.likes);
+                        dislikeCountSpan.text(data.dislikes);
+
+                        // Toggle active states
+                        if (action === "like") {
+                            likeButton.toggleClass('active', data.user_action === 'like');
+                            dislikeButton.removeClass('active');
+                        } else if (action === "dislike") {
+                            dislikeButton.toggleClass('active', data.user_action === 'dislike');
+                            likeButton.removeClass('active');
+                        }
+                    } else {
+                        console.error("Error: " + data.message);
+                    }
+                } catch (e) {
+                    console.error("Invalid JSON response");
+                }
+            }).fail(function () {
+                console.error("Error processing request.");
+            });
+        });
+    });
+</script>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -336,7 +300,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["reportsubmit"], $_POST
                 }
             }
             handleCommentSubmission($conn);
-            handleLikesDislikes($conn);
             handleReplySubmission($conn);
             // Close database connection
             $conn->close();

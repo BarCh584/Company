@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../CSS/default.css?v=<?= time(); ?>">
     <title>Chat</title>
-    <link rel="icon" href="../Logo.png">
+    <link rel="icon" href="../Logo2.png">
 </head>
 
 <body>
@@ -226,12 +226,27 @@
         function displayMessage({ sender, message, createdat }) {
             const messageDiv = document.createElement('div');
             messageDiv.className = 'messagegriditem';
-            messageDiv.innerHTML = `
-            <h3>${sender} 
-            <small style="color: #3f3f3f">${createdat}</small></h3>
-            <p>${message}</p><br>
-        `;
+
+            const directory = `../uploads/${sender}/profileimg/`;
+            const imgformats = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'tiff'];
+            let filesfound = [];
+            for (const format of imgformats) {
+                const pattern = `${directory}profile_picture.${format}`;
+                const xhr = new XMLHttpRequest();
+                xhr.open('HEAD', pattern, false);
+                xhr.send();
+                if (xhr.status !== 404) {
+                    filesfound.push(pattern);
+                    break; // Stop after finding the first image
+                }
+            }
+            if (filesfound.length === 0) {
+                filesfound = ["../Images/Navbar/black/hollow/settings.profile.png"];
+            }
+
+            messageDiv.innerHTML = `<img src='${filesfound[0]}' class='messageprofileimg' alt='Profile picture'><div><h3 style='margin: 0;'>${sender} <small style='color: #3f3f3f'>${createdat}</small></h3><p style='margin: 0;'>${message}</p></div>`;
             chatWindow.appendChild(messageDiv);
+            chatWindow.appendChild(document.createElement('br'));
             chatWindow.scrollTop = chatWindow.scrollHeight;
         }
     </script>

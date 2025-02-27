@@ -1,6 +1,6 @@
 To do:
-- CHANGE EMAIL
-- Startpage
+- CHANGE email
+- Fixe like/dislike system
 - DM chats listed using ID's
 - Improving Design
 - Extending settings

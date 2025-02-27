@@ -92,8 +92,8 @@ session_start();
         <?php
     }
     ?>
-    
-    
+
+
     <div class='cookie-banner'>
         <div>
             <p>This website uses cookies</p>
@@ -157,13 +157,32 @@ session_start();
                 this.src = this.src.replace("white", "black") // black icons for dark mode
             })
         }
-        $(".hollow").each(function () {
-            this.src = this.src.replace("filled", "hollow");
-        })
 
-        $(".filled").each(function () {
-            this.src = this.src.replace("hollow", "filled");
-        })
+        // change image src to the filled or hollow directory to change the icon´s appearance
+
+        changeicon();
+        $("button").click(function () {
+            changeicon();
+            $(this).children("img").each(function () {
+                if (this.src && this.src.includes("hollow")) {
+                    this.src = this.src.replace("hollow", "filled");
+                } else if (this.src && this.src.includes("filled")) {
+                    this.src = this.src.replace("filled", "hollow");
+                }
+            });
+        });
+        function changeicon() {
+            $(".active").each(function () {
+                $(this).children("img").each(function () {
+                    this.src = this.src.replace("hollow", "filled");
+                });
+            });
+            if (!$("button").hasClass("active")) {
+                $(this).children("img").each(function () {
+                    this.src = this.src.replace("filled", "hollow");
+                });
+            }
+        }
         if (window.innerWidth >= 650) {
             $(".innavbar").show();
         }

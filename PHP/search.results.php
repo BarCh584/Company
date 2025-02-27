@@ -69,7 +69,7 @@ function handleReplySubmission($conn)
     <title>Document</title>
     <link rel="stylesheet" href="../CSS/default.css?v=<?php echo time(); ?>">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <link rel="icon" href="../Logo.png">
+    <link rel="icon" href="../Logo2.png">
 </head>
 
 <body>
@@ -164,12 +164,11 @@ function handleReplySubmission($conn)
                         if ($_GET["show"] == "posts" && !isset($_GET["postid"])) {
                             echo "<div class='postgrid' style='margin-left:0vw !important;'>";
                             while ($post = $posts->fetch_assoc()) {
-                            
-                                echo "<a href='search.postid.php?postid=$post[id]'><div class='postgriditem'>";
-                                echo "<h4>" . htmlspecialchars($post["accountname"]) . "</h4>";
+
+                                echo "<div class='postgriditem'><a href='search.postid.php?postid=$post[id]'>"; // 
+                                echo "<h4>" . htmlspecialchars($post["accountname"]) . " <small>" . timeelapsed($post["createdat"]) . "</small></h4>";
                                 echo "<h4>" . htmlspecialchars($post["title"]) . "</h4>";
                                 echo "<p>" . htmlspecialchars($post["comment"]) . "</p>";
-                                echo "<p><small>Posted on: " . htmlspecialchars($post["createdat"]) . "</small></p>";
                                 if ($post["file"]) {
                                     $fileExtension = strtolower(pathinfo($post["file"], PATHINFO_EXTENSION));
                                     if (in_array($fileExtension, ["mp3", "mp4", "wav"])) {
@@ -185,13 +184,13 @@ function handleReplySubmission($conn)
                                 $commentsonpoststmt->bind_result($comments, $commentid);
                                 $commentsonpoststmt->fetch();
                                 $commentsonpoststmt->close(); // Close the statement to prevent data leaks
-                                $repliesonpoststmt = $conn->prepare("SELECT COUNT(*) FROM replies WHERE commentid = ?");    
+                                $repliesonpoststmt = $conn->prepare("SELECT COUNT(*) FROM replies WHERE commentid = ?");
                                 $repliesonpoststmt->bind_param("i", $commentid);
                                 $repliesonpoststmt->execute();
                                 $repliesonpoststmt->bind_result($replies);
                                 $repliesonpoststmt->fetch();
                                 $repliesonpoststmt->close(); // Close the statement to prevent data leaks
-                                uibuttons($post["id"], 'post', $post["likes"], $post["dislikes"], $comments+$replies);
+                                uibuttons($post["id"], 'post', $post["likes"], $post["dislikes"], $comments + $replies);
                                 ?>
                             </div></a> <!-- Close postgriditem -->
                             <?php
@@ -228,7 +227,6 @@ function handleReplySubmission($conn)
         }
         // Process form submissions
         handleCommentSubmission($conn);
-        handleLikesDislikes($conn);
         handleReplySubmission($conn);
         // Close database connection
         $conn->close();
@@ -270,103 +268,58 @@ function handleReplySubmission($conn)
     </div>
 </body>
 
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.likebutton, .dislikebutton').on('click', function () {
+            let button = $(this);
+            let action = button.data('action');
+            let id = button.data('id');
+            let type = button.data('type');
+            let likeButton = $(`button[data-id='${id}'][data-action='like']`);
+            let dislikeButton = $(`button[data-id='${id}'][data-action='dislike']`);
+            let likeCountSpan = likeButton.find('span');
+            let dislikeCountSpan = dislikeButton.find('span');
+
+            $.post('../Libraries/search.resultsdislikeandlikelib.php', {
+                action: action,
+                contenttype: type,
+                id: id
+            }, function (response) {
+                try {
+                    let data = JSON.parse(response);
+
+                    if (data.status === "success") {
+                        // Update like and dislike counts
+                        likeCountSpan.text(data.likes);
+                        dislikeCountSpan.text(data.dislikes);
+
+                        // Toggle active states
+                        if (action === "like") {
+                            likeButton.toggleClass('active', data.user_action === 'like');
+                            dislikeButton.removeClass('active');
+                        } else if (action === "dislike") {
+                            dislikeButton.toggleClass('active', data.user_action === 'dislike');
+                            likeButton.removeClass('active');
+                        }
+                    } else {
+                        console.error("Error: " + data.message);
+                    }
+                } catch (e) {
+                    console.error("Invalid JSON response");
+                }
+            }).fail(function () {
+                console.error("Error processing request.");
+            });
+        });
+    });
+</script>
+
+
+
+
 <?php
-/**
- * Handle comment submission
- */
-
-/**
- * Handle like or dislike actions for posts and comments
- */
-function handleLikesDislikes($conn)
-{
-    if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["action"])) {
-        if (!isset($_SESSION['id'])) {
-            return; // User must be logged in
-        }
-
-        $user_id = $_SESSION['id'];
-        $action = $_POST["action"];
-        $content_type = isset($_POST["postid"]) ? 'post' : 'comment';
-        $content_id = isset($_POST["postid"]) ? $_POST["postid"] : ($_POST["commentid"] ?? null);
-        
-        if (!$content_id) {
-            return;
-        }
-
-        // Table name validation to prevent SQL injection
-        $validTables = ['posts', 'comments'];
-        $table = ($content_type === 'post') ? 'posts' : 'comments';
-
-        $conn->begin_transaction(); // Start transaction
-
-        // Check existing interaction
-        $stmt = $conn->prepare("
-            SELECT action FROM user_interactions 
-            WHERE user_id = ? AND content_type = ? AND content_id = ?
-        ");
-        $stmt->bind_param("isi", $user_id, $content_type, $content_id);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $existingActionRow = $result->fetch_assoc();
-        $existingAction = $existingActionRow['action'] ?? null;
-
-        if ($existingAction === $action) {
-            // Remove interaction
-            $deleteStmt = $conn->prepare("
-                DELETE FROM user_interactions 
-                WHERE user_id = ? AND content_type = ? AND content_id = ?
-            ");
-            $deleteStmt->bind_param("isi", $user_id, $content_type, $content_id);
-            $deleteStmt->execute();
-
-            // Decrease count
-            $updateStmt = $conn->prepare("
-                UPDATE $table SET {$action}s = {$action}s - 1 WHERE id = ? AND {$action}s > 0
-            ");
-            $updateStmt->bind_param("i", $content_id);
-            $updateStmt->execute();
-        } else {
-            // Toggle interaction
-            if ($existingAction) {
-                $oppositeAction = ($action === 'like') ? 'dislike' : 'like';
-
-                // Update user interaction
-                $updateInteractionStmt = $conn->prepare("
-                    UPDATE user_interactions SET action = ? 
-                    WHERE user_id = ? AND content_type = ? AND content_id = ?
-                ");
-                $updateInteractionStmt->bind_param("sisi", $action, $user_id, $content_type, $content_id);
-                $updateInteractionStmt->execute();
-
-                // Adjust counts
-                $decreaseStmt = $conn->prepare("
-                    UPDATE $table SET {$oppositeAction}s = {$oppositeAction}s - 1 WHERE id = ? AND {$oppositeAction}s > 0
-                ");
-                $decreaseStmt->bind_param("i", $content_id);
-                $decreaseStmt->execute();
-            } else {
-                // New interaction
-                $insertStmt = $conn->prepare("
-                    INSERT INTO user_interactions (user_id, content_type, content_id, action) 
-                    VALUES (?, ?, ?, ?)
-                ");
-                $insertStmt->bind_param("isis", $user_id, $content_type, $content_id, $action);
-                $insertStmt->execute();
-            }
-
-            // Increase count for the new action
-            $increaseStmt = $conn->prepare("
-                UPDATE $table SET {$action}s = {$action}s + 1 WHERE id = ?
-            ");
-            $increaseStmt->bind_param("i", $content_id);
-            $increaseStmt->execute();
-        }
-
-        $conn->commit(); // Commit transaction
-    }
-}
-
 function getUserIdByUsername($conn, $username)
 {
     $stmt = $conn->prepare("SELECT id FROM users WHERE username=?");
@@ -401,25 +354,42 @@ function uibuttons($id, $type, $likes, $dislikes, $comments)
     $likeActive = $userAction === 'like' ? 'active' : '';
     $dislikeActive = $userAction === 'dislike' ? 'active' : '';
     echo "
-        <form method='post' style='display: inline;'>
-            <input type='hidden' name='action' value='like'>
-            <input type='hidden' name='{$type}id' value='{$id}'>
-            <button type='submit' style='display: inline;' class='$likeActive'><img class='likedislike' src='../Images/Posts-comments-replies/black/hollow/like.png'> <span>$likes</span></button>
-        </form>
-        <form method='post' style='display: inline;'>
-            <input type='hidden' name='action' value='dislike'>
-            <input type='hidden' name='{$type}id' value='{$id}'>
-            <button type='submit' style='display: inline;' class='$dislikeActive'><img class='likedislike' src='../Images/Posts-comments-replies/black/hollow/dislike.png'> <span>$dislikes</span></button>
-        </form>
-        <form method='post' style='display: inline'>
-            <input type='hidden' name='action' value='comment'>
-            <button type='submit' style='display: inline;'><img class='likedislike' src='../Images/Posts-comments-replies/black/hollow/comment.png'><span>$comments</span></button>
-        </form>
+        <button type='button' style='display: inline;' class='$likeActive likebutton' data-action='like' data-id='{$id}' data-type='{$type}'><img class='likedislike' src='../Images/Posts-comments-replies/black/hollow/like.png'> <span>$likes</span></button>
+        <button type='button' style='display: inline;' class='$dislikeActive dislikebutton' data-action='dislike' data-id='{$id}' data-type='{$type}'><img class='likedislike' src='../Images/Posts-comments-replies/black/hollow/dislike.png'> <span>$dislikes</span></button>
+        <button type='button' style='display: inline;' class='commentbutton' data-action='comment' data-id='{$id}' data-type='{$type}'><img class='likedislike' src='../Images/Posts-comments-replies/black/hollow/comment.png'><span>$comments</span></button>
         <button class='report-button'>Report</button>
 
     ";
 }
+function timeelapsed($datetime)
+{
+    $timestamp = strtotime($datetime); // Convert the date string to a timestamp in seconds since the Unix epoch
+    $time = time();
+    $timeelapsed = $time - $timestamp; // Calculate the difference in seconds
 
+    switch ($timeelapsed) {
+        case ($timeelapsed < 60): // Less than a minute
+            return "$timeelapsed second" . ($timeelapsed == 1 ? "" : "s") . " ago";
+        case ($timeelapsed < 3600): // Less than an hour
+            $minutes = floor($timeelapsed / 60);
+            return "$minutes minute" . ($minutes == 1 ? "" : "s") . " ago";
+        case ($timeelapsed < 86400): // Less than a day
+            $hours = floor($timeelapsed / 3600);
+            return "$hours hour" . ($hours == 1 ? "" : "s") . " ago";
+        case ($timeelapsed < 604800): // Less than a week
+            $days = floor($timeelapsed / 86400);
+            return "$days day" . ($days == 1 ? "" : "s") . " ago";
+        case ($timeelapsed < 2592000): // Less than a month
+            $weeks = floor($timeelapsed / 604800);
+            return "$weeks week" . ($weeks == 1 ? "" : "s") . " ago";
+        case ($timeelapsed < 31536000): // Less than a year
+            $months = floor($timeelapsed / 2592000);
+            return "$months month" . ($months == 1 ? "" : "s") . " ago";
+        case ($timeelapsed >= 31536000): // More than a year
+            $years = floor($timeelapsed / 31536000);
+            return "$years year" . ($years == 1 ? "" : "s") . " ago";
+    }
+}
 // Report submission
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["reportsubmit"], $_POST["reason"])) {
     print ("<script>alert('Report reason: " . $_POST["reason"] . "');</script>");
@@ -449,15 +419,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["reportsubmit"], $_POST
                 this.src = this.src.replace("white", "black") // black icons for dark mode
             });
         }
-        /*$("#hollow").each(function () {
-            this.src = this.src.replace("filled", "hollow");
-        });
-
-        $("#filled").each(function () {
-            this.src = this.src.replace("hollow", "filled");
-        });*/
-        // Function to open the report popup
-        // Close the popup when the close button is clicked
         $('.popup .close').click(function () {
             $('#reportPopup').remove();
         });
@@ -475,6 +436,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["reportsubmit"], $_POST
         // Close the popup when the close button is clicked
         $('.popup .close').click(function () {
             $('#reportPopup').remove();
+        });
+        $(window).keydown(function (e) {
+            if (e.key === 'Escape') {
+                $('.report-banner').css('visibility', 'hidden');
+                $('body > *:not(.report-banner)').css('filter', 'blur(0px)');
+                $('body > *:not(.report-banner)').css('pointer-events', 'all');	
+            }
         });
         // Report functionality
         $(".report-banner").css("visibility", "hidden");

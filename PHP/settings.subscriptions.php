@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../CSS/default.css?v=<?php echo time(); ?>">
     <title>Document</title>
-    <link rel="icon" href="../Logo.png">
+    <link rel="icon" href="../Logo2.png">
 </head>
 
 <body>
