@@ -16,38 +16,24 @@ $conn = new mysqli($servername, $db_username, $db_password, $dbname);
 if ($conn->connect_error) {
     die("Connection failed: {$conn->connect_error}");
 }
-
-function handleCommentSubmission($conn)
-{
-    if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["submit_comment"], $_POST["postid"])) {
-        $comment = $conn->real_escape_string($_POST["comment"]);
-        $postid = $conn->real_escape_string($_POST["postid"]);
-        $userid = $conn->real_escape_string($_SESSION['id']); // Get the logged-in user's ID from session
-
-        // Insert the comment into the database
-        $commentstmt = $conn->prepare("INSERT INTO comments (postid, userid, comment) VALUES (?, ?, ?)");
-        $commentstmt->bind_param("iis", $postid, $userid, $comment);
-        $commentstmt->execute();
-
-        // Redirect to avoid form resubmission
-        header("Location: {$_SERVER['REQUEST_URI']}");
-        exit();
-    }
-}
-function handleReplySubmission($conn)
-{
-    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit_reply"], $_POST["commentid"])) {
-        $reply = $conn->real_escape_string($_POST["reply"]);
-        $commentid = $conn->real_escape_string($_POST["commentid"]);
-        $userid = $conn->real_escape_string($_SESSION['id']);
-
-        $replystmt = $conn->prepare("INSERT INTO replies (commentid, userid, reply) VALUES (?, ?, ?)");
-        $replystmt->bind_param("iis", $commentid, $userid, $reply);
-        $replystmt->execute();
-
-        header("Location: {$_SERVER['REQUEST_URI']}");
-        exit();
-    }
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["reportsubmit"], $_POST["reason"]) && isset($_GET['postid'])) {
+    $repuserstmt = $conn->prepare("SELECT accountid FROM posts WHERE id=?");
+    $repuserstmt->bind_param("i", $_GET['postid']);
+    $repuserstmt->execute();
+    $repuserresult = $repuserstmt->get_result();
+    $repuser = $repuserresult->fetch_assoc();
+    $reporteduserid = $repuser['accountid'];
+    $reason = $conn->real_escape_string($_POST["reason"]);
+    $datatype = "post";
+    $reportedtype = $conn->real_escape_string($datatype);
+    $applicantid = $_SESSION['id'];
+    $status = "pending";
+    $reportedcontentid = $_GET['postid'];
+    $reportstmt = $conn->prepare("INSERT INTO reports (reason, applicantid, reporteduserid, reportedtype, reportedcontentid, status) VALUES (?, ?, ?, ?, ?, ?)");
+    $reportstmt->bind_param("siisis", $reason, $applicantid, $reporteduserid, $reportedtype, $reportedcontentid, $status);
+    $reportstmt->execute();
+    $reportstmt->close();
+    echo "<script>alert('Report submitted successfully.');</script>";
 }
 ?>
 
@@ -60,10 +46,60 @@ function handleReplySubmission($conn)
     <title>Document</title>
     <link rel="stylesheet" href="../CSS/default.css?v=<?php echo time(); ?>">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <link rel="icon" href="../Logo2.png">
+    <link rel="icon" href="../Logo.png">
 </head>
 
 <body>
+    <script>
+        $(document).ready(function () {
+
+            if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                $(".likedislike").each(function () {
+                    this.src = this.src.replace("black", "white"); // White icons for dark mode
+                });
+            }
+            else {
+                $(".likedislike").each(function () {
+                    this.src = this.src.replace("white", "black") // black icons for dark mode
+                });
+            }
+            $('.popup .close').click(function () {
+                $('#reportPopup').remove();
+            });
+            // Handle form submission
+            $('#reportForm').submit(function (event) {
+                event.preventDefault();
+                const formData = $(this).serialize();
+                $.post('report.php', formData, function (response) {
+                    alert('Report submitted successfully.');
+                    $('#reportPopup').remove();
+                }).fail(function () {
+                    alert('Failed to submit report.');
+                });
+            });
+            // Close the popup when the close button is clicked
+            $('.popup .close').click(function () {
+                $('#reportPopup').remove();
+            });
+            // Report functionality
+            $(".report-banner").css("visibility", "hidden");
+            $(document).on('click', '.report-button', function () {
+                console.log("Button clicked");
+                var datatype = this.getAttribute('data-type');
+                console.log("test" + datatype);
+                // Blur the background and make it clickable per default 
+                $(".report-banner").css("visibility", "visible");
+                $('body > *:not(.report-banner)').css('filter', 'blur(4px)');
+                $('body > *:not(.report-banner)').css('pointer-events', 'all');
+            });
+            $('.reportsubmit').click(function () {
+                // Closes the banner if the user clicks on a button with the class "close"
+                $(".report-banner").css("visibility", "hidden");
+                $('body > *:not(.report-banner)').css('filter', 'blur(0px)');
+                $('body > *:not(.report-banner)').css('pointer-events', 'all');
+            });
+        });
+    </script>
     <div class="normalcontentnavbar">
         <!-- Search form -->
 
@@ -76,10 +112,11 @@ function handleReplySubmission($conn)
         if ($posts->num_rows > 0) {
             echo "<div class='postgrid' style='margin-left:0vw !important;'>";
             while ($post = $posts->fetch_assoc()) {
-                echo "<div class='postgriditem'><a href='search.postid.php?postid=$post[id]'>"; // 
-                echo "<h4>" . htmlspecialchars($post["accountname"]) . " <small>". timeelapsed($post["createdat"]) . "</small></h4>";
+                echo "<div class='postgriditem'>"; // <a href='search.postid.php?postid=$post[id]'>
+                echo "<h4>" . htmlspecialchars($post["accountname"]) . "</h4>";
                 echo "<h4>" . htmlspecialchars($post["title"]) . "</h4>";
                 echo "<p>" . htmlspecialchars($post["comment"]) . "</p>";
+                echo "<p><small>Posted on: " . htmlspecialchars($post["createdat"]) . "</small></p>";
                 if ($post["file"]) {
                     $fileExtension = strtolower(pathinfo($post["file"], PATHINFO_EXTENSION));
                     if (in_array($fileExtension, ["mp3", "mp4", "wav"])) {
@@ -101,20 +138,20 @@ function handleReplySubmission($conn)
                 $repliesonpoststmt->bind_result($replies);
                 $repliesonpoststmt->fetch();
                 $repliesonpoststmt->close(); // Close the statement to prevent data leaks
-                uibuttons($post["id"], 'post', $post["likes"], $post["dislikes"], $comments + $replies);
+                uibuttonsfun($post["id"], 'post', $post["likes"], $post["dislikes"], $comments + $replies);
                 ?>
-            </div></a> <!-- Close postgriditem -->
+            </div><!--</a> --><!-- Close postgriditem -->
             <?php
             }
-         } ?>
-        </div><br> <!-- Close postgrid -->
-        <?php
-        // Process form submissions
-        handleCommentSubmission($conn);
-        handleReplySubmission($conn);
-        // Close database connection
-        $conn->close();
-        ?>
+        } ?>
+    </div><br> <!-- Close postgrid -->
+    <?php
+    // Process form submissions
+    handleCommentSubmission($conn);
+    handleReplySubmission($conn);
+    // Close database connection
+    $conn->close();
+    ?>
     </div>
     <div class='report-banner'>
         <p>Report content for:</p><br>
@@ -204,23 +241,8 @@ function handleReplySubmission($conn)
 
 
 <?php
-function getUserIdByUsername($conn, $username)
-{
-    $stmt = $conn->prepare("SELECT id FROM users WHERE username=?");
-    $stmt->bind_param("s", $username);
-    $stmt->execute();
-    $result = $stmt->get_result()->fetch_assoc();
-    $stmt->close();
-    return $result;
-}
-function getPostsByUserId($conn, $userid)
-{
-    $stmt = $conn->prepare("SELECT * FROM posts WHERE accountid=?");
-    $stmt->bind_param("i", $userid);
-    $stmt->execute();
-    return $stmt->get_result();
-}
-function uibuttons($id, $type, $likes, $dislikes, $comments)
+
+function uibuttonsfun($id, $type, $likes, $dislikes, $comments)
 {
     global $conn;
     $user_id = $_SESSION['id'];
@@ -241,101 +263,12 @@ function uibuttons($id, $type, $likes, $dislikes, $comments)
         <button type='button' style='display: inline;' class='$likeActive likebutton' data-action='like' data-id='{$id}' data-type='{$type}'><img class='likedislike' src='../Images/Posts-comments-replies/black/hollow/like.png'> <span>$likes</span></button>
         <button type='button' style='display: inline;' class='$dislikeActive dislikebutton' data-action='dislike' data-id='{$id}' data-type='{$type}'><img class='likedislike' src='../Images/Posts-comments-replies/black/hollow/dislike.png'> <span>$dislikes</span></button>
         <button type='button' style='display: inline;' class='commentbutton' data-action='comment' data-id='{$id}' data-type='{$type}'><img class='likedislike' src='../Images/Posts-comments-replies/black/hollow/comment.png'><span>$comments</span></button>
-        <button class='report-button'>Report</button>
+        <button class='report-button' data-type='$type'>Report</button>
 
     ";
 }
-function timeelapsed($datetime)
-{
-    $timestamp = strtotime($datetime); // Convert the date string to a timestamp in seconds since the Unix epoch
-    $time = time();
-    $timeelapsed = $time - $timestamp; // Calculate the difference in seconds
 
-    switch ($timeelapsed) {
-        case ($timeelapsed < 60): // Less than a minute
-            return "$timeelapsed second" . ($timeelapsed == 1 ? "" : "s") . " ago";
-        case ($timeelapsed < 3600): // Less than an hour
-            $minutes = floor($timeelapsed / 60);
-            return "$minutes minute" . ($minutes == 1 ? "" : "s") . " ago";
-        case ($timeelapsed < 86400): // Less than a day
-            $hours = floor($timeelapsed / 3600);
-            return "$hours hour" . ($hours == 1 ? "" : "s") . " ago";
-        case ($timeelapsed < 604800): // Less than a week
-            $days = floor($timeelapsed / 86400);
-            return "$days day" . ($days == 1 ? "" : "s") . " ago";
-        case ($timeelapsed < 2592000): // Less than a month
-            $weeks = floor($timeelapsed / 604800);
-            return "$weeks week" . ($weeks == 1 ? "" : "s") . " ago";
-        case ($timeelapsed < 31536000): // Less than a year
-            $months = floor($timeelapsed / 2592000);
-            return "$months month" . ($months == 1 ? "" : "s") . " ago";
-        case ($timeelapsed >= 31536000): // More than a year
-            $years = floor($timeelapsed / 31536000);
-            return "$years year" . ($years == 1 ? "" : "s") . " ago";
-    }
-}
-// Report submission
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["reportsubmit"], $_POST["reason"])) {
-    print ("<script>alert('Report reason: " . $_POST["reason"] . "');</script>");
-
-    /*
-    $reason = $conn->real_escape_string($_POST["reason"]);
-    $content_id = $conn->real_escape_string($_POST["content_id"]);
-    $content_type = $conn->real_escape_string($_POST["content_type"]);
-    $user_id = $conn->real_escape_string($_SESSION['id']);
-
-    $reportstmt = $conn->prepare("INSERT INTO reports (user_id, content_id, content_type, reason) VALUES (?, ?, ?, ?)");
-    $reportstmt->bind_param("iiss", $user_id, $content_id, $content_type, $reason);
-    $reportstmt->execute();
-    $reportstmt->close();
-    echo "<script>alert('Report submitted successfully.');</script>";*/
-}
 ?>
-<script>
-    $(document).ready(function () {
-        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            $(".likedislike").each(function () {
-                this.src = this.src.replace("black", "white"); // White icons for dark mode
-            });
-        }
-        else {
-            $(".likedislike").each(function () {
-                this.src = this.src.replace("white", "black") // black icons for dark mode
-            });
-        }
-        $('.popup .close').click(function () {
-            $('#reportPopup').remove();
-        });
-        // Handle form submission
-        $('#reportForm').submit(function (event) {
-            event.preventDefault();
-            const formData = $(this).serialize();
-            $.post('report.php', formData, function (response) {
-                alert('Report submitted successfully.');
-                $('#reportPopup').remove();
-            }).fail(function () {
-                alert('Failed to submit report.');
-            });
-        });
-        // Close the popup when the close button is clicked
-        $('.popup .close').click(function () {
-            $('#reportPopup').remove();
-        });
-        // Report functionality
-        $(".report-banner").css("visibility", "hidden");
-        $(".report-button").click(function () {
-            // Blur the background and make it clickable per default 
-            $(".report-banner").css("visibility", "visible");
-            $('body > *:not(.report-banner)').css('filter', 'blur(4px)');
-            $('body > *:not(.report-banner)').css('pointer-events', 'all');
-        });
-        $('.reportsubmit').click(function () {
-            // Closes the banner if the user clicks on a button with the class "close"
-            $(".report-banner").css("visibility", "hidden");
-            $('body > *:not(.report-banner)').css('filter', 'blur(0px)');
-            $('body > *:not(.report-banner)').css('pointer-events', 'all');
-        });
-    });
-</script>
+
 
 </html>

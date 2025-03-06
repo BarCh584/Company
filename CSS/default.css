@@ -488,7 +488,7 @@ button:hover {
   background-color: #282828;
 }
 
-.reasons {
+.reasons > * {
   display: flex; /* Change from block to flex */
   flex-direction: column; /* Arrange children in a vertical column */
   height: 100%; /* Ensure the parent has a defined height */

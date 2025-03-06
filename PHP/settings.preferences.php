@@ -63,6 +63,7 @@ if (isset($_POST['disable2fa'])) {
 </head>
 
 <body>
+    <img src="../Logo2.png" class="logo">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <div class="innormalcontentnavbar">
         <h1>Preferences</h1>
@@ -99,17 +100,13 @@ if (isset($_POST['disable2fa'])) {
                 $disable2fa->close();
             }
         }
-
         ?>
-
     </div>
-
     <script>
         if (window.innerWidth < 768) {
             $(".innavbar").hide();
         }
     </script>
-
 </body>
 
 </html>

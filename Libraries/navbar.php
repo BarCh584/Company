@@ -22,7 +22,7 @@ session_start();
         $imgformats = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'tiff'];
         $filesfound = [];
         foreach ($imgformats as $format) {
-            $pattern = $directory . $format;
+            $pattern = "{$directory}{$format}";
             $filesfound = array_merge($filesfound, glob($pattern)); // Append found files to $filesfound
         }
         if (count($filesfound) == 0) {
@@ -35,37 +35,57 @@ session_start();
             "message" => ["message.php", "message.png", "Messages"],
             "settings.profile" => ["settings.navbar.php", "settings.png", "Settings"],
             "live-stream" => ["live-stream.php?username=$_SESSION[username]", "live-streaming.png", "Livestream"],
-            "profile" => ["search.results.php?username=$_SESSION[username]&show=posts", $filesfound[0], "$_SESSION[username]"]
+            "profile" => ["search.results.php?username=$_SESSION[username]&show=posts", $filesfound[0], "$_SESSION[username]"],
+            "admin" => ["admin.php", "admin.png", "Admin"]
         ];
         ?>
         <ul class="outnavbar">
             <!--Logo-->
             <?php foreach ($buttons as $key => $value) {
-                if ($key != "profile") { ?>
-                    <li><a class="<?php echo ($buttontohighlight == $key) ? 'active ' . $key : 'not-active'; ?>"
-                            href="<?php echo $value[0]; ?>">
-                            <img class="imagesrc <?php echo ($buttontohighlight == $key) ? 'filled' : 'hollow'; ?>"
-                                src="../Images/Navbar/black/hollow/<?php echo $value[1]; ?>" alt="Logo">
-                            <h5><?php t($value[2]); ?></h5>
-                        </a></li>
-                <?php } else {
-                    ?>
+                if ($key != "profile" && $key != "admin") { ?>
                     <li>
-                        <a href="<?php echo $value[0]; ?>">
-                            <img id="imagesrc" class="imagesrc" src="<?php
-                            if (count($filesfound) == 0) {
-                                print ("../Images/Navbar/black/hollow/profile.png");
-                            } else
-                                print ($filesfound[0]); ?>" alt="Profile picture">
+                        <a class="<?= ($buttontohighlight == $key) ? "active $key" : 'not-active'; ?>" href="<?= $value[0]; ?>">
+                            <img class="imagesrc <?= ($buttontohighlight == $key) ? 'filled' : 'hollow'; ?>"
+                                src="../Images/Navbar/black/hollow/<?= $value[1]; ?>" alt="Logo">
                             <h5><?php t($value[2]); ?></h5>
                         </a>
                     </li>
+                <?php } else if ($key == "profile") { ?>
+                        <li>
+                            <a href="<?php echo $value[0]; ?>">
+                                <img id="imagesrc" class="imagesrc" src="<?php
+                                if (count($filesfound) == 0) {
+                                    print "../Images/Navbar/black/hollow/profile.png";
+                                } else
+                                    print ($filesfound[0]); ?>" alt="Profile picture">
+                                <h5><?php t($value[2]); ?></h5>
+                            </a>
+                        </li>
                     <?php
+                } else if ($key == "admin") {
+                    $conn = new mysqli("localhost", "root", "", "Company");
+                    $checkadmin = $conn->prepare("SELECT * FROM users WHERE username = ?");
+                    $checkadmin->bind_param("s", $_SESSION['username']);
+                    $checkadmin->execute();
+                    $getresult = $checkadmin->get_result();
+                    $result = $getresult->fetch_assoc();
+                    if (str_contains($result["permissions"], "view")) { ?>
+                                <li>
+                                    <a class="<?= ($buttontohighlight == $key) ? "active $key" : 'not-active'; ?>" href="<?= $value[0]; ?>">
+                                        <img class="imagesrc <?= ($buttontohighlight == $key) ? 'filled' : 'hollow'; ?>"
+                                            src="../Images/Navbar/black/hollow/<?= $value[1]; ?>" alt="Logo">
+                                        <h5><?php t($value[2]); ?></h5>
+                                    </a>
+                                </li>
+                        <?php
+                    }
+                    $conn->close();
                 }
             } ?>
         </ul>
         <?php
     }
+
     function createsettingsnavbar($buttontohighlightin)
     {
         $settingsButtons = [
@@ -90,6 +110,122 @@ session_start();
             <?php } ?>
         </ul>
         <?php
+    }
+
+
+    function getuserprofileimg($username)
+    {
+        $directory = "../uploads/" . $_SESSION['username'] . "/profileimg/profile_picture.";
+        $imgformats = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'tiff'];
+        $filesfound = [];
+        foreach ($imgformats as $format) {
+            $pattern = $directory . $format;
+            $filesfound = array_merge($filesfound, glob($pattern)); // Append found files to $filesfound
+        }
+        if (count($filesfound) == 0) {
+            $filesfound = ["../Images/Navbar/black/hollow/settings.profile.png"];
+        }
+        return "<img src='" . $filesfound[0] . "' class='messageprofileimg' alt='Profile picture'>";
+    }
+    function timeelapsed($datetime)
+    {
+        $timestamp = strtotime($datetime); // Convert the date string to a timestamp in seconds since the Unix epoch
+        $time = time();
+        $timeelapsed = $time - $timestamp; // Calculate the difference in seconds
+    
+        switch ($timeelapsed) {
+            case ($timeelapsed < 60): // Less than a minute
+                return "$timeelapsed second" . ($timeelapsed == 1 ? "" : "s") . " ago";
+            case ($timeelapsed < 3600): // Less than an hour
+                $minutes = floor($timeelapsed / 60);
+                return "$minutes minute" . ($minutes == 1 ? "" : "s") . " ago";
+            case ($timeelapsed < 86400): // Less than a day
+                $hours = floor($timeelapsed / 3600);
+                return "$hours hour" . ($hours == 1 ? "" : "s") . " ago";
+            case ($timeelapsed < 604800): // Less than a week
+                $days = floor($timeelapsed / 86400);
+                return "$days day" . ($days == 1 ? "" : "s") . " ago";
+            case ($timeelapsed < 2592000): // Less than a month
+                $weeks = floor($timeelapsed / 604800);
+                return "$weeks week" . ($weeks == 1 ? "" : "s") . " ago";
+            case ($timeelapsed < 31536000): // Less than a year
+                $months = floor($timeelapsed / 2592000);
+                return "$months month" . ($months == 1 ? "" : "s") . " ago";
+            case ($timeelapsed >= 31536000): // More than a year
+                $years = floor($timeelapsed / 31536000);
+                return "$years year" . ($years == 1 ? "" : "s") . " ago";
+        }
+    }
+    function getUserIdByUsername($conn, $username)
+    {
+        $stmt = $conn->prepare("SELECT id FROM users WHERE username=?");
+        $stmt->bind_param("s", $username);
+        $stmt->execute();
+        $result = $stmt->get_result()->fetch_assoc();
+        $stmt->close();
+        return $result;
+    }
+    function getPostsByUserId($conn, $userid)
+    {
+        $stmt = $conn->prepare("SELECT * FROM posts WHERE accountid=?");
+        $stmt->bind_param("i", $userid);
+        $stmt->execute();
+        return $stmt->get_result();
+    }
+    function uibuttons($id, $type, $likes, $dislikes)
+    {
+        global $conn;
+        $user_id = $_SESSION['id'];
+
+        // Check the user's current interaction
+        $stmt = $conn->prepare("
+        SELECT action FROM user_interactions 
+        WHERE user_id = ? AND content_type = ? AND content_id = ?
+        ");
+        $stmt->bind_param("isi", $user_id, $type, $id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $userAction = $result->fetch_assoc()['action'] ?? null; // Check if the user has interacted with this item
+    
+        $likeActive = $userAction === 'like' ? 'active' : '';
+        $dislikeActive = $userAction === 'dislike' ? 'active' : '';
+        echo "
+    <button type='button' style='display: inline;' class='$likeActive likebutton' data-action='like' data-id='{$id}' data-type='{$type}'><img class='likedislike' src='../Images/Posts-comments-replies/black/hollow/like.png'> <span>$likes</span></button>
+    <button type='button' style='display: inline;' class='$dislikeActive dislikebutton' data-action='dislike' data-id='{$id}' data-type='{$type}'><img class='likedislike' src='../Images/Posts-comments-replies/black/hollow/dislike.png'> <span>$dislikes</span></button>
+    <button class='report-button' data-type='$type'>Report</button>
+    ";
+    }
+    function handleCommentSubmission($conn)
+    {
+        if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["submit_comment"], $_POST["postid"])) {
+            $comment = $conn->real_escape_string($_POST["comment"]);
+            $postid = $conn->real_escape_string($_POST["postid"]);
+            $userid = $conn->real_escape_string($_SESSION['id']); // Get the logged-in user's ID from session
+    
+            // Insert the comment into the database
+            $commentstmt = $conn->prepare("INSERT INTO comments (postid, userid, comment) VALUES (?, ?, ?)");
+            $commentstmt->bind_param("iis", $postid, $userid, $comment);
+            $commentstmt->execute();
+
+            // Redirect to avoid form resubmission
+            header("Location: {$_SERVER['REQUEST_URI']}");
+            exit();
+        }
+    }
+    function handleReplySubmission($conn)
+    {
+        if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit_reply"], $_POST["commentid"])) {
+            $reply = $conn->real_escape_string($_POST["reply"]);
+            $commentid = $conn->real_escape_string($_POST["commentid"]);
+            $userid = $conn->real_escape_string($_SESSION['id']);
+
+            $replystmt = $conn->prepare("INSERT INTO replies (commentid, userid, reply) VALUES (?, ?, ?)");
+            $replystmt->bind_param("iis", $commentid, $userid, $reply);
+            $replystmt->execute();
+
+            header("Location: {$_SERVER['REQUEST_URI']}");
+            exit();
+        }
     }
     ?>
 
