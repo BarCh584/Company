@@ -103,28 +103,7 @@ $conn = new mysqli($servername, $db_username, $db_password, $dbname);
         }
     });
 </script>
-<?php
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["reportsubmit"], $_POST["reason"]) && isset($_GET['postid'])) {
 
-    $repuserstmt = $conn->prepare("SELECT accountid FROM posts WHERE id=?");
-    $repuserstmt->bind_param("i", $_GET['postid']);
-    $repuserstmt->execute();
-    $datatype = $_POST["datatype"];
-    $repuserresult = $repuserstmt->get_result();
-    $repuser = $repuserresult->fetch_assoc();
-    $reporteduserid = $repuser['accountid'];
-    $reason = $conn->real_escape_string($_POST["reason"]);
-    $reportedtype = $conn->real_escape_string($datatype);
-    $applicantid = $_SESSION['id'];
-    $status = "pending";
-    $reportedcontentid = $_GET['postid'];
-    $reportstmt = $conn->prepare("INSERT INTO reports (reason, applicantid, reporteduserid, reportedtype, reportedcontentid, status) VALUES (?, ?, ?, ?, ?, ?)");
-    $reportstmt->bind_param("siisis", $reason, $applicantid, $reporteduserid, $reportedtype, $reportedcontentid, $status);
-    $reportstmt->execute();
-    $reportstmt->close();
-    echo "<script>alert('Report submitted successfully.');</script>";
-}
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>

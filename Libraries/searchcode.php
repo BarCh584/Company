@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (count($filesfound) == 0) {
                     $filesfound = ["../Images/Navbar/black/hollow/settings.profile.png"];
                 }
-                echo "<li><a href='search.results.php?username=" . htmlspecialchars($row["username"]) . "'><img class='imagesrc' id='imagesrc' src='$filesfound[0]'>" . htmlspecialchars($row["username"]) . "</a></li><br>";
+                echo "<li><a href='search.results.php?username=" . htmlspecialchars($row["username"]) ."&show=posts". "'><img class='imagesrc' id='imagesrc' src='$filesfound[0]'>" . htmlspecialchars($row["username"]) . "</a></li><br>";
             }
             echo "</div>";
         } else {

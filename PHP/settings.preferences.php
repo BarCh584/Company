@@ -85,6 +85,7 @@ if (isset($_POST['disable2fa'])) {
             </form>
             <?php
             if (isset($qrCodeUrl)) {
+                echo "<p>Scan the QR code with your authenticator app & enter the code from your authenticator app to confirm.</p>";
                 echo "<img src='$qrCodeUrl'>";
             }
             if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['enable2fa'])) { ?>

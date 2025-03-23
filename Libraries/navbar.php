@@ -69,7 +69,7 @@ session_start();
                     $checkadmin->execute();
                     $getresult = $checkadmin->get_result();
                     $result = $getresult->fetch_assoc();
-                    if (str_contains($result["permissions"], "view")) { ?>
+                    if (str_contains($result["permissions"], "view") || str_contains($result["permissions"], "*")) { ?>
                                 <li>
                                     <a class="<?= ($buttontohighlight == $key) ? "active $key" : 'not-active'; ?>" href="<?= $value[0]; ?>">
                                         <img class="imagesrc <?= ($buttontohighlight == $key) ? 'filled' : 'hollow'; ?>"
@@ -163,7 +163,16 @@ session_start();
         $stmt->execute();
         $result = $stmt->get_result()->fetch_assoc();
         $stmt->close();
-        return $result;
+        return $result ? $result['id'] : null;
+    }
+    function getUserNameById($conn, $id)
+    {
+        $stmt = $conn->prepare("SELECT username FROM users WHERE id=?");
+        $stmt->bind_param("s", $id);
+        $stmt->execute();
+        $result = $stmt->get_result()->fetch_assoc();
+        $stmt->close();
+        return $result ? $result['username'] : null;
     }
     function getPostsByUserId($conn, $userid)
     {
@@ -227,6 +236,28 @@ session_start();
             exit();
         }
     }
+    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["reportsubmit"], $_POST["reason"]) && isset($_GET['postid'])) {
+        $conn = new mysqli("localhost", "root", "", "Company");
+        $repuserstmt = $conn->prepare("SELECT accountid FROM posts WHERE id=?");
+        $repuserstmt->bind_param("i", $_GET['postid']);
+        $repuserstmt->execute();
+        $repuserresult = $repuserstmt->get_result();
+        $repuser = $repuserresult->fetch_assoc();
+        $reporteduserid = $repuser['accountid'];
+        $reason = $conn->real_escape_string($_POST["reason"]);
+        $datatype = print ("<script>document.write(datatype)</script>");
+        $reportedtype = $conn->real_escape_string($datatype);
+        $applicantid = $_SESSION['id'];
+        $status = "pending";
+        $reportedcontentid = $_GET['postid'];
+        $reportedusername = getUserNameById($conn, $reporteduserid);
+        $reportedapplicantname = getUserNameById($conn, $applicantid);
+        $reportstmt = $conn->prepare("INSERT INTO reports (reason, applicantid, reporteduserid, reportedtype, reportedcontentid, status, reportedusername, applicantname) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+        $reportstmt->bind_param("siisisss", $reason, $applicantid, $reporteduserid, $reportedtype, $reportedcontentid, $status, $reportedusername, $reportedapplicantname);
+        $reportstmt->execute();
+        $reportstmt->close();
+        echo "<script>alert('Report submitted successfully.');</script>";
+    }
     ?>
 
 
@@ -279,7 +310,11 @@ session_start();
     document.getElementById("generaltermsandconditions").addEventListener("click", function () {
         window.location.href = "generaltermsandconditions.php";
     });
-    $(document).ready(function () {
+
+    window.onload = function () {
+        actions();
+    }
+    function actions() {
         // Set screenY in session via AJAX
 
         $('.cookies').hide();
@@ -300,24 +335,30 @@ session_start();
         $("button").click(function () {
             changeicon();
             $(this).children("img").each(function () {
-                if (this.src && this.src.includes("hollow")) {
-                    this.src = this.src.replace("hollow", "filled");
-                } else if (this.src && this.src.includes("filled")) {
-                    this.src = this.src.replace("filled", "hollow");
+                if (!this.src.includes("comment.png")) {
+                    if (this.src && this.src.includes("hollow")) {
+                        this.src = this.src.replace("hollow", "filled");
+                    } else if (this.src && this.src.includes("filled")) {
+                        this.src = this.src.replace("filled", "hollow");
+                    }
                 }
             });
         });
         function changeicon() {
             $(".active").each(function () {
                 $(this).children("img").each(function () {
-                    this.src = this.src.replace("hollow", "filled");
+                    if (!this.src.includes("comment.png")) {
+                        this.src = this.src.replace("hollow", "filled");
+                    }
                 });
             });
-            if (!$("button").hasClass("active")) {
+            $("button:not(.active)").each(function () {
                 $(this).children("img").each(function () {
-                    this.src = this.src.replace("filled", "hollow");
+                    if (!this.src.includes("comment.png")) {
+                        this.src = this.src.replace("filled", "hollow");
+                    }
                 });
-            }
+            });
         }
         if (window.innerWidth >= 650) {
             $(".innavbar").show();
@@ -352,8 +393,7 @@ session_start();
             // Toggles the cookies div if the user clicks on a button with the class "manage"
             $('.cookies').toggle();
         });
-    });
-
+    }
 </script>
 
 </html>

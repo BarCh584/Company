@@ -87,6 +87,16 @@ if (isset($_POST['emailadd']) && isset($_POST['pswrd'])) {
                     $_SESSION['pswrd'] = $pswrd;
                     $_SESSION['id'] = $id;
                     $_SESSION['username'] = $username;
+                    // Check if the use is not banned
+                    $banstmt = $conn->prepare("SELECT * FROM penalties WHERE userid = ? AND penalty = 'ban'");
+                    $banstmt->bind_param("i", $id);
+                    $banstmt->execute();
+                    $banstmt->store_result();
+                    if ($banstmt->num_rows > 0) {
+                        echo "<script>alert('You are banned from AccessFrame');</script>";
+                        session_abort();
+                        exit();
+                    }
                     // Check if user has 2FA enabled
                     $twoFAstmt = $conn->prepare("SELECT 2FAstatus FROM users WHERE email = ?");
                     $twoFAstmt->bind_param("s", $email);

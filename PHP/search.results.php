@@ -96,9 +96,14 @@ function uibuttonsfun($id, $type, $likes, $dislikes, $comments)
                 console.error("Error processing request.");
             });
         });
+        $(".commentbutton").on("click", function() {
+            let id = $(this).data("id");
+            let type = $(this).data("type");
+            window.location.href = `search.postid.php?postid=${id}`;
+        });
         if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
             $(".likedislike").each(function () {
-                this.src = this.src.replace("black", "white"); // White icons for dark mode
+                 this.src = this.src.replace("black", "white"); // White icons for dark mode
             });
         }
         else {
@@ -166,26 +171,6 @@ function uibuttonsfun($id, $type, $likes, $dislikes, $comments)
     <div class="normalcontentnavbar">
         <!-- Search form -->
         <?php
-        if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["reportsubmit"], $_POST["reason"]) && isset($_GET['postid'])) {
-
-            $repuserstmt = $conn->prepare("SELECT accountid FROM posts WHERE id=?");
-            $repuserstmt->bind_param("i", $_GET['postid']);
-            $repuserstmt->execute();
-            $datatype = $_POST["datatype"];
-            $repuserresult = $repuserstmt->get_result();
-            $repuser = $repuserresult->fetch_assoc();
-            $reporteduserid = $repuser['accountid'];
-            $reason = $conn->real_escape_string($_POST["reason"]);
-            $reportedtype = $conn->real_escape_string($datatype);
-            $applicantid = $_SESSION['id'];
-            $status = "pending";
-            $reportedcontentid = $_GET['postid'];
-            $reportstmt = $conn->prepare("INSERT INTO reports (reason, applicantid, reporteduserid, reportedtype, reportedcontentid, status) VALUES (?, ?, ?, ?, ?, ?)");
-            $reportstmt->bind_param("siisis", $reason, $applicantid, $reporteduserid, $reportedtype, $reportedcontentid, $status);
-            $reportstmt->execute();
-            $reportstmt->close();
-            echo "<script>alert('Report submitted successfully.');</script>";
-        }
         if (isset($_GET["username"])) {
             $searchedusername = htmlspecialchars($_GET["username"]);
             $user = getUserIdByUsername($conn, $searchedusername);
@@ -196,7 +181,7 @@ function uibuttonsfun($id, $type, $likes, $dislikes, $comments)
                 $creatorstmtresult = $creatorstmt->get_result();
                 $creatorstmtfinances = $creatorstmtresult->fetch_assoc();
                 if ($user) {
-                    $userid = $user["id"];
+                    $userid = $user;
                 } else {
                     echo "<p>User not found.</p>";
                     exit();
@@ -274,7 +259,6 @@ function uibuttonsfun($id, $type, $likes, $dislikes, $comments)
                         if ($_GET["show"] == "posts" && !isset($_GET["postid"])) {
                             echo "<div class='postgrid' style='margin-left:0vw !important;'>";
                             while ($post = $posts->fetch_assoc()) {
-
                                 echo "<div class='postgriditem'>"; // <a href='search.postid.php?postid=$post[id]'>
                                 echo "<h4>" . htmlspecialchars($post["accountname"]) . " <small>" . timeelapsed($post["createdat"]) . "</small></h4>";
                                 echo "<h4>" . htmlspecialchars($post["title"]) . "</h4>";

@@ -126,6 +126,10 @@
                         <a href="https://www.flaticon.com/free-icons/defender" title="defender icons">Defender icons
                                 created by Lagot Design - Flaticon</a>
                 </li>
+                <li>
+                        <a href="https://www.flaticon.com/free-icons/comment" title="comment icons">Comment icons
+                                created by Smashicons - Flaticon</a>
+                </li>
         </div>
 </body>
 
