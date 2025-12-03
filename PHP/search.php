@@ -19,7 +19,7 @@
         <div id="search-results"></div>
     </ul>
 
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="../Libraries/jquery/jquery-3.6.0.min.js"></script>
     <script>
         function search() {
             const username = document.getElementById("username").value;

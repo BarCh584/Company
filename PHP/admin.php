@@ -66,7 +66,7 @@
         ?>
 
     </div>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="../Libraries/jquery/jquery-3.6.0.min.js"></script>
     <script>
         const otherReasonElement = document.getElementById("otherreason");
         if (otherReasonElement) {

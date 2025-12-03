@@ -9,7 +9,7 @@ $db_password = "";
 $dbname = "Company";
 $conn = new mysqli($servername, $db_username, $db_password, $dbname);
 ?>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="../Libraries/jquery/jquery-3.6.0.min.js"></script>
 <script>
     var datatype;
     $(document).ready(function () {

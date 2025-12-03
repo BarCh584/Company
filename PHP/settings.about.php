@@ -23,7 +23,7 @@
                 <h3><a href="Impress.php">Impress</a></h3>
                 <h1>Special thanks to:</h1>
                 <h3>Flaticon icons from the following links:</h3>
-                <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+                <script src="../Libraries/jquery/jquery-3.6.0.min.js"></script>
                 <script>
                         if (window.innerWidth < 768) {
                                 $(".innavbar").hide();

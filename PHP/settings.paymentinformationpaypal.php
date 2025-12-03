@@ -11,7 +11,7 @@
 
 <body>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="../Libraries/jquery/jquery-3.6.0.min.js"></script>
 
     <?php
     include_once '../Libraries/navbar.php';
