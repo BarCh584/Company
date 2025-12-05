@@ -181,61 +181,6 @@ session_start();
         $stmt->execute();
         return $stmt->get_result();
     }
-    function uibuttons($id, $type, $likes, $dislikes)
-    {
-        global $conn;
-        $user_id = $_SESSION['id'];
-
-        // Check the user's current interaction
-        $stmt = $conn->prepare("
-        SELECT action FROM user_interactions 
-        WHERE user_id = ? AND content_type = ? AND content_id = ?
-        ");
-        $stmt->bind_param("isi", $user_id, $type, $id);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $userAction = $result->fetch_assoc()['action'] ?? null; // Check if the user has interacted with this item
-    
-        $likeActive = $userAction === 'like' ? 'active' : '';
-        $dislikeActive = $userAction === 'dislike' ? 'active' : '';
-        echo "
-    <button type='button' style='display: inline;' class='$likeActive likebutton' data-action='like' data-id='{$id}' data-type='{$type}'><img class='likedislike' src='../Images/Posts-comments-replies/black/hollow/like.png'> <span>$likes</span></button>
-    <button type='button' style='display: inline;' class='$dislikeActive dislikebutton' data-action='dislike' data-id='{$id}' data-type='{$type}'><img class='likedislike' src='../Images/Posts-comments-replies/black/hollow/dislike.png'> <span>$dislikes</span></button>
-    <button class='report-button' data-type='$type'>Report</button>
-    ";
-    }
-    function handleCommentSubmission($conn)
-    {
-        if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["submit_comment"], $_POST["postid"])) {
-            $comment = $conn->real_escape_string($_POST["comment"]);
-            $postid = $conn->real_escape_string($_POST["postid"]);
-            $userid = $conn->real_escape_string($_SESSION['id']); // Get the logged-in user's ID from session
-    
-            // Insert the comment into the database
-            $commentstmt = $conn->prepare("INSERT INTO comments (postid, userid, comment) VALUES (?, ?, ?)");
-            $commentstmt->bind_param("iis", $postid, $userid, $comment);
-            $commentstmt->execute();
-
-            // Redirect to avoid form resubmission
-            header("Location: {$_SERVER['REQUEST_URI']}");
-            exit();
-        }
-    }
-    function handleReplySubmission($conn)
-    {
-        if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit_reply"], $_POST["commentid"])) {
-            $reply = $conn->real_escape_string($_POST["reply"]);
-            $commentid = $conn->real_escape_string($_POST["commentid"]);
-            $userid = $conn->real_escape_string($_SESSION['id']);
-
-            $replystmt = $conn->prepare("INSERT INTO replies (commentid, userid, reply) VALUES (?, ?, ?)");
-            $replystmt->bind_param("iis", $commentid, $userid, $reply);
-            $replystmt->execute();
-
-            header("Location: {$_SERVER['REQUEST_URI']}");
-            exit();
-        }
-    }
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["reportsubmit"], $_POST["reason"]) && isset($_GET['postid'])) {
         $conn = new mysqli("localhost", "root", "", "Company");
         $repuserstmt = $conn->prepare("SELECT accountid FROM posts WHERE id=?");
@@ -259,8 +204,6 @@ session_start();
         echo "<script>alert('Report submitted successfully.');</script>";
     }
     ?>
-
-
     <div class='cookie-banner'>
         <div>
             <p>This website uses cookies</p>

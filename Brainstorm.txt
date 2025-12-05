@@ -1,6 +1,8 @@
 To do:
+- Donations
+- Live streaming
+- Web cam has to work!!!
 - CHANGE email
-- Fixe like/dislike system
 - DM chats listed using ID's
 - Improving Design
 - Extending settings
@@ -16,9 +18,6 @@ Last steps:
 - Website hosting
 - T&Cs(Terms and conditions)
 - Mail server
-- uncomment monthly subscription crontab task on raspberry pi
-- Plan id for subscriptions and uncomment createSubscriptionplan instruction
-- Logo
 
 For later:
 

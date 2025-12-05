@@ -98,7 +98,7 @@ if (isset($_POST['emailadd']) && isset($_POST['pswrd'])) {
                         exit();
                     }
                     // Check if user has 2FA enabled
-                    $twoFAstmt = $conn->prepare("SELECT 2FAstatus FROM users WHERE email = ?");
+                    $twoFAstmt = $conn->prepare("SELECT 2FA FROM users WHERE email = ?");
                     $twoFAstmt->bind_param("s", $email);
                     $twoFAstmt->execute();
                     $twoFAstmt->store_result();

@@ -375,7 +375,7 @@ ul.profilenavbar li a p {
   height: 25vh;
 }
 #dmtextinpfld {
-  margin-left: 0 !important;
+  margin-left: 0;
   top: 70vh;
   left: 0vw;
   width: 50vw;
@@ -638,8 +638,8 @@ button:hover {
     overflow-y: scroll;
   }
   #dmtextinpfld {
-    top: 70vh;
-    margin-left: 0vw !important;
+    top: 70vh !important;
+    left: 25vw !important;
   }
   .normalcontentnavbar {
     margin-left: 0vw !important;

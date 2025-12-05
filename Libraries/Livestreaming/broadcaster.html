@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <style>
+        video {
+          width: 100%;
+          height: auto;
+          background-color: black;
+        }
+    </style>
+    <video id="ls" autoplay playsinline></video>
+
+    <script>
+      const ws = new WebSocket("ws//localhost:3000");
+      let pc = new RTCPeerConnection();
+
+      navigator.mediaDevices
+        .getUserMedia({ video: true, audio: true })
+        .then((stream) => {
+          document.getElementById("ls").srcObject = stream;
+          stream.getTracks().forEach((track) => pc.addTrack(track, stream));
+        });
+      pc.onicecandidate = (event) => {
+        if (event.candidate) {
+          ws.send(JSON.stringify({ candidate: event.candidate }));
+        }
+      };
+      ws.onmessage = async ({ data }) => {
+        const msg = JSON.parse(data);
+
+        if (msg.answer) {
+          await pc.setRemoteDescription(msg.answer);
+        } else if (msg.candidate) {
+          await pc.addIceCandidate(msg.candidate);
+        }
+      };
+
+      async function start() {
+        const offer = await pc.createOffer();
+        await pc.setLocalDescription(offer);
+        ws.send(JSON.stringify({ offer }));
+      }
+
+      start();
+    </script>
+  </body>
+</html>
